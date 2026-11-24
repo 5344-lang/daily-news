@@ -21,8 +21,8 @@ TO_EMAIL = os.environ.get("TO_EMAIL", GMAIL_USER).strip()
 
 def get_candidate_models():
     url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
-    text_models = []
-    image_models = []
+    stable_text, preview_text = [], []
+    stable_image, preview_image = [], []
     try:
         res = requests.get(url, timeout=30)
         res.raise_for_status()
@@ -32,14 +32,20 @@ def get_candidate_models():
             if "generateContent" not in methods:
                 continue
             lower = name.lower()
+            is_preview = any(x in lower for x in ["preview", "exp", "omni"])
             if "image" in lower:
-                image_models.append(name)
+                (preview_image if is_preview else stable_image).append(name)
             elif "flash" in lower and not any(x in lower for x in ["tts", "audio", "embedding", "lite"]):
-                text_models.append(name)
-        text_models.sort(reverse=True)
-        image_models.sort(reverse=True)
+                (preview_text if is_preview else stable_text).append(name)
+        stable_text.sort(reverse=True)
+        preview_text.sort(reverse=True)
+        stable_image.sort(reverse=True)
+        preview_image.sort(reverse=True)
     except Exception as e:
         print(f"모델 목록 조회 중 경고: {e}")
+
+    text_models = stable_text + preview_text
+    image_models = stable_image + preview_image
 
     for fb in ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"]:
         if fb not in text_models:
@@ -47,6 +53,9 @@ def get_candidate_models():
     for fb in ["gemini-2.5-flash-image", "gemini-2.0-flash-exp-image-generation"]:
         if fb not in image_models:
             image_models.append(fb)
+
+    print("후보 텍스트 모델:", text_models)
+    print("후보 이미지 모델:", image_models)
     return text_models, image_models
 
 
@@ -150,15 +159,14 @@ def call_gemini_text(news_items, past_topics, text_models):
     for model_name in text_models:
         endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
         res = requests.post(endpoint, json=payload, timeout=60)
-        if res.status_code == 404:
-            print(f"[{model_name}] 사용 불가(404), 다음 모델 시도...")
+        if res.status_code != 200:
+            print(f"[{model_name}] 건너뜀 ({res.status_code}): {res.text[:160]}")
             continue
-        res.raise_for_status()
         print(f"사용된 텍스트 모델: {model_name}")
         text = res.json()["candidates"][0]["content"]["parts"][0]["text"]
         return json.loads(text)
 
-    raise RuntimeError("사용 가능한 Gemini 텍스트 모델을 찾지 못했습니다. API 키를 확인해 주세요.")
+    raise RuntimeError("사용 가능한 Gemini 텍스트 모델을 찾지 못했습니다. API 키 할당량을 확인해 주세요.")
 
 
 def generate_psych_illustration(image_prompt, image_models):
