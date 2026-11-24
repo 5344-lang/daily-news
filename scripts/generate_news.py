@@ -572,6 +572,17 @@ def fetch_blog_articles(blogs_cfg, published_urls):
                 img, body = scrape_naver_blog_post(link, img_idx)
             else:
                 raw_img, body = scrape_generic_article(link, max_len=4000)
+                # 티스토리 등 플랫폼 기본 '사진 없음' 이미지 제외
+                ignore_patterns = [
+                    "tistory_admin/static",
+                    "opengraph.png",
+                    "no_image",
+                    "noimage",
+                    "default_image",
+                    "og_default",
+                ]
+                if raw_img and any(p in raw_img.lower() for p in ignore_patterns):
+                    raw_img = ""
                 img = download_local_image(raw_img, f"blog_{img_idx}.jpg", referer=link) or raw_img
 
             if len(body) >= 80:
