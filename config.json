@@ -58,11 +58,13 @@
     {
       "name": "똑심마인드 블로그",
       "url": "https://rss.blog.naver.com/talk_sim_mind.xml",
+      "mode": "new_only",
       "enabled": true
     },
     {
       "name": "pppoem",
       "url": "https://pppoem.tistory.com/rss",
+      "mode": "unread",
       "enabled": true
     }
   ]
