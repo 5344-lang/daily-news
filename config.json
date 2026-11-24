@@ -1,7 +1,7 @@
 {
   "paper_name": "DAILY NEWS",
   "site_url": "https://5344-lang.github.io/daily-news/",
-  "weather_city": "경산",
+  "weather_city": "대구",
   "categories": [
     { "name": "심리학·인지", "query": "심리학 OR 뇌과학 OR 정신건강" },
     { "name": "AI·테크", "query": "생성형 AI OR 인공지능 자동화" },
