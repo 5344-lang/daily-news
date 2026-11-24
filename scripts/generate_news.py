@@ -124,6 +124,9 @@ def fetch_google_calendar_today():
         return ""
     try:
         res = requests.get(GCAL_ICS_URL, headers=HEADERS, timeout=(5, 10))
+        if res.status_code == 404:
+            print("구글 캘린더 404 오류: '공개 주소'가 아닌 'iCal 형식의 비공개 주소'(/private-.../basic.ics)를 등록해 주세요.")
+            return "일정 주소 확인 필요"
         res.raise_for_status()
         cal = Calendar.from_ical(res.content)
         start_of_day = datetime(NOW_KST.year, NOW_KST.month, NOW_KST.day, 0, 0, 0, tzinfo=KST)
@@ -162,8 +165,8 @@ def fetch_google_calendar_today():
 
 def get_candidate_models():
     url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
-    stable_flash, stable_lite, stable_pro, preview_text = [], [], [], []
-    excluded = ["tts", "audio", "embedding", "omni", "robotics", "computer-use", "banana", "imagen", "veo", "lyria", "image"]
+    stable_lite, stable_flash, preview_lite, preview_flash = [], [], [], []
+    excluded = ["tts", "audio", "embedding", "omni", "robotics", "computer-use", "banana", "imagen", "veo", "lyria", "image", "pro"]
     try:
         res = requests.get(url, timeout=REQ_TIMEOUT)
         res.raise_for_status()
@@ -173,26 +176,28 @@ def get_candidate_models():
             if "generateContent" not in methods:
                 continue
             lower = name.lower()
-            if any(x in lower for x in excluded):
+            if any(x in lower for x in excluded) or "flash" not in lower:
                 continue
             is_preview = any(x in lower for x in ["preview", "exp"])
-            if "flash" in lower and "lite" in lower:
-                (preview_text if is_preview else stable_lite).append(name)
-            elif "flash" in lower:
-                (preview_text if is_preview else stable_flash).append(name)
-            elif "pro" in lower:
-                (preview_text if is_preview else stable_pro).append(name)
+            if "lite" in lower:
+                (preview_lite if is_preview else stable_lite).append(name)
+            else:
+                (preview_flash if is_preview else stable_flash).append(name)
 
-        for lst in (stable_flash, stable_lite, stable_pro, preview_text):
+        for lst in (stable_lite, stable_flash, preview_lite, preview_flash):
             lst.sort(reverse=True)
     except Exception as e:
         print(f"모델 목록 조회 중 경고: {e}")
 
-    text_models = (stable_flash + stable_lite + stable_pro + preview_text)[:8]
-    for fb in ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-flash-latest"]:
-        if fb not in text_models:
-            text_models.append(fb)
-    return text_models
+    # 응답 속도가 빠르고 무료 한도가 넉넉한 lite 계열 우선, 상위 5개만 시도
+    ordered = stable_lite + stable_flash + preview_lite + preview_flash
+    deduped = []
+    for name in ordered:
+        if name not in deduped:
+            deduped.append(name)
+    if not deduped:
+        deduped = ["gemini-flash-lite-latest", "gemini-flash-latest"]
+    return deduped[:5]
 
 
 def load_history():
@@ -396,10 +401,10 @@ def fetch_research_candidates(research_feeds, published_urls):
             link = entry.get("link", "").strip()
             if not link or link in published_urls:
                 continue
-            img, body = scrape_generic_article(link, max_len=2000)
+            img, body = scrape_generic_article(link, max_len=1600)
             if not body:
                 raw_sum = BeautifulSoup(entry.get("summary", ""), "html.parser").get_text(" ", strip=True)
-                body = raw_sum[:1800]
+                body = raw_sum[:1500]
             if len(body) < 180:
                 continue
             candidates.append({
@@ -409,9 +414,9 @@ def fetch_research_candidates(research_feeds, published_urls):
                 "image": img,
                 "body": body,
             })
-            if len(candidates) >= 2:
+            if len(candidates) >= 1:
                 break
-        if len(candidates) >= 2:
+        if len(candidates) >= 1:
             break
     print(f"최신 심리 실험 연구 후보 {len(candidates)}건 수집 완료")
     return candidates
@@ -542,65 +547,88 @@ def fetch_blog_articles(blogs_cfg, published_urls):
     return picked
 
 
+def fallback_editor(news_items):
+    print("Gemini 서버 일시 과부하 — 자동 선별 안전망 모드로 신문을 발행합니다.")
+    scored = sorted(
+        news_items,
+        key=lambda x: (int(x["has_body"]), int(x["has_image"]), len(x["full_article"])),
+        reverse=True,
+    )
+    lead_id = scored[0]["id"] if scored else 0
+    article_ids = []
+    seen_cats = {scored[0]["category"]} if scored else set()
+
+    for item in scored[1:]:
+        if item["category"] not in seen_cats:
+            article_ids.append(item["id"])
+            seen_cats.add(item["category"])
+        if len(article_ids) >= 5:
+            break
+    for item in scored[1:]:
+        if item["id"] not in article_ids:
+            article_ids.append(item["id"])
+        if len(article_ids) >= 5:
+            break
+
+    return {
+        "edition_quote": "오늘도 차분한 시선으로 하루를 시작합니다.",
+        "lead_id": lead_id,
+        "lead_takeaway": "",
+        "article_ids": article_ids,
+        "research_report": None,
+    }
+
+
 def call_gemini_editor(news_items, research_candidates, text_models):
     compact_news = [
         {
             "id": item["id"],
             "category": item["category"],
             "title": item["title"],
-            "source": item["source"],
             "has_image": item["has_image"],
             "has_body": item["has_body"],
-            "preview": item["full_article"][:140],
         }
         for item in news_items
     ]
 
     research_block = [
         {
-            "idx": i,
-            "source_name": r["source_name"],
-            "title": r["title"],
-            "body": r["body"][:1600],
+            "idx": 0,
+            "source_name": research_candidates[0]["source_name"],
+            "title": research_candidates[0]["title"],
+            "body": research_candidates[0]["body"][:1200],
         }
-        for i, r in enumerate(research_candidates[:2])
-    ]
+    ] if research_candidates else []
 
     prompt = f"""
-당신은 고전 신문 'DAILY NEWS'의 편집장 겸 심리학 과학 저널리스트입니다.
-오늘({TODAY_KR}) 수집된 뉴스 후보와 최신 심리학 실험 논문 기사를 바탕으로 JSON으로만 응답하세요.
+고전 신문 'DAILY NEWS'({TODAY_KR}) 편집장으로서 아래 JSON 스키마로만 간결하게 응답하세요.
 
-[요구사항]
-1. edition_quote: 신문 제호 아래 들어갈 짧은 명언 또는 편집장 한마디
-2. lead_id: 1면 톱기사로 가장 적합한 뉴스 id 1개 (has_body와 has_image가 true인 기사 우선)
-3. lead_takeaway: 1면 톱기사 핵심 통찰 한 줄
-4. article_ids: 나머지 뉴스 중 카테고리별로 골고루 4~5개의 id 선택 (lead_id 중복 금지, has_body 우선)
-5. research_report: [심리학 실험 연구 후보]가 비어 있지 않다면, 그중 가장 흥미로운 최신 실험 연구 1편을 골라 한국어 심층 기사로 번역·재구성할 것. (후보가 비어 있으면 null)
-   - selected_idx: 선택한 연구의 idx 번호
-   - title: 호기심을 끄는 한국어 기사 제목
-   - journal_info: 원문에서 언급된 학술지명/연구기관/저자 정보 (없으면 출처명)
-   - full_article: 4개 문단(\\n\\n 구분) — ① 흥미로운 질문 ② 구체적인 실험 방법 ③ 의외의 실험 결과 ④ 일상에 주는 시사점
-   - takeaway: 연구 핵심 한 줄 요약
+[규칙]
+1. edition_quote: 제호 아래 짧은 한 줄 문구
+2. lead_id: 1면 톱기사 id 1개 (has_body, has_image가 true인 기사 우선)
+3. lead_takeaway: 1면 기사 핵심 한 줄
+4. article_ids: 나머지 뉴스 중 카테고리별 5개 id (lead_id 제외)
+5. research_report: 아래 [연구]가 있으면 한국어 3~4문단(\\n\\n 구분)으로 흥미롭게 번역·정리(질문·실험·결과·시사점). 없으면 null.
 
-[출력 JSON 스키마]
+[JSON 스키마]
 {{
   "edition_quote": "문장",
   "lead_id": 0,
   "lead_takeaway": "핵심 한 줄",
-  "article_ids": [1, 3, 5, 7],
+  "article_ids": [1, 2, 3, 4, 5],
   "research_report": {{
     "selected_idx": 0,
     "title": "한국어 제목",
-    "journal_info": "학술지 또는 연구기관 정보",
-    "full_article": "문단1\\n\\n문단2\\n\\n문단3\\n\\n문단4",
+    "journal_info": "학술지/연구기관",
+    "full_article": "문단1\\n\\n문단2\\n\\n문단3",
     "takeaway": "핵심 한 줄"
   }}
 }}
 
-[뉴스 후보]
+[뉴스]
 {json.dumps(compact_news, ensure_ascii=False)}
 
-[심리학 실험 연구 후보]
+[연구]
 {json.dumps(research_block, ensure_ascii=False)}
 """
     payload = {
@@ -612,22 +640,26 @@ def call_gemini_editor(news_items, research_candidates, text_models):
         endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
         for attempt in range(2):
             try:
-                res = requests.post(endpoint, json=payload, timeout=(5, 40))
+                res = requests.post(endpoint, json=payload, timeout=(5, 75))
                 if res.status_code == 200:
                     print(f"사용된 텍스트 모델: {model_name}")
                     text = res.json()["candidates"][0]["content"]["parts"][0]["text"]
                     return json.loads(text)
-                if res.status_code in (503, 429) and attempt == 0:
-                    print(f"[{model_name}] 일시 지연({res.status_code}) — 3초 후 재시도...")
-                    time.sleep(3)
+                if res.status_code == 503 and attempt == 0:
+                    print(f"[{model_name}] 서버 과부하(503) — 6초 후 재시도...")
+                    time.sleep(6)
                     continue
+                if res.status_code == 429:
+                    print(f"[{model_name}] 속도 제한(429) — 6초 대기 후 다음 모델 시도")
+                    time.sleep(6)
+                    break
                 print(f"[{model_name}] 건너뜀 ({res.status_code})")
                 break
             except Exception as e:
                 print(f"[{model_name}] 요청 예외: {e}")
                 break
 
-    raise RuntimeError("사용 가능한 Gemini 텍스트 모델을 찾지 못했습니다.")
+    return fallback_editor(news_items)
 
 
 def send_gmail(edition, site_url):
@@ -735,10 +767,7 @@ def main():
     research_report = None
     ai_research = ai_data.get("research_report")
     if ai_research and research_candidates:
-        sel = ai_research.get("selected_idx", 0)
-        if not isinstance(sel, int) or sel < 0 or sel >= len(research_candidates):
-            sel = 0
-        src_r = research_candidates[sel]
+        src_r = research_candidates[0]
         local_r_img = download_local_image(src_r["image"], "research_0.jpg", referer=src_r["url"])
         research_report = {
             "source_name": src_r["source_name"],
