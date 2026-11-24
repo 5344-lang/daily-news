@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import time
 import base64
@@ -36,6 +37,7 @@ def get_candidate_models():
     url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
     stable_flash, stable_lite, stable_pro, preview_text = [], [], [], []
     stable_image, preview_image = [], []
+    excluded = ["tts", "audio", "embedding", "omni", "robotics", "computer-use", "banana", "imagen", "veo", "lyria"]
     try:
         res = requests.get(url, timeout=30)
         res.raise_for_status()
@@ -45,12 +47,13 @@ def get_candidate_models():
             if "generateContent" not in methods:
                 continue
             lower = name.lower()
-            if any(x in lower for x in ["tts", "audio", "embedding", "omni", "robotics", "computer-use"]):
-                continue
             is_preview = any(x in lower for x in ["preview", "exp"])
             if "image" in lower:
                 (preview_image if is_preview else stable_image).append(name)
-            elif "flash" in lower and "lite" in lower:
+                continue
+            if any(x in lower for x in excluded):
+                continue
+            if "flash" in lower and "lite" in lower:
                 (preview_text if is_preview else stable_lite).append(name)
             elif "flash" in lower:
                 (preview_text if is_preview else stable_flash).append(name)
@@ -164,6 +167,23 @@ def resolve_real_url(google_url):
         return google_url
 
 
+def clean_article_text(text):
+    if not text:
+        return ""
+    lines = []
+    for line in text.splitlines():
+        s = line.strip()
+        if not s:
+            continue
+        # 저작권/기자 이메일 등 불필요한 꼬리말 정리
+        if any(k in s for k in ["무단전재", "재배포 금지", "저작권자", "ⓒ", "Copyright", "제보하기", "구독하기"]):
+            continue
+        s = re.sub(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", "", s).strip()
+        if len(s) >= 15:
+            lines.append(s)
+    return "\n\n".join(lines)[:3200]
+
+
 def scrape_article(google_url):
     real_url = resolve_real_url(google_url)
     image_url = ""
@@ -182,51 +202,67 @@ def scrape_article(google_url):
 
         extracted = trafilatura.extract(html, include_comments=False, include_tables=False)
         if extracted and len(extracted.strip()) > 120:
-            full_text = extracted.strip()
+            full_text = clean_article_text(extracted)
         else:
             paras = [p.get_text(" ", strip=True) for p in soup.find_all("p") if len(p.get_text(strip=True)) > 30]
-            full_text = "\n\n".join(paras[:12])
+            full_text = clean_article_text("\n".join(paras[:15]))
     except Exception as e:
         print(f"본문 추출 건너뜀 ({real_url[:50]}): {e}")
 
-    return real_url, image_url, full_text[:1600]
+    return real_url, image_url, full_text
 
 
 def fetch_rss_news(categories):
     collected = []
+    idx = 0
     for cat in categories:
         q = urllib.parse.quote(cat["query"])
         url = f"https://news.google.com/rss/search?q={q}&hl=ko&gl=KR&ceid=KR:ko"
         feed = feedparser.parse(url)
-        for entry in feed.entries[:2]:
+        for entry in feed.entries[:3]:
             raw_link = entry.get("link", "")
             real_url, img, body = scrape_article(raw_link)
+            title = entry.get("title", "").split(" - ")[0].strip()
             collected.append({
+                "id": idx,
                 "category": cat["name"],
-                "title": entry.get("title", ""),
+                "title": title,
                 "url": real_url,
                 "source": entry.get("source", {}).get("title", "뉴스"),
                 "image": img,
-                "raw_body": body,
+                "full_article": body if body else f"{title} 관련 보도입니다. 자세한 내용은 하단 원문 출처에서 확인하실 수 있습니다.",
+                "has_image": bool(img),
+                "has_body": len(body) > 200,
             })
-    print(f"총 {len(collected)}건 기사 수집 및 본문/사진 추출 완료")
+            idx += 1
+    print(f"총 {len(collected)}건 기사 수집 및 원문/사진 추출 완료")
     return collected
 
 
-def call_gemini_text(news_items, past_topics, text_models):
+def call_gemini_editor(news_items, past_topics, text_models):
+    # Gemini에는 제목과 앞부분 160자만 가볍게 전달하여 503 과부하 방지
+    compact_list = [
+        {
+            "id": item["id"],
+            "category": item["category"],
+            "title": item["title"],
+            "source": item["source"],
+            "has_image": item["has_image"],
+            "has_body": item["has_body"],
+            "preview": item["full_article"][:160],
+        }
+        for item in news_items
+    ]
+
     prompt = f"""
 당신은 고전 신문 'DAILY NEWS'의 편집장 겸 심리학 칼럼니스트입니다.
-아래 오늘({TODAY_KR}) 수집된 뉴스(원문 텍스트와 이미지 URL 포함)를 바탕으로, 독자가 외부 링크로 나가지 않고 이 신문 안에서 기사를 완독할 수 있도록 편집해 JSON으로만 응답하세요.
+오늘({TODAY_KR}) 수집된 기사 후보 목록을 보고 가장 읽기 좋은 기사를 고른 뒤, 오늘의 심리학 학습만화 칼럼을 작성해 JSON으로만 응답하세요.
 
 [요구사항]
-1. lead_story: 오늘 가장 흥미롭고 중요한 1면 톱기사 1건
-   - full_article: 수집된 raw_body의 핵심 사실, 수치, 인용구를 빠짐없이 살려 4~5문단으로 충실하게 정리한 전체 기사 본문 (문단 구분은 \\n\\n 사용). raw_body가 부족하면 제목과 맥락을 바탕으로 충실히 보완할 것.
-   - takeaway: 핵심 포인트 한 줄
-   - image: 입력 데이터의 image URL을 그대로 유지
-2. articles: 카테고리별로 골고루 5건 선별
-   - full_article: 독자가 원문을 따로 찾아보지 않아도 되도록 핵심 내용·배경·전망을 3~4문단으로 충실하게 담은 전체 기사 본문 (문단 구분은 \\n\\n 사용)
-   - image: 입력 데이터의 image URL을 그대로 유지
-3. psych_column: 매일 1개의 흥미로운 심리학·인지과학·상담이론 개념 소개
+1. lead_id: 오늘 1면 톱기사로 가장 적합한 기사 id 1개 (가급적 has_body와 has_image가 모두 true인 기사 우선 선택)
+2. lead_takeaway: 선택한 1면 톱기사의 핵심 통찰 한 줄 요약
+3. article_ids: 나머지 기사 중 카테고리별로 골고루 5개의 id 선택 (lead_id와 중복 금지, has_body가 true인 기사 우선)
+4. psych_column: 매일 1개의 흥미로운 심리학·인지과학·상담이론 개념 소개
    - 이미 다룬 주제({json.dumps(past_topics, ensure_ascii=False)})는 제외할 것.
    - concept_name: 심리학 용어명
    - title: 흥미로운 칼럼 제목
@@ -241,25 +277,9 @@ def call_gemini_text(news_items, past_topics, text_models):
 [출력 JSON 스키마]
 {{
   "edition_quote": "오늘 신문 제호 아래 들어갈 짧은 명언 또는 편집장 한마디",
-  "lead_story": {{
-    "category": "카테고리명",
-    "title": "신문 헤드라인 스타일 제목",
-    "full_article": "문단1\\n\\n문단2\\n\\n문단3\\n\\n문단4",
-    "takeaway": "핵심 포인트 한 줄",
-    "source": "언론사명",
-    "url": "원문 URL",
-    "image": "입력된 이미지 URL 그대로"
-  }},
-  "articles": [
-    {{
-      "category": "카테고리명",
-      "title": "제목",
-      "full_article": "문단1\\n\\n문단2\\n\\n문단3",
-      "source": "언론사명",
-      "url": "원문 URL",
-      "image": "입력된 이미지 URL 그대로"
-    }}
-  ],
+  "lead_id": 0,
+  "lead_takeaway": "핵심 포인트 한 줄",
+  "article_ids": [1, 3, 5, 7, 9],
   "psych_column": {{
     "concept_name": "심리학 용어명",
     "title": "칼럼 제목",
@@ -270,35 +290,32 @@ def call_gemini_text(news_items, past_topics, text_models):
   }}
 }}
 
-[수집된 뉴스]
-{json.dumps(news_items, ensure_ascii=False)}
+[기사 후보 목록]
+{json.dumps(compact_list, ensure_ascii=False)}
 """
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {
             "responseMimeType": "application/json",
-            "maxOutputTokens": 8192,
         },
     }
 
     for model_name in text_models:
         endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
-        max_tries = 3
-        for attempt in range(max_tries):
+        for attempt in range(3):
             try:
-                res = requests.post(endpoint, json=payload, timeout=90)
+                res = requests.post(endpoint, json=payload, timeout=60)
                 if res.status_code == 200:
                     print(f"사용된 텍스트 모델: {model_name}")
                     text = res.json()["candidates"][0]["content"]["parts"][0]["text"]
                     return json.loads(text)
-                if res.status_code == 503 and attempt < max_tries - 1:
-                    wait = (attempt + 1) * 5
+                if res.status_code == 503 and attempt < 2:
+                    wait = (attempt + 1) * 4
                     print(f"[{model_name}] 서버 일시 과부하(503) — {wait}초 후 재시도...")
                     time.sleep(wait)
                     continue
                 if res.status_code == 429 and attempt == 0:
-                    print(f"[{model_name}] 속도 제한(429) — 5초 후 1회 재시도...")
-                    time.sleep(5)
+                    time.sleep(4)
                     continue
                 print(f"[{model_name}] 건너뜀 ({res.status_code})")
                 break
@@ -407,7 +424,41 @@ def main():
     text_models, image_models = get_candidate_models()
     past_topics = load_psych_history()
     news = fetch_rss_news(config["categories"])
-    ai_data = call_gemini_text(news, past_topics, text_models)
+    news_map = {item["id"]: item for item in news}
+
+    ai_data = call_gemini_editor(news, past_topics, text_models)
+
+    lead_id = ai_data.get("lead_id", 0)
+    lead_item = news_map.get(lead_id, news[0])
+    lead_story = {
+        "category": lead_item["category"],
+        "title": lead_item["title"],
+        "full_article": lead_item["full_article"],
+        "takeaway": ai_data.get("lead_takeaway", ""),
+        "source": lead_item["source"],
+        "url": lead_item["url"],
+        "image": lead_item["image"],
+    }
+
+    chosen_ids = [i for i in ai_data.get("article_ids", []) if i in news_map and i != lead_item["id"]]
+    if len(chosen_ids) < 5:
+        for item in news:
+            if item["id"] != lead_item["id"] and item["id"] not in chosen_ids:
+                chosen_ids.append(item["id"])
+            if len(chosen_ids) >= 5:
+                break
+
+    articles = [
+        {
+            "category": news_map[i]["category"],
+            "title": news_map[i]["title"],
+            "full_article": news_map[i]["full_article"],
+            "source": news_map[i]["source"],
+            "url": news_map[i]["url"],
+            "image": news_map[i]["image"],
+        }
+        for i in chosen_ids[:5]
+    ]
 
     psych = ai_data.get("psych_column", {})
     psych["image"] = generate_psych_illustration(psych.get("image_prompt", ""), image_models)
@@ -418,8 +469,8 @@ def main():
         "date_kr": TODAY_KR,
         "paper_name": config.get("paper_name", "DAILY NEWS"),
         "edition_quote": ai_data.get("edition_quote", ""),
-        "lead_story": ai_data["lead_story"],
-        "articles": ai_data["articles"],
+        "lead_story": lead_story,
+        "articles": articles,
         "psych_column": psych,
     }
 
