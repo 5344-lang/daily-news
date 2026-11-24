@@ -2,81 +2,65 @@
   "date": "2026-11-24",
   "date_kr": "2026년 11월 24일",
   "paper_name": "DAILY NEWS",
-  "edition_quote": "마음의 균형을 찾는 것은 세상의 혼란 속에서 자신을 지키는 최고의 지혜입니다.",
+  "edition_quote": "마음의 균형이 무너질 때, 세상을 바르게 직시하는 인지적 통찰이 가장 강력한 무기가 된다.",
   "lead_story": {
     "category": "심리학·인지",
-    "title": "러시아군 정신건강 ‘적신호’… 우크라이나 전쟁 이후 1000명 이상 자살",
-    "summary": "우크라이나 전쟁 장기화에 따라 러시아 군인들의 정신건강 악화가 심각한 사회적 문제로 대두되고 있습니다. 전쟁터에서 겪는 극심한 트라우마와 외상 후 스트레스 장애(PTSD)로 인해 1,000명이 넘는 병사가 극단적 선택을 한 것으로 집계되었습니다. 전문가들은 전쟁이 유발하는 참혹한 인지적·심리적 혼란이 적절한 치료 없이 방치될 경우 복귀 후에도 커다란 사회적 비용을 초래할 것이라 경고하고 있습니다. 이에 따라 군 내부의 정신건강 지원 체계 개편과 긴급 심리 치료 프로그램 도입 촉구가 이어지고 있습니다.",
-    "takeaway": "전쟁의 비극은 신체적 파괴를 넘어 인간 정신의 깊은 파멸을 불러일으킨다.",
+    "title": "러시아군 정신건강 ‘적신호’…“우크라전 이후 1000명 넘게 자살”",
+    "full_article": "러시아가 2022년 2월 우크라이나를 침공한 이후 자살로 숨진 러시아 군인이 1000명을 넘어선 것으로 나타났다. 전쟁 장기화에 따른 병력 손실과 군 내부의 가혹행위, 전투 임무에 대한 부담 등이 장병들의 정신건강을 위협하고 있다는 분석이 나온다.\n\n23일(현지시간) 영국 일간 가디언은 러시아 연방통계청에서 유출된 사망증명서 1100만여건을 분석한 결과 우크라이나 전쟁 발발 이후 러시아 군인 1087명이 자살로 숨진 것으로 파악됐다고 보도했다.\n\n해당 자료는 벨라루스 반정부 해커 조직 ‘사이버 파르티잔’과 우크라이나 해커 조직 ‘사일런트 크로’가 확보한 것이다. 러시아 정부는 군 사망자 관련 정보를 국가기밀로 취급하고 있으며 군인의 자살 관련 통계도 공개하지 않고 있다.\n\n연도별로 보면 자살로 숨진 러시아 군인은 개전 첫해인 2022년 50여명에서 2024년 200여명으로 늘었다. 지난해에는 365명으로 가장 많았으며 올해도 이미 300명에 육박했다.\n\n이들 가운데 최소 614건이 우크라이나 내 점령지나 벨고로드, 브랸스크 등 러시아 접경지에서 발생했고, 나머지 113건은 사망 지역이 명시되지 않았다.\n\n자살한 러시아 군인의 절반 이상이 총기를 사용했으며, 장소는 군 주둔지, 진지, 훈련소, 개인 주거지 등으로 다양했다.\n\n전쟁 지역에서 발생한 자살 사건 중 43건은 18∼19세의 젊은 군인들이었다.\n\n영국 파이낸셜타임스(FT)는 같은 자료를 분석해 개전 이후 올해 9월까지 최소 1229명의 러시아 군인이 자살로 숨졌다고 보도했다. 러시아 군인의 자살률은 일반 인구의 두 배 이상으로 분석됐다.\n\nFT는 사망 원인이 다르게 분류됐거나 군 복무 사실이 기록되지 않은 사례 등을 고려하면 실제 사망자 규모는 1600명에 육박할 가능성이 있다고 봤다.\n\n전문가들은 군 내부의 강압적인 분위기와 가혹행위, 위험성이 높은 전투 임무 등이 장병들의 심리적 부담을 가중하는 요인으로 지목했다. 사실상 전쟁이 끝날 때까지 군 복무를 중단하기 어려운 계약 구조도 문제로 꼽혔다.\n\n러시아 군인들의 탈영을 지원하는 시민단체 역시 공식 기록에 반영되지 않은 사례가 상당수 있을 것으로 보고 있다.",
+    "takeaway": "전쟁 장기화와 극한의 스트레스가 군 장병들의 심리적 붕괴를 초래하고 있어 즉각적인 정신건강 개입 조치가 시급합니다.",
     "source": "중앙일보",
-    "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE5YbUQ5NTZjT2lfNE4wNG16UU1IUmJFeHZqbjJPcnF5cHlHRHRUUzBPbHIwWHRhdnFDNm50MUtHZ3dSSUpDWlMzeHZnS0c1VkxuSU5DNVFB?oc=5",
-    "image": ""
+    "url": "https://www.joongang.co.kr/article/25481581",
+    "image": "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202611/24/ce142f25-25d1-4af1-98a3-7c29cd83713c.jpg"
   },
   "articles": [
     {
       "category": "심리학·인지",
-      "title": "아주대병원, 싱가포르 IMH와 디지털 정신건강 분야 국제협력 논의",
-      "summary": "아주대학교병원이 싱가포르 정신건강연구소(IMH)와 손잡고 디지털 기반의 정신건강 모니터링 및 치료 기술 협력을 강화합니다. 양 기관은 AI와 빅데이터를 활용한 혁신적 정신건강 솔루션 개발을 추진할 계획입니다.",
-      "source": "후생신보",
-      "url": "https://news.google.com/rss/articles/CBMiREFVX3lxTE5gMTBUU29PMENuN2VhTXhOZXFPY1BzaGRXREtueVhQWmRHaVNidmJaUFpNZDVINE16U0dwNHpRaUwtcEh6?oc=5",
-      "image": ""
+      "title": "아주대병원-싱가포르 IMH, 디지털 정신건강 분야 국제협력 논의",
+      "full_article": "지역사회·청소년 디지털 정신건강 플랫폼 운영 및 연구 성과 공유\n\n[메디칼업저버 양영구 기자] 아주대병원은 최근 병원을 방문한 싱가포르 정신건강 전문기관 Institute of Mental Health(IMH) 대표단과 디지털 정신건강 플랫폼의 운영·연구 성과를 공유하고 국제협력 방안을 논의했다고 24일 밝혔다.\n\n이날 행사에는 싱가포르 IMH 제이미 머빈 림(Jamie Mervyn Lim) CEO, 패트릭 테이 텍 관(Patrick Tay Teck Guan) NHG 정신건강위원회 위원장을 비롯해 국립정신건강센터 관계자와 아주대병원 의료진 및 연구진이 참석했다.\n\n홍창형 교수(정신건강의학과)는 지역사회 정신건강사업의 성과와 아주대병원이 수원시와 협력해 개발한 디지털 정신건강 플랫폼 '마로(MARO)'의 운영 사례를 소개했다.\n\n이어 조용혁 교수(정신건강의학과)는 학생들의 정신건강 문제를 조기에 발견하고 맞춤형 지원을 연계하는 청소년 디지털 플랫폼 '나보주니어(NAVO Junior)'의 적용 사례와 연구 성과를 발표했다.\n\n싱가포르 IMH 대표단은 자국의 정신건강 정책과 디지털 정신건강 혁신 전략을 공유했다.\n\n양 기관은 지역사회 및 청소년 정신건강 관리모델의 발전 방향과 디지털 정신건강 서비스의 임상적 효과 검증, 국제 공동연구 및 연구자 교류 등 협력 가능성을 논의했다.\n\n한편 향후 지속적인 연구 교류를 통해 디지털 정신건강 분야의 협력 기반을 확대해 나갈 계획이다.",
+      "source": "메디칼업저버",
+      "url": "https://www.monews.co.kr/news/articleView.html?idxno=415732",
+      "image": "https://cdn.monews.co.kr/news/photo/202611/415732_219764_3547.jpg"
     },
     {
       "category": "보드게임",
-      "title": "주사위 하나에 울고 웃다… ‘2026 보드게임페스타’ 성황리 개최",
-      "summary": "온 가족이 함께 즐길 수 있는 국내 최대 규모의 보드게임 축제 '2026 보드게임페스타'가 개최되어 많은 관람객의 호응을 얻었습니다. 현장에서는 신작 보드게임 체험과 다채로운 이벤트가 열려 디지털 기기를 벗어난 오프라인 소통의 장이 마련되었습니다.",
+      "title": "주사위 하나에 울고 웃고…온가족이 즐기는 ‘2026 보드게임페스타’ [한강로 사진관]",
+      "full_article": "테이블마다 주사위가 굴러가고, 게임판을 사이에 둔 관람객들의 표정에는 긴장감과 웃음이 교차했다. 규칙을 익히며 머리를 맞대는 가족부터 승부에 몰입한 친구들까지, 주말 행사장은 보드게임을 즐기는 시민들로 활기를 띠었다.\n\n22일 서울 강남구 세텍(SETEC) 제1·2전시실에서 ‘2026 보드게임페스타 시즌2’가 열렸다.\n\n21일부터 이틀간 진행된 이번 행사는 한국보드게임산업협회가 주최·주관하는 보드게임 체험 박람회다. 보드게임을 가족 놀이문화이자 교육문화로 널리 알리고, 시민들에게 다양한 게임을 직접 경험할 기회를 제공하기 위해 마련됐다.\n\n행사장에서는 국내외 다양한 보드게임을 직접 체험할 수 있는 프로그램이 운영됐다. 출시 예정작을 포함한 신작 보드게임 전시와 게임 작가들의 신작 체험 공간도 마련돼 관람객들이 새로운 게임을 접할 수 있도록 했다.\n\n루미큐브 등 다양한 종목의 보드게임 대회를 비롯해 참가 업체별 이벤트도 진행됐다. 현장에는 보드게임을 할인된 가격에 구매할 수 있는 판매 공간이 마련됐으며, 신작 게임 관련 상품을 증정하는 행사도 준비됐다.\n\n보드게임페스타는 2015년 ‘서울보드게임페스타’라는 이름으로 시작해 2022년부터 현재 명칭으로 개최되고 있다. 어린이부터 성인까지 다양한 연령층이 참여할 수 있는 체험형 행사로, 보드게임을 통한 건전한 여가문화 확산을 목적으로 한다.\n\n행사는 21일 오전 10시부터 오후 6시까지, 22일 오전 10시부터 오후 5시까지 진행됐다. 입장료는 5000원으로 전체 연령이 관람할 수 있도록 운영됐다.",
       "source": "세계일보",
-      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFBXREdZMzh0SkFRbHFsQU9MMVNMX1ppYmd1bU9hRlBoX01HZzZYTF8yeXN2NU1IcGM0Qnk0S2tPMVVpbXV5dlRvd0p4RTJtWkh0YXlCN1VWaHPSAVRBVV95cUxNUThFb0RLX3JBN0JUaGszRTRuQXliVm5rT1QzeDM3Tm04Z3BMQl9EVUdyNExPaGFfYXNZVl81MTFRV2l2ODBlRDhVb1JITGs3LWRWbW0?oc=5",
-      "image": ""
+      "url": "https://m.segye.com/view/20261122507982",
+      "image": "https://www.segye.com/content/image/2026/11/22/20261122508372.jpg"
     },
     {
       "category": "보드게임",
-      "title": "보드게임을 디지털 공간으로… ‘전염병 주식회사’ 신작 출시",
-      "summary": "전 세계적으로 큰 인기를 끌었던 전략 보드게임 '전염병 주식회사'가 신규 디지털 플랫폼 버전으로 새롭게 출시되었습니다. 더욱 정교해진 시뮬레이션 시스템과 향상된 멀티플레이 기능으로 게이머들의 기대를 모으고 있습니다.",
-      "source": "게임메카",
-      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE1YSVAxVW9PQ2h6NU02YWdTaktqQ2lnbzlCUDFZU05oYUYyZ3dlTDU5emZzVnZ6UzNHR2o0YXRaczd2VDZnY082U0l6YlFzd0hqWm5ZUUJsM0nSAVtBVV95cUxNa2YtZk8tOWYzOWxXeVV2a3RjU3pObG0td3o3VFV0NE9OMER0SmxlWk9nOGc3TjNVVlpsdFZ1aFI5c3dmRkpQMXBZcWxzbUlsYTBHNUpxWndoWjc4?oc=5",
-      "image": ""
+      "title": "2026 보드게임페스타 시즌2, 11월 21~22일 세텍서 개최",
+      "full_article": "[서울=컬처GB신문] 2026 보드게임페스타 시즌2가 11월 21일부터 22일까지 서울 강남구 세텍(SETEC) 1·2전시장에서 열린다. 한국보드게임산업협회가 주최·주관하는 이번 행사는 보드게임을 직접 즐기고 신작을 살펴볼 수 있는 체험 박람회다.\n\n행사장에는 보드게임 체험과 신작 전시가 마련된다. 출시 예정작을 만나고, 보드게임 작가들이 선보이는 새 게임을 직접 해보는 체험 공간도 운영한다.\n\n루미큐브를 비롯한 보드게임 대회와 할인 판매, 참가업체별 이벤트도 진행한다. 관람객은 게임을 체험하는 한편, 대회와 부대 프로그램을 통해 다양한 방식으로 보드게임을 접할 수 있다.\n\n관람은 전 연령이 가능하다. 운영시간은 21일 오전 10시부터 오후 6시까지, 22일 오전 10시부터 오후 5시까지다. 입장료는 5,000원이며 사전 예매 시 4,500원이다. 예매와 세부 프로그램은 보드게임페스타 공식 홈페이지에서 확인할 수 있으며, 문의는 운영사무국(070-8611-9803)으로 하면 된다.\n\n컬처GB신문은 단순한 소식 전달을 넘어, 문화 현장의 기획 구조와 실무적 운영 방식을 세밀하게 기록함으로써 지역 문화 자산의 기초 자료를 보존하고 그 가치를 확산하는 데 목적을 둡니다.",
+      "source": "m.culturegb.com",
+      "url": "https://m.culturegb.com/view.php?idx=2536",
+      "image": "https://www.culturegb.com/data/newsThumb/1794580180_t300.webp"
     },
     {
       "category": "도서·문학",
-      "title": "연말 맞아 풍성해진 지역 서가… 수필·시조·소설 신간 잇따라",
-      "summary": "울산 지역 문단이 연말을 맞아 풍성한 신간 출간 소식을 전하며 독자들의 눈길을 사로잡고 있습니다. 수필, 시조, 소설 등 다양한 장르의 작품들이 출간되어 따뜻한 문학적 온기를 전하고 있습니다.",
-      "source": "경상일보",
-      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBjMGh5RkJVQll4Wk1rR3kzc0VQWjFuOTNwWGtSWVZpeDhkQlVKdU9VSk1tQTVNdFBLUnRlQXFLU3lCVGNRXzZsZ2s3OTg4UVNCY3l4UkNudGs3NjhscWl6V1R1MXJNMVpkSDJmMg?oc=5",
-      "image": ""
-    },
-    {
-      "category": "도서·문학",
-      "title": "SF로 사람의 결을 탐구하다… 소홍진 장편소설 ‘사람을 찾습니다’ 출간",
-      "summary": "과학기술의 발전 속에서 인간성의 의미를 질문하는 소홍진 작가의 신작 장편소설 '사람을 찾습니다'가 출간되었습니다. SF적 상상력과 따뜻한 휴머니즘이 결합되어 현대인들에게 깊은 울림을 선사합니다.",
-      "source": "매일일보",
-      "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFB0Ul9YVHlPdVlqcjM2Nk9LNUdFXzRFdDFnU0pwTUdyZG9kOWxJVUVqcEI3Z3FXdWZGTDF2UFV3RmppUnBRMklOYkZvdkNqVFIxZm9VYlpWcGw0VjdEWEVrVU1tR0U?oc=5",
-      "image": ""
+      "title": "선재스님부터 정세랑까지…서울국제도서전서 만나는 신간 9종",
+      "full_article": "선재 스님의 에세이에서부터 소설가 정세랑의 산문집까지 신간 9종이 '2026 서울국제도서전' 개막일에 맞춰 출간돼 독자들과 만난다.\n\n선재 스님의 개인적 경험에서 출발해 음식이 어떻게 사람을 살리고, 몸과 마음을 회복시키는지를 이야기한다.\n\n소설가 정세랑이 5년 만에 펴내는 산문집 '당신의 독자가 될게요'도 만날 수 있다.\n\n전체 내용을 이해하기 위해서는 기사 본문과 함께 읽어야 합니다.\n\n송고 2026년06월15일 11시55분\n\n구글 검색에서 연합뉴스 기사를 우선적으로 보여줍니다.\n\n(서울=연합뉴스) 김정은 기자 = 선재 스님의 에세이에서부터 소설가 정세랑의 산문집까지 신간 9종이 '2026 서울국제도서전'(SIBF) 개막일에 맞춰 출간돼 독자들과 만난다.\n\n15일 도서전을 공동 주최하는 대한출판문화협회에 따르면 오는 24∼28일 서울시 강남구 삼성동 코엑스에서 열리는 서울국제도서전에서는 '여름, 첫 책' 프로그램을 통해 도서전 개막일에 맞춰 출간되는 신간 9종을 소개한다.\n\n선재 스님의 에세이 '나를 살리는 음식들'은 그의 음식 일기이자 출가자로 살아온 인생 이야기를 담은 책이다.\n\n젊은 시절 간경화 말기 진단을 받았던 선재 스님은 된장과 간장, 김치 같은 발효 음식으로 식생활을 바꾸고 스스로 몸을 돌보며 건강을 회복했다. 선재 스님의 개인적 경험에서 출발해 음식이 어떻게 사람을 살리고, 몸과 마음을 회복시키는지를 이야기한다.\n\n소설가 정세랑이 5년 만에 펴내는 산문집 '당신의 독자가 될게요'도 만날 수 있다. 정 작가가 처음 펴내는 쓰기에 대한 산문집으로, 쓰기 앞에서 주춤거리는 이들에게 현실적이고 구체적인 조언을 건넨다.\n\n두 명의 한국계 미국인 소설가의 작품도 독자들을 기다린다. 박지선의 SF소설 '루미너스'와 권오경의 장편소설 '빛의 전시'다.\n\n만화가 재수의 그림 에세이 '그리고 보니 아름다웠지', 한국 1세대 여성 조각가 김윤신의 삶과 작품 세계를 기록한 '김윤신, 전기톱을 든 여인', 심보선, 안희연 등 한국 시인 스무명의 신작 시를 담은 '다가올 시간에 윙크 윙크'도 만날 수 있다.\n\n이 밖에 기자이자 시인인 김유태가 영화와 그 모태가 된 원작 23편을 다룬 '밤과 책: 영화탐문', 카페에서 아르바이트를 하며 대학 입시를 준비하는 청춘의 이야기를 담은 그림책 작가 이명애의 '케이크를 조심히 다뤄 주세요'도 소개된다.",
+      "source": "연합뉴스",
+      "url": "https://www.yna.co.kr/view/AKR20260615088700005",
+      "image": "https://img4.yna.co.kr/etc/inner/KR/2026/06/15/AKR20260615088700005_01_i_P4.jpg"
     },
     {
       "category": "경제·시사",
-      "title": "세계경제포럼, ‘2026년 10대 기술 트렌드’ 발표… AI·에너지 혁신 주도",
-      "summary": "세계경제포럼(WEF)이 향후 세계 경제를 바꿔놓을 10대 유망 기술 트렌드를 발표했습니다. 인공지능의 심화 적용과 차세대 친환경 에너지 혁신이 미래 산업 생태계의 핵심 축이 될 것으로 전망됩니다.",
-      "source": "테크데일리",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5Gak5aYkZOaDduSjRpcUlMd0ZZZjlNZlRsUE5tTlZHenVOVVREV09rZl9sWjdQT3ZPdXdpdTZCSVh5UkZkWDBzNEtELXY5OFZ5dXBibWl4REZsaWlaaGs0UkZEZzVnV3JnQkktTHp30gFyQVVfeXFMTS1tWW44UlNIVzkyTkt5VVR4bzFxVjVwaTFyUmo5VFhENk50TU1sZDlfSm9EZjFnRHk4WElvelp3dVdiQmk5eXzeLUZtNERnbU5iMEV1R0FYR0xNX01FNFFNcEtGSmQ0ejdkRWU3ZHk1Skd3?oc=5",
-      "image": ""
-    },
-    {
-      "category": "경제·시사",
-      "title": "‘코어’ 트렌드 열풍… 트렌드를 설명하는 시대의 새 키워드",
-      "summary": "패션과 라이프스타일 전반에서 다양한 단어 뒤에 '코어'를 붙여 취향과 트렌드를 정의하는 현상이 확산되고 있습니다. 개성화된 소비 트렌드와 개인의 정체성 표현 욕구가 반영된 경제 문화적 현상으로 분석됩니다.",
-      "source": "technovalue.com",
-      "url": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE5sbURkRVczS2ZpOFI5LWpiS0xmT0VTREJ2WEhGUEt6eU9zaVZDeE5vNEtjQkI2Tk01ZEVyYnY0aGstTVoyZWo3czcwLWR2VUx0Z2J3b0hjcw?oc=5",
-      "image": ""
+      "title": "Deloitte Trend Tracker (2026년 10월)",
+      "full_article": "Deloitte Trend Tracker는 주요 리포트와 인사이트를 한데 모아 소개하는 월간 매거진입니다. Deloitte Trend Tracker와 함께 중요한 경제·산업 트렌드를 놓치지 말고 확인하세요.\n\nPart 1. AI 확산이 바꾸는 기업과 시장의 경쟁 구도\n\nPart 2. Industry focus: 자동차/모빌리티\n\nPart 3. Industry focus: 금융 서비스\n\nAI 확산으로 토큰 비용이 새로운 변동비가 되고 있습니다. CFO는 AI 사용량과 비용을 사업성과에 연계하고 인프라·호스팅 전략, 예산·KPI 등을 아우르는 AI 투자· 성과 관리체계를 선제적으로 구축해야 합니다.\n\n생성형 AI가 상품 탐색·비교를 넘어 구매 의사결정을 좌우하는 핵심 접점으로 부상하고 있습니다. 소비재·유통 기업은 상품 데이터 구조화, AI 추천 최적화, 개인화 고객경험 및 성과 측정 체계까지 아우르는 전사적 AI 커머스 전략 재설계가 필요합니다.\n\n기업은 소버린 AI 확산에 대응해 데이터·인프라·인재· 거버넌스 전반의 AI 전략을 재점검하고, 기술 주권과 글로벌 협력을 아우르는 경쟁력 확보 방안을 마련해야 합니다.\n\n자동차 부품업계 전반의 리스크가 확대되는 가운데, 기업은 부품군별 위험과 재무·혁신 역량을 진단해 사업· 기술 포트폴리오 전환과 고객 다변화, 구조조정 전략을 선제적으로 구축해야 합니다.\n\n글로벌 자동차 OEM은 모터스포츠를 단순한 브랜드 마케팅을 넘어 기술 검증·고객 확보·신사업 창출의 전략적 플랫폼으로 활용하고, 자사의 목표와 역량에 맞는 참여 방식과 투자전략을 설계해야 합니다.\n\n상용차 시장이 전동화·서비스·플랫폼 중심으로 전환되는 가운데, OEM은 미래 시나리오에 맞춰 제품 포트폴리오와 수익모델, 핵심 역량을 선제적으로 고도화해야 합니다.\n\n아태 금융시장의 성장축이 규모에서 경쟁우위로 이동하는 가운데, 금융사는 고객·AI· 디지털자산·자본시장의 변화를 선점해 차별화된 사업모델과 성장전략을 수립해야 합니다.\n\n보험 M&A가 규모 확대에서 핵심 사업·역량 확보 중심으로 변화하는 가운데, 보험사는 전략적 우선순위와 자본여력을 바탕으로 거래 대상을 선별하고 인수 후가치 실현까지 준비해야 합니다.\n\n금융권의 AI 활용이 확대될수록 신뢰와 거버넌스가 AX 성과를 좌우하는 핵심 경쟁력으로 부상하고 있습니다. 금융사는 AI 리스크를 선제적으로 관리하면서 혁신을 가속할 수 있는 거버넌스 전략을 마련해야 합니다.\n\n딜로이트는 소비자들의 상품 및 서비스 구매 행태와 소비 심리를 조사해, 기업 마케팅 전략 수립에 적용 가능한 데이터를 제공합니다.\n\n소비 심리 조사 인터랙티브 대시보드\n\n2026년 상반기 국내 자동차 구매 의향 분석 리포트\n\n솔루션을 실행으로 전환하기 위해 딜로이트와 고객기업이 어떻게 협력해 왔는지 구체적이고 실무적인 사례들을 제공합니다.\n\n2026년 주요 경영진의 전망 및 인사이트",
+      "source": "Deloitte",
+      "url": "https://www.deloitte.com/kr/ko/our-thinking/monthly-trend-tracker/trend-tracker-2026-10.html",
+      "image": "https://media.deloitte.com/is/image/deloitte/trend-tracker-2026-10-1920x880:1200-x-627"
     }
   ],
   "psych_column": {
     "concept_name": "학습된 무기력 (Learned Helplessness)",
-    "title": "피할 수 없는 스트레스가 만든 마음의 감옥",
-    "caption": "자신이 상황을 통제할 수 없다는 반복된 경험은 스스로 탈출할 능력조차 잊게 만든다. (Seligman & Maier, 1967)",
-    "summary": "학습된 무기력이란 자신이 아무리 노력해도 피할 수 없거나 통제 불가능한 스트레스 상황을 반복적으로 겪을 때 발생하는 심리적 상태입니다. 이러한 경험이 누적되면 상황을 바꿀 수 있는 충분한 능력이나 기회가 주어져도 시도조차 하지 않은 채 자발 포기 상태에 이르게 됩니다. 인지적으로 '내 행동은 아무런 결과를 바꾸지 못한다'는 잘못된 강박적 신념이 형성되는 것이 핵심 원인입니다.",
-    "real_case": "심리학자 마틴 셀리그만의 1967년 실험에서 피할 수 없는 전기 자극을 받은 개들은, 이후 낮은 담장만 넘으면 전기 자극을 쉽게 피할 수 있는 상자로 옮겨졌음에도 탈출을 시도하지 않고 바닥에 엎드려 고통을 참아냈습니다.",
-    "image_prompt": "Clean modern Korean educational comic webtoon illustration style, crisp bold black ink outlines, expressive cartoon characters, flat cel-shading with contrasting warm and cool split background colors, 16:9 wide horizontal comic panel. Split-screen comparison design. On the left side panel with dark blue cool lighting, a sad cartoon character sits helplessly inside a cage with a wide open door, shoulders dropped with a low-energy aura. On the right side panel with bright warm yellow lighting, an empowered cartoon character boldly steps out of an open cage toward a sunny field, surrounded by an energetic glowing aura and a bright lightbulb icon overhead. No text, no speech bubbles, no letters, no words inside the image.",
-    "image": ""
+    "title": "피할 수 없는 통제가 만든 마음의 감옥",
+    "caption": "통제 불가능한 환경에 지속적으로 노출되면, 스스로 상황을 바꿀 수 있는 기회가 와도 시도조차 하지 않게 된다. (Seligman, 1967)",
+    "summary": "학습된 무기력은 피할 수 없는 스트레스나 좌절을 반복적으로 겪은 개체가 향후 피할 수 있는 상황이 되어도 자발적인 회피나 대처 행위를 포기하는 현상입니다. 개인이 상황을 스스로 통제할 수 없다는 통제감의 상실이 핵심 요인으로 작용합니다. 이 상태에 빠지면 인지적·동기적 기능이 전반적으로 저하되어 자존감이 낮아지고 무력감에 시달리게 됩니다.",
+    "real_case": "마틴 셀리그만(Martin Seligman)의 1967년 개 실험에서, 전기 자극을 피할 수 없었던 상자에 갇혔던 개들은 나중에 낮은 담장만 넘으면 자극을 피할 수 있는 새 상자에 넣어져도 그냥 누워서 참기만 했습니다. 이처럼 직장이나 학업에서 거듭된 부정적 피드백과 통제 불능 상태를 겪은 사람도 스스로 환경을 개선할 수 있는 기회가 찾아왔을 때 시도를 포기하는 경향을 보입니다.",
+    "image_prompt": "Clean modern Korean educational comic webtoon illustration, bold black ink outlines, expressive cartoon characters, flat cel-shading, contrasting warm and cool split background colors, wide 16:9 comic panel. Split-screen comparison showing two states of a character: On the left side with a cold blue background, a slumped cartoon figure sits inside an open room but remains curled up under a dark cloud, unable to move. On the right side with a warm yellow background, the same character gains courage and steps through a bright open doorway towards a shining sun. No text, no words, no letters, no speech bubbles.",
+    "image": "./data/today_psych.png"
   }
 }
