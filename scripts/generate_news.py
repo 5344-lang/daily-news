@@ -208,10 +208,11 @@ def load_history():
                 if isinstance(data, dict):
                     data.setdefault("research", [])
                     data.setdefault("blogs", [])
+                    data.setdefault("research_idx", 0)
                     return data
         except Exception:
             pass
-    return {"research": [], "blogs": []}
+    return {"research": [], "blogs": [], "research_idx": 0}
 
 
 def save_history(history):
@@ -422,13 +423,20 @@ def hydrate_selected_article(item):
     }
 
 
-def fetch_research_candidates(research_feeds, published_urls):
+def fetch_research_candidates(research_feeds, history):
+    enabled_feeds = [f for f in research_feeds if f.get("enabled", True) and f.get("url")]
+    if not enabled_feeds:
+        return []
+
+    published_urls = history.get("research", [])
+    start_idx = history.get("research_idx", 0) % len(enabled_feeds)
     candidates = []
-    for feed_cfg in research_feeds:
-        if not feed_cfg.get("enabled", True) or not feed_cfg.get("url"):
-            continue
+
+    for offset in range(len(enabled_feeds)):
+        cur_idx = (start_idx + offset) % len(enabled_feeds)
+        feed_cfg = enabled_feeds[cur_idx]
         feed = fetch_feed_safe(feed_cfg["url"])
-        for entry in feed.entries[:4]:
+        for entry in feed.entries[:5]:
             link = entry.get("link", "").strip()
             if not link or link in published_urls:
                 continue
@@ -445,11 +453,12 @@ def fetch_research_candidates(research_feeds, published_urls):
                 "image": img,
                 "body": body,
             })
-            if len(candidates) >= 1:
-                break
-        if len(candidates) >= 1:
+            history["research_idx"] = (cur_idx + 1) % len(enabled_feeds)
             break
-    print(f"최신 심리 실험 연구 후보 {len(candidates)}건 수집 완료")
+        if candidates:
+            break
+
+    print(f"최신 심리 실험 연구 후보 {len(candidates)}건 수집 완료 (다음 피드 순번: {history.get('research_idx', 0)})")
     return candidates
 
 
@@ -520,6 +529,14 @@ def scrape_naver_blog_post(url, img_idx):
     return local_img, full_text
 
 
+def is_recent_entry(entry, hours=48):
+    parsed = entry.get("published_parsed") or entry.get("updated_parsed")
+    if not parsed:
+        return False
+    entry_ts = calendar.timegm(parsed)
+    return (time.time() - entry_ts) <= (hours * 3600)
+
+
 def fetch_blog_articles(blogs_cfg, published_urls):
     picked = []
     img_idx = 0
@@ -531,8 +548,21 @@ def fetch_blog_articles(blogs_cfg, published_urls):
         if not feed.entries:
             continue
 
-        fresh_entries = [e for e in feed.entries[:8] if e.get("link", "").split("?")[0] not in published_urls]
-        candidates = (fresh_entries if fresh_entries else feed.entries[:2])[:4]
+        mode = b.get("mode", "unread")
+        if mode == "new_only":
+            candidates = [
+                e for e in feed.entries[:10]
+                if e.get("link", "").split("?")[0] not in published_urls and is_recent_entry(e, hours=48)
+            ][:3]
+        else:
+            candidates = [
+                e for e in feed.entries[:30]
+                if e.get("link", "").split("?")[0] not in published_urls
+            ][:4]
+
+        if not candidates:
+            print(f"구독 블로그 [{b.get('name', '')}] ({mode}) — 조건에 맞는 새 글 없음, 건너뜀")
+            continue
 
         selected_post = None
         for entry in candidates:
@@ -544,7 +574,7 @@ def fetch_blog_articles(blogs_cfg, published_urls):
                 raw_img, body = scrape_generic_article(link, max_len=4000)
                 img = download_local_image(raw_img, f"blog_{img_idx}.jpg", referer=link) or raw_img
 
-            if len(body) >= 180:
+            if len(body) >= 80:
                 selected_post = {
                     "blog_name": b.get("name", "구독 블로그"),
                     "title": title,
@@ -762,7 +792,7 @@ def main():
 
     text_models = get_candidate_models()
     news_candidates = fetch_rss_candidates(config.get("categories", []))
-    research_candidates = fetch_research_candidates(config.get("research_feeds", []), history["research"])
+    research_candidates = fetch_research_candidates(config.get("research_feeds", []), history)
     blog_articles = fetch_blog_articles(config.get("blogs", []), history["blogs"])
 
     news_map = {item["id"]: item for item in news_candidates}
