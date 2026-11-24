@@ -3,17 +3,49 @@
   "site_url": "https://5344-lang.github.io/daily-news/",
   "weather_city": "대구",
   "categories": [
-    { "name": "심리학·인지", "query": "심리학 OR 뇌과학 OR 정신건강" },
-    { "name": "AI·테크", "query": "생성형 AI OR 인공지능 자동화" },
-    { "name": "보드게임", "query": "보드게임 신작 OR 테이블탑" },
-    { "name": "도서·문학", "query": "신간 도서 OR SF 소설 OR 추리소설" },
-    { "name": "경제·시사", "query": "경제 핵심 뉴스 OR 산업 트렌드" }
+    {
+      "name": "심리학·인지",
+      "query": "심리학 OR 뇌과학 OR 정신건강"
+    },
+    {
+      "name": "AI·테크",
+      "query": "생성형 AI OR 인공지능 자동화"
+    },
+    {
+      "name": "보드게임",
+      "query": "보드게임 신작 OR 테이블탑"
+    },
+    {
+      "name": "도서·문학",
+      "query": "신간 도서 OR SF 소설 OR 추리소설"
+    },
+    {
+      "name": "경제·시사",
+      "query": "경제 핵심 뉴스 OR 산업 트렌드"
+    }
   ],
   "research_feeds": [
-    { "name": "ScienceDaily 심리연구", "url": "https://www.sciencedaily.com/rss/mind_brain/psychology.xml", "enabled": true },
-    { "name": "PsyPost 심리실험", "url": "https://www.psypost.org/feed/", "enabled": true }
+    {
+      "name": "ScienceDaily 심리연구",
+      "url": "https://www.sciencedaily.com/rss/mind_brain/psychology.xml",
+      "enabled": true
+    },
+    {
+      "name": "PsyPost 심리실험",
+      "url": "https://www.psypost.org/feed/",
+      "enabled": true
+    }
   ],
   "blogs": [
-    { "name": "똑심마인드 블로그", "url": "https://rss.blog.naver.com/talk_sim_mind.xml", "enabled": true }
+    {
+      "name": "똑심마인드 블로그",
+      "url": "https://rss.blog.naver.com/talk_sim_mind.xml",
+      "enabled": true
+    },
+    {
+      "name": "pppoem",
+      "url": "https://pppoem.tistory.com/",
+      "enabled": true
+    }
   ]
 }
