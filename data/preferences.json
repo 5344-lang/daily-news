@@ -1,5 +1,12 @@
 {
-  "likes": [],
+  "likes": [
+    {
+      "title": "대구시교육청, 생성형 AI 업무 활용 사례 공유…교육 현장 확산 나선다",
+      "category": "AI·테크",
+      "url": "https://www.eroun.net/news/articleView.html?idxno=96403",
+      "date": "2026-11-25"
+    }
+  ],
   "dislikes": [
     {
       "title": "연말 맞아 풍성한 울산 서가…수필·시조·소설·동화 신간 잇따라",
