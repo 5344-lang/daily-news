@@ -1,6 +1,7 @@
 import os
 import json
 import base64
+import random
 import smtplib
 import urllib.parse
 from datetime import datetime, timezone, timedelta
@@ -8,6 +9,9 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import feedparser
 import requests
+from bs4 import BeautifulSoup
+import trafilatura
+from googlenewsdecoder import new_decoderv1
 
 KST = timezone(timedelta(hours=9))
 TODAY = datetime.now(KST).strftime("%Y-%m-%d")
@@ -17,6 +21,10 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 GMAIL_USER = os.environ.get("GMAIL_USER", "").strip()
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
 TO_EMAIL = os.environ.get("TO_EMAIL", GMAIL_USER).strip()
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+}
 
 
 def get_candidate_models():
@@ -54,8 +62,6 @@ def get_candidate_models():
         if fb not in image_models:
             image_models.append(fb)
 
-    print("후보 텍스트 모델:", text_models)
-    print("후보 이미지 모델:", image_models)
     return text_models, image_models
 
 
@@ -75,46 +81,93 @@ def save_psych_history(history, new_topic):
         json.dump(history[-60:], f, ensure_ascii=False, indent=2)
 
 
+def resolve_real_url(google_url):
+    try:
+        decoded = new_decoderv1(google_url, interval=1)
+        if decoded.get("status") and decoded.get("decoded_url"):
+            return decoded["decoded_url"]
+    except Exception:
+        pass
+    try:
+        r = requests.get(google_url, headers=HEADERS, timeout=10, allow_redirects=True)
+        return r.url
+    except Exception:
+        return google_url
+
+
+def scrape_article(google_url):
+    real_url = resolve_real_url(google_url)
+    image_url = ""
+    full_text = ""
+    try:
+        res = requests.get(real_url, headers=HEADERS, timeout=12)
+        res.encoding = res.apparent_encoding or "utf-8"
+        html = res.text
+
+        soup = BeautifulSoup(html, "html.parser")
+        og_img = soup.find("meta", property="og:image") or soup.find("meta", attrs={"name": "twitter:image"})
+        if og_img and og_img.get("content"):
+            cand = og_img["content"].strip()
+            if cand.startswith("http"):
+                image_url = cand
+
+        extracted = trafilatura.extract(html, include_comments=False, include_tables=False)
+        if extracted and len(extracted.strip()) > 120:
+            full_text = extracted.strip()
+        else:
+            paras = [p.get_text(" ", strip=True) for p in soup.find_all("p") if len(p.get_text(strip=True)) > 30]
+            full_text = "\n\n".join(paras[:15])
+    except Exception as e:
+        print(f"본문 추출 건너뜀 ({real_url[:50]}): {e}")
+
+    return real_url, image_url, full_text[:2800]
+
+
 def fetch_rss_news(categories):
     collected = []
     for cat in categories:
         q = urllib.parse.quote(cat["query"])
         url = f"https://news.google.com/rss/search?q={q}&hl=ko&gl=KR&ceid=KR:ko"
         feed = feedparser.parse(url)
-        for entry in feed.entries[:5]:
-            img = ""
-            if "media_content" in entry and entry.media_content:
-                img = entry.media_content[0].get("url", "")
+        for entry in feed.entries[:3]:
+            raw_link = entry.get("link", "")
+            real_url, img, body = scrape_article(raw_link)
             collected.append({
                 "category": cat["name"],
                 "title": entry.get("title", ""),
-                "link": entry.get("link", ""),
-                "published": entry.get("published", ""),
+                "url": real_url,
                 "source": entry.get("source", {}).get("title", "뉴스"),
                 "image": img,
+                "raw_body": body,
             })
+    print(f"총 {len(collected)}건 기사 수집 및 본문/사진 추출 완료")
     return collected
 
 
 def call_gemini_text(news_items, past_topics, text_models):
     prompt = f"""
 당신은 고전 신문 'DAILY NEWS'의 편집장 겸 심리학 칼럼니스트입니다.
-아래 오늘({TODAY_KR}) 수집된 뉴스를 엄선하고, 마지막 면에 실을 '오늘의 심리학 학습만화 칼럼'을 작성해 JSON으로만 응답하세요.
+아래 오늘({TODAY_KR}) 수집된 뉴스(원문 텍스트와 이미지 URL 포함)를 바탕으로, 독자가 외부 링크로 나가지 않고 이 신문 안에서 기사를 완독할 수 있도록 편집해 JSON으로만 응답하세요.
 
 [요구사항]
-1. lead_story: 오늘 가장 흥미롭고 중요한 1면 톱기사 1건 (요약 4~5문장, 핵심 한 줄 포함)
-2. articles: 카테고리별로 골고루 6~8건 선별 (각 요약 2~3문장, 품격 있는 신문 문어체)
+1. lead_story: 오늘 가장 흥미롭고 중요한 1면 톱기사 1건
+   - full_article: 수집된 raw_body의 핵심 사실, 수치, 인용구를 빠짐없이 살려 4~6문단으로 충실하게 정리한 전체 기사 본문 (문단 구분은 \\n\\n 사용). raw_body가 부족하면 제목과 맥락을 바탕으로 충실히 보완할 것.
+   - takeaway: 핵심 포인트 한 줄
+   - image: 입력 데이터의 image URL을 그대로 유지
+2. articles: 카테고리별로 골고루 5건 선별
+   - full_article: 독자가 원문을 따로 찾아보지 않아도 되도록 핵심 내용·배경·전망을 3~5문단으로 충실하게 담은 전체 기사 본문 (문단 구분은 \\n\\n 사용)
+   - image: 입력 데이터의 image URL을 그대로 유지
 3. psych_column: 매일 1개의 흥미로운 심리학·인지과학·상담이론 개념 소개
    - 이미 다룬 주제({json.dumps(past_topics, ensure_ascii=False)})는 제외할 것.
-   - concept_name: 심리학 용어명 (예: 더닝-크루거 효과, 확증 편향, 자이가르닉 효과 등)
+   - concept_name: 심리학 용어명
    - title: 흥미로운 칼럼 제목
    - caption: 만화 하단에 들어갈 묵직한 한 줄 요약 및 학자/연도 (예: "능력이 낮을수록 자신의 오류를 알아차릴 인지 도구도 없다. (Flavell, 1979)")
-   - summary: 개념 설명 3~4문장 (쉽고 명쾌하게)
+   - summary: 개념 설명 3~4문장
    - real_case: 일상 예시 또는 유명 심리학 실험 사례 2~3문장
    - image_prompt: 아래 스타일 가이드에 맞춘 **영어** 이미지 생성 프롬프트.
-     * 스타일: Clean modern Korean educational comic / webtoon illustration style, crisp bold black ink outlines, expressive cartoon characters, flat cel-shading with contrasting warm and cool split background colors, 16:9 wide horizontal comic panel.
-     * 구도: 주제에 맞춰 '좌우 2단 비교 컷(Split-screen comparison)', '시소/저울 같은 직관적 시각 비유', 또는 '실제 실험 장면 스토리텔링' 중 하나를 선택해 구체적으로 묘사할 것.
-     * 중요: 이미지 안에 글자/텍스트/말풍선 글씨는 절대 넣지 말 것 ("No text, no speech bubbles, no letters, no words inside the image"). 오직 표정, 행동, 아이콘(별, 물음표, 돋보기, 전구 등)만으로 개념이 직관적으로 이해되게 묘사할 것.
+     * 스타일: Clean modern Korean educational comic webtoon illustration, bold black ink outlines, expressive cartoon characters, flat cel-shading, contrasting warm and cool split background colors, wide 16:9 comic panel.
+     * 구도: 주제에 맞춰 '좌우 2단 비교 컷(Split-screen comparison)', '시소/저울 같은 직관적 시각 비유', 또는 '실제 실험 장면 스토리텔링' 중 하나를 구체적으로 묘사할 것.
+     * 중요: 이미지 안에 글자/텍스트/말풍선 글씨는 절대 넣지 말 것 ("no text, no words, no letters, no speech bubbles"). 표정과 시각적 상징물만으로 표현할 것.
 
 [출력 JSON 스키마]
 {{
@@ -122,20 +175,20 @@ def call_gemini_text(news_items, past_topics, text_models):
   "lead_story": {{
     "category": "카테고리명",
     "title": "신문 헤드라인 스타일 제목",
-    "summary": "4~5문장 요약",
+    "full_article": "문단1\\n\\n문단2\\n\\n문단3\\n\\n문단4",
     "takeaway": "핵심 포인트 한 줄",
     "source": "언론사명",
     "url": "원문 URL",
-    "image": "이미지 URL (없으면 빈 문자열)"
+    "image": "입력된 이미지 URL 그대로"
   }},
   "articles": [
     {{
       "category": "카테고리명",
       "title": "제목",
-      "summary": "2~3문장 요약",
+      "full_article": "문단1\\n\\n문단2\\n\\n문단3",
       "source": "언론사명",
       "url": "원문 URL",
-      "image": "이미지 URL (없으면 빈 문자열)"
+      "image": "입력된 이미지 URL 그대로"
     }}
   ],
   "psych_column": {{
@@ -153,25 +206,32 @@ def call_gemini_text(news_items, past_topics, text_models):
 """
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"responseMimeType": "application/json"},
+        "generationConfig": {
+            "responseMimeType": "application/json",
+            "maxOutputTokens": 8192,
+        },
     }
 
     for model_name in text_models:
         endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
-        res = requests.post(endpoint, json=payload, timeout=60)
+        res = requests.post(endpoint, json=payload, timeout=90)
         if res.status_code != 200:
-            print(f"[{model_name}] 건너뜀 ({res.status_code}): {res.text[:160]}")
+            print(f"[{model_name}] 건너뜀 ({res.status_code})")
             continue
         print(f"사용된 텍스트 모델: {model_name}")
         text = res.json()["candidates"][0]["content"]["parts"][0]["text"]
         return json.loads(text)
 
-    raise RuntimeError("사용 가능한 Gemini 텍스트 모델을 찾지 못했습니다. API 키 할당량을 확인해 주세요.")
+    raise RuntimeError("사용 가능한 Gemini 텍스트 모델을 찾지 못했습니다.")
 
 
 def generate_psych_illustration(image_prompt, image_models):
     if not image_prompt:
         return ""
+    os.makedirs("data", exist_ok=True)
+    img_path = "data/today_psych.png"
+
+    # 1순위: Gemini 이미지 모델 시도
     payload = {
         "contents": [{"parts": [{"text": image_prompt}]}],
         "generationConfig": {"responseModalities": ["TEXT", "IMAGE"]},
@@ -181,21 +241,32 @@ def generate_psych_illustration(image_prompt, image_models):
         try:
             res = requests.post(endpoint, json=payload, timeout=90)
             if res.status_code != 200:
-                print(f"[{model_name}] 이미지 생성 건너뜀 ({res.status_code})")
                 continue
             parts = res.json()["candidates"][0]["content"]["parts"]
             for part in parts:
                 inline = part.get("inlineData") or part.get("inline_data")
                 if inline and inline.get("data"):
-                    os.makedirs("data", exist_ok=True)
-                    img_path = "data/today_psych.png"
                     with open(img_path, "wb") as f:
                         f.write(base64.b64decode(inline["data"]))
-                    print(f"심리학 학습만화 삽화 생성 완료! (모델: {model_name})")
+                    print(f"Gemini 삽화 생성 완료! ({model_name})")
                     return "./data/today_psych.png"
-        except Exception as e:
-            print(f"[{model_name}] 삽화 생성 오류: {e}")
-    print("사용 가능한 이미지 모델이 없어 텍스트 칼럼만 발행합니다.")
+        except Exception:
+            pass
+
+    # 2순위: 무료 무키 이미지 생성 폴백 (Pollinations)
+    try:
+        encoded = urllib.parse.quote(image_prompt)
+        seed = random.randint(1, 999999)
+        free_url = f"https://image.pollinations.ai/prompt/{encoded}?width=1024&height=576&nologo=true&seed={seed}"
+        res = requests.get(free_url, headers=HEADERS, timeout=60)
+        if res.status_code == 200 and len(res.content) > 5000:
+            with open(img_path, "wb") as f:
+                f.write(res.content)
+            print("무료 이미지 생성기(Pollinations)로 심리학 학습만화 삽화 저장 완료!")
+            return "./data/today_psych.png"
+    except Exception as e:
+        print(f"무료 이미지 폴백 오류: {e}")
+
     return ""
 
 
@@ -206,6 +277,7 @@ def send_gmail(edition, site_url):
 
     lead = edition["lead_story"]
     psych = edition.get("psych_column", {})
+    lead_preview = lead.get("full_article", "").split("\n\n")[0]
     items_html = "".join(
         f"<li style='margin-bottom:8px;'><b>[{a['category']}]</b> {a['title']}</li>"
         for a in edition["articles"][:5]
@@ -218,9 +290,9 @@ def send_gmail(edition, site_url):
       </div>
       <p style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">[1면 톱기사 · {lead['category']}]</p>
       <h2 style="margin-top: 0;">{lead['title']}</h2>
-      <p style="line-height: 1.6;">{lead['summary']}</p>
+      <p style="line-height: 1.6;">{lead_preview}</p>
       <hr style="border: 0; border-top: 1px solid #111; margin: 18px 0;">
-      <p style="font-weight: bold;">오늘의 주요 단신</p>
+      <p style="font-weight: bold;">오늘의 주요 기사</p>
       <ul style="padding-left: 18px; line-height: 1.6;">{items_html}</ul>
       <div style="background: #efe9dc; border: 1px solid #111; padding: 12px; margin-top: 16px;">
         <p style="margin: 0 0 4px; font-size: 12px; font-weight: bold;">🧠 오늘의 심리학 학습만화</p>
@@ -229,7 +301,7 @@ def send_gmail(edition, site_url):
       </div>
       <div style="text-align: center; margin-top: 24px;">
         <a href="{site_url}" style="display: inline-block; padding: 12px 24px; background: #111; color: #fff; text-decoration: none; font-weight: bold;">
-          📰 오늘의 신문 & 심리학 만화 보기
+          📰 오늘의 신문 전체 기사 & 만화 읽기
         </a>
       </div>
     </div>
