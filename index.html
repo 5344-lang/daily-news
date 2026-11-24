@@ -16,6 +16,10 @@
       --font-size: 16px;
       --line-height: 28px;
     }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
     body.eink {
       --bg: #ffffff;
       --paper: #ffffff;
@@ -26,7 +30,6 @@
       height: 100vh;
       height: 100dvh;
     }
-    * { box-sizing: border-box; }
     body {
       margin: 0;
       background: var(--bg);
@@ -91,11 +94,12 @@
       min-height: 0;
       overflow: hidden;
       position: relative;
-      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
     body.eink #reader-track {
       column-fill: auto;
-      will-change: transform;
     }
     header {
       text-align: center;
@@ -181,6 +185,13 @@
       margin: 8px 0 12px;
       display: block;
       break-inside: avoid;
+    }
+    /* 이북 모드에서는 불필요한 CSS 필터 제거해 전면 리프레시 유발 최소화 */
+    body.eink .news-img {
+      filter: none;
+    }
+    body.hide-images .news-img {
+      display: none !important;
     }
     .article-body p {
       margin: 0 0 11px;
@@ -405,6 +416,7 @@
       <div class="toolbar-group">
         <button id="btn-paper" class="active" onclick="setMode('paper')">신문지 모드</button>
         <button id="btn-eink" onclick="setMode('eink')">이북 모드</button>
+        <button id="btn-img-toggle" onclick="toggleImages()">사진 켜짐</button>
       </div>
       <div class="toolbar-group">
         <button onclick="changeFont(-1)">가-</button>
@@ -520,8 +532,13 @@
 
     let mode = localStorage.getItem('dn_mode') || 'paper';
     let fontSize = parseInt(localStorage.getItem('dn_font') || '16', 10);
+    let hideImages = localStorage.getItem('dn_hide_img') === '1';
     let currentPage = 0;
     let totalPages = 1;
+    let cachedStep = 0;
+    let lastVpW = 0;
+    let lastVpH = 0;
+    let recalcTimer = null;
     let loadedConfig = null;
 
     function applyTypography() {
@@ -531,11 +548,26 @@
     }
     applyTypography();
 
+    function applyImageToggleUI() {
+      document.body.classList.toggle('hide-images', hideImages);
+      const btn = document.getElementById('btn-img-toggle');
+      btn.textContent = hideImages ? '사진 꺼짐' : '사진 켜짐';
+      btn.classList.toggle('active', hideImages);
+    }
+    applyImageToggleUI();
+
+    function toggleImages() {
+      hideImages = !hideImages;
+      localStorage.setItem('dn_hide_img', hideImages ? '1' : '0');
+      applyImageToggleUI();
+      if (mode === 'eink') scheduleEinkRecalc();
+    }
+
     function changeFont(delta) {
       fontSize = Math.min(24, Math.max(13, fontSize + delta));
       localStorage.setItem('dn_font', fontSize);
       applyTypography();
-      if (mode === 'eink') setTimeout(updateEinkLayout, 60);
+      if (mode === 'eink') scheduleEinkRecalc();
     }
 
     function setMode(newMode) {
@@ -548,7 +580,7 @@
       const track = document.getElementById('reader-track');
       if (mode === 'eink') {
         currentPage = 0;
-        requestAnimationFrame(() => updateEinkLayout());
+        requestAnimationFrame(() => recalcEinkLayout());
       } else {
         track.style.height = '';
         track.style.width = '';
@@ -559,13 +591,23 @@
       }
     }
 
-    function updateEinkLayout() {
+    function scheduleEinkRecalc() {
+      if (mode !== 'eink') return;
+      clearTimeout(recalcTimer);
+      recalcTimer = setTimeout(() => recalcEinkLayout(), 100);
+    }
+
+    // 레이아웃 계산은 화면 크기/글자 크기/이미지 로드 시에만 실행
+    function recalcEinkLayout() {
       if (mode !== 'eink') return;
       const vp = document.getElementById('eink-viewport');
       const track = document.getElementById('reader-track');
       const vw = vp.clientWidth;
       const vh = vp.clientHeight;
       if (!vw || !vh) return;
+
+      lastVpW = vw;
+      lastVpH = vh;
 
       const safeHeight = Math.max(180, vh - 22);
       const maxImgH = Math.max(120, Math.floor(safeHeight * 0.34));
@@ -578,19 +620,28 @@
       track.style.columnWidth = vw + 'px';
       track.style.columnGap = COLUMN_GAP + 'px';
 
-      const step = vw + COLUMN_GAP;
-      totalPages = Math.max(1, Math.ceil((track.scrollWidth + COLUMN_GAP - 4) / step));
+      cachedStep = vw + COLUMN_GAP;
+      totalPages = Math.max(1, Math.ceil((track.scrollWidth + COLUMN_GAP - 4) / cachedStep));
       if (currentPage >= totalPages) currentPage = totalPages - 1;
       if (currentPage < 0) currentPage = 0;
 
-      track.style.transform = `translateX(-${currentPage * step}px)`;
+      applyPageOffset();
+    }
+
+    // 페이지 넘김 시에는 레이아웃을 건드리지 않고 위치만 1프레임으로 즉시 이동
+    function applyPageOffset() {
+      if (mode !== 'eink' || !cachedStep) return;
+      const track = document.getElementById('reader-track');
+      track.style.transform = `translateX(-${currentPage * cachedStep}px)`;
       document.getElementById('page-indicator').textContent = `${currentPage + 1} / ${totalPages}`;
     }
 
     function goToPage(pageIdx) {
       if (mode !== 'eink') return;
-      currentPage = Math.max(0, Math.min(totalPages - 1, pageIdx));
-      updateEinkLayout();
+      const clamped = Math.max(0, Math.min(totalPages - 1, pageIdx));
+      if (clamped === currentPage) return;
+      currentPage = clamped;
+      applyPageOffset();
     }
 
     function movePage(delta) {
@@ -647,13 +698,16 @@
     });
 
     if (typeof ResizeObserver !== 'undefined') {
-      const ro = new ResizeObserver(() => {
-        if (mode === 'eink') updateEinkLayout();
+      const ro = new ResizeObserver((entries) => {
+        if (mode !== 'eink') return;
+        const rect = entries[0].contentRect;
+        if (Math.abs(rect.width - lastVpW) > 2 || Math.abs(rect.height - lastVpH) > 2) {
+          scheduleEinkRecalc();
+        }
       });
       ro.observe(document.getElementById('eink-viewport'));
     }
 
-    // 현재 기기 GPS 위치 기반 실시간 날씨 자동 갱신 (지원 안 되는 기기는 기본 대구 날씨 유지)
     function updateLiveLocationWeather() {
       if (!navigator.geolocation) return;
       navigator.geolocation.getCurrentPosition(
@@ -686,11 +740,9 @@
             const slot = document.getElementById('weather-slot');
             if (slot) {
               slot.innerHTML = `<b>📍 ${place} ${desc} ${tNow}${tMin}°/${tMax}° (강수 ${rain}%)</b>`;
-              if (mode === 'eink') updateEinkLayout();
+              scheduleEinkRecalc();
             }
-          } catch (e) {
-            // 실패 시 기본(대구) 날씨 그대로 유지
-          }
+          } catch (e) {}
         },
         () => {},
         { timeout: 6000, maximumAge: 600000 }
@@ -700,7 +752,7 @@
     function imgTag(src) {
       if (!src) return '';
       const bust = src.startsWith('./') ? `${src}?t=${Date.now()}` : src;
-      return `<img class="news-img" src="${bust}" referrerpolicy="no-referrer" alt="기사 사진" onload="updateEinkLayout()" onerror="this.style.display='none'; updateEinkLayout();" />`;
+      return `<img class="news-img" src="${bust}" referrerpolicy="no-referrer" alt="기사 사진" onload="scheduleEinkRecalc()" onerror="this.style.display='none'; scheduleEinkRecalc();" />`;
     }
 
     function formatParagraphs(text, useDropcap = false) {
@@ -785,7 +837,7 @@
         setMode(mode);
         updateLiveLocationWeather();
         if (document.fonts && document.fonts.ready) {
-          document.fonts.ready.then(() => updateEinkLayout());
+          document.fonts.ready.then(() => scheduleEinkRecalc());
         }
       } catch (err) {
         document.getElementById('content').innerHTML = `<p style="text-align:center; padding:40px 0;">${err.message}</p>`;
