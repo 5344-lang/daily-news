@@ -72,12 +72,13 @@
       display: flex;
       gap: 5px;
       align-items: center;
+      flex-wrap: wrap;
     }
     .toolbar button {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--ink);
-      padding: 4px 9px;
+      padding: 4px 8px;
       font-family: inherit;
       font-size: 12px;
       cursor: pointer;
@@ -186,7 +187,6 @@
       display: block;
       break-inside: avoid;
     }
-    /* 이북 모드에서는 불필요한 CSS 필터 제거해 전면 리프레시 유발 최소화 */
     body.eink .news-img {
       filter: none;
     }
@@ -251,6 +251,34 @@
       margin-top: 8px;
       break-inside: avoid;
     }
+    /* 기사 하단 좋아요 / 싫어요 / 저장 바 */
+    .article-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-top: 8px;
+      flex-wrap: wrap;
+      break-inside: avoid;
+    }
+    .act-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--ink);
+      padding: 3px 10px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .act-btn.active {
+      background: var(--ink);
+      color: var(--paper);
+    }
+    .act-status {
+      font-size: 11px;
+      color: var(--muted);
+      margin-left: 4px;
+    }
     .special-section {
       border-top: 4px double var(--border);
       padding-top: 18px;
@@ -302,13 +330,13 @@
       background: #faf7f0;
       color: #111;
       border: 2px solid #111;
-      max-width: 620px;
+      max-width: 640px;
       width: 100%;
       max-height: 88vh;
       overflow-y: auto;
       padding: 18px 20px;
       font-size: 14px;
-      line-height: 1.5;
+      line-height: 1.6;
     }
     .modal.compact {
       max-width: 380px;
@@ -408,6 +436,26 @@
       background: #111;
       color: #fff;
     }
+    /* 보관함 목록 스타일 */
+    .saved-item {
+      border-bottom: 1px solid #bbb;
+      padding: 10px 0;
+    }
+    .saved-item:last-child { border-bottom: none; }
+    .saved-item-meta {
+      font-size: 12px;
+      color: #555;
+      margin-bottom: 4px;
+    }
+    .saved-item-title {
+      font-weight: 900;
+      font-size: 15px;
+      margin: 0 0 8px;
+    }
+    .saved-item-btns {
+      display: flex;
+      gap: 6px;
+    }
   </style>
 </head>
 <body>
@@ -419,9 +467,10 @@
         <button id="btn-img-toggle" onclick="toggleImages()">사진 켜짐</button>
       </div>
       <div class="toolbar-group">
-        <button onclick="changeFont(-1)">가-</button>
-        <button onclick="changeFont(1)">가+</button>
-        <button onclick="openSettings()">⚙ 설정</button>
+        <button onclick="changeFont(-1)">글자 작게</button>
+        <button onclick="changeFont(1)">글자 크게</button>
+        <button onclick="openArchive()">보관함</button>
+        <button onclick="openSettings()">설정</button>
       </div>
     </div>
 
@@ -431,7 +480,7 @@
           <h1 class="masthead" id="paper-name">DAILY NEWS</h1>
           <div class="meta-bar">
             <span id="paper-date">발행 준비 중</span>
-            <span>PERSONAL MORNING EDITION</span>
+            <span>개인 조간 에디션</span>
           </div>
           <div class="briefing-bar" id="briefing-bar"></div>
           <p class="quote" id="paper-quote"></p>
@@ -444,9 +493,9 @@
     </div>
 
     <div class="eink-nav" id="eink-nav">
-      <button onclick="movePage(-1)">◀ 이전</button>
+      <button onclick="movePage(-1)">이전</button>
       <button class="page-jump-btn" id="page-indicator" onclick="openPageJump()">1 / 1</button>
-      <button onclick="movePage(1)">다음 ▶</button>
+      <button onclick="movePage(1)">다음</button>
     </div>
   </div>
 
@@ -455,7 +504,7 @@
     <div class="modal compact">
       <div class="modal-header">
         <h3>페이지 이동</h3>
-        <button class="btn-sm" onclick="closePageJump()">닫기 ✕</button>
+        <button class="btn-sm" onclick="closePageJump()">닫기</button>
       </div>
       <div class="row-item">
         <input type="number" id="jump-input" min="1" placeholder="페이지 번호 입력" onkeydown="if(event.key==='Enter') jumpToInputPage()" />
@@ -465,12 +514,23 @@
     </div>
   </div>
 
+  <!-- 저장한 기사 보관함 모달 -->
+  <div class="modal-backdrop" id="archive-modal" onclick="if(event.target===this) closeArchive()">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="archive-title">저장한 기사 보관함</h3>
+        <button class="btn-sm" onclick="closeArchive()">닫기</button>
+      </div>
+      <div id="archive-body"></div>
+    </div>
+  </div>
+
   <!-- 신문 내 설정 모달 -->
   <div class="modal-backdrop" id="settings-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3>⚙ 신문 관심사 & 구독 설정</h3>
-        <button class="btn-sm" onclick="closeSettings()">닫기 ✕</button>
+        <h3>신문 관심사 및 구독 설정</h3>
+        <button class="btn-sm" onclick="closeSettings()">닫기</button>
       </div>
 
       <div class="modal-sec">
@@ -484,20 +544,20 @@
       <div class="modal-sec">
         <h4>2. 관심 뉴스 키워드</h4>
         <div id="cfg-categories"></div>
-        <button class="btn-sm" onclick="addCategoryRow()">+ 뉴스 카테고리 추가</button>
+        <button class="btn-sm" onclick="addCategoryRow()">뉴스 카테고리 추가</button>
       </div>
 
       <div class="modal-sec">
         <h4>3. 최신 심리학 실험 논문 피드</h4>
         <div id="cfg-research"></div>
-        <button class="btn-sm" onclick="addResearchRow()">+ 연구 RSS 추가</button>
+        <button class="btn-sm" onclick="addResearchRow()">연구 피드 추가</button>
       </div>
 
       <div class="modal-sec">
         <h4>4. 구독 블로그 (원문 전체 수록)</h4>
-        <p class="help-text">네이버 블로그는 아이디(예: <code>talk_sim_mind</code>)나 주소만 넣어도 자동 변환됩니다.</p>
+        <p class="help-text">네이버 블로그는 아이디(예: talk_sim_mind)나 주소만 넣어도 자동 변환됩니다.</p>
         <div id="cfg-blogs"></div>
-        <button class="btn-sm" onclick="addBlogRow()">+ 블로그 추가</button>
+        <button class="btn-sm" onclick="addBlogRow()">블로그 추가</button>
       </div>
 
       <div class="modal-sec">
@@ -506,13 +566,13 @@
           <input type="text" id="gh-repo" placeholder="아이디/저장소 (예: 5344-lang/daily-news)" />
         </div>
         <div class="row-item">
-          <input type="password" id="gh-token" placeholder="GitHub Personal Access Token" />
+          <input type="password" id="gh-token" placeholder="GitHub 토큰 입력" />
         </div>
       </div>
 
       <div class="modal-actions">
         <button class="btn-outline" onclick="saveConfigToGitHub(false)">설정만 저장</button>
-        <button class="btn-primary" onclick="saveConfigToGitHub(true)">저장 & 지금 바로 신문 다시 뽑기</button>
+        <button class="btn-primary" onclick="saveConfigToGitHub(true)">저장 후 지금 바로 신문 다시 뽑기</button>
       </div>
       <div class="status-msg" id="settings-status"></div>
     </div>
@@ -540,6 +600,45 @@
     let lastVpH = 0;
     let recalcTimer = null;
     let loadedConfig = null;
+    let editionDate = '';
+    let articleRegistry = {};
+
+    let prefs = loadLocalPrefs();
+    let syncInFlight = false;
+    let syncPending = false;
+
+    function loadLocalPrefs() {
+      try {
+        const raw = localStorage.getItem('dn_prefs');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return {
+            likes: Array.isArray(parsed.likes) ? parsed.likes : [],
+            dislikes: Array.isArray(parsed.dislikes) ? parsed.dislikes : [],
+            saved: Array.isArray(parsed.saved) ? parsed.saved : []
+          };
+        }
+      } catch (e) {}
+      return { likes: [], dislikes: [], saved: [] };
+    }
+
+    function saveLocalPrefs() {
+      prefs.likes = prefs.likes.slice(-50);
+      prefs.dislikes = prefs.dislikes.slice(-50);
+      prefs.saved = prefs.saved.slice(-100);
+      localStorage.setItem('dn_prefs', JSON.stringify(prefs));
+    }
+
+    function mergePrefs(remote) {
+      if (!remote || typeof remote !== 'object') return;
+      ['likes', 'dislikes', 'saved'].forEach(key => {
+        const map = new Map();
+        (remote[key] || []).forEach(item => { if (item && item.url) map.set(item.url, item); });
+        (prefs[key] || []).forEach(item => { if (item && item.url) map.set(item.url, item); });
+        prefs[key] = Array.from(map.values());
+      });
+      saveLocalPrefs();
+    }
 
     function applyTypography() {
       const lh = Math.round(fontSize * 1.75);
@@ -597,7 +696,6 @@
       recalcTimer = setTimeout(() => recalcEinkLayout(), 100);
     }
 
-    // 레이아웃 계산은 화면 크기/글자 크기/이미지 로드 시에만 실행
     function recalcEinkLayout() {
       if (mode !== 'eink') return;
       const vp = document.getElementById('eink-viewport');
@@ -628,7 +726,6 @@
       applyPageOffset();
     }
 
-    // 페이지 넘김 시에는 레이아웃을 건드리지 않고 위치만 1프레임으로 즉시 이동
     function applyPageOffset() {
       if (mode !== 'eink' || !cachedStep) return;
       const track = document.getElementById('reader-track');
@@ -739,7 +836,7 @@
 
             const slot = document.getElementById('weather-slot');
             if (slot) {
-              slot.innerHTML = `<b>📍 ${place} ${desc} ${tNow}${tMin}°/${tMax}° (강수 ${rain}%)</b>`;
+              slot.innerHTML = `<b>날씨: ${place} ${desc} ${tNow}${tMin}°/${tMax}° (강수 ${rain}%)</b>`;
               scheduleEinkRecalc();
             }
           } catch (e) {}
@@ -763,50 +860,298 @@
       ).join('');
     }
 
+    // ===== 좋아요 / 싫어요 / 저장 버튼 =====
+    function registerArticle(key, item) {
+      articleRegistry[key] = item;
+    }
+
+    function hasUrl(list, url) {
+      return list.some(x => x.url === url);
+    }
+
+    function renderActionBar(key, allowFeedback = true) {
+      const item = articleRegistry[key];
+      if (!item || !item.url) return '';
+      const liked = hasUrl(prefs.likes, item.url);
+      const disliked = hasUrl(prefs.dislikes, item.url);
+      const saved = hasUrl(prefs.saved, item.url);
+
+      const fbBtns = allowFeedback ? `
+        <button class="act-btn ${liked ? 'active' : ''}" data-key="${key}" data-act="like" onclick="handleArticleAction('${key}', 'like')">${liked ? '좋아요됨' : '좋아요'}</button>
+        <button class="act-btn ${disliked ? 'active' : ''}" data-key="${key}" data-act="dislike" onclick="handleArticleAction('${key}', 'dislike')">${disliked ? '싫어요됨' : '싫어요'}</button>` : '';
+
+      return `
+        <div class="article-actions" id="act-bar-${key}">
+          ${fbBtns}
+          <button class="act-btn ${saved ? 'active' : ''}" data-key="${key}" data-act="save" onclick="handleArticleAction('${key}', 'save')">${saved ? '저장됨' : '저장'}</button>
+          <span class="act-status" id="act-msg-${key}"></span>
+        </div>`;
+    }
+
+    function updateActionBarUI(key) {
+      const item = articleRegistry[key];
+      const bar = document.getElementById(`act-bar-${key}`);
+      if (!item || !bar) return;
+
+      const liked = hasUrl(prefs.likes, item.url);
+      const disliked = hasUrl(prefs.dislikes, item.url);
+      const saved = hasUrl(prefs.saved, item.url);
+
+      const btnLike = bar.querySelector('[data-act="like"]');
+      const btnDislike = bar.querySelector('[data-act="dislike"]');
+      const btnSave = bar.querySelector('[data-act="save"]');
+
+      if (btnLike) {
+        btnLike.classList.toggle('active', liked);
+        btnLike.textContent = liked ? '좋아요됨' : '좋아요';
+      }
+      if (btnDislike) {
+        btnDislike.classList.toggle('active', disliked);
+        btnDislike.textContent = disliked ? '싫어요됨' : '싫어요';
+      }
+      if (btnSave) {
+        btnSave.classList.toggle('active', saved);
+        btnSave.textContent = saved ? '저장됨' : '저장';
+      }
+    }
+
+    function handleArticleAction(key, action) {
+      const item = articleRegistry[key];
+      if (!item || !item.url) return;
+
+      const meta = {
+        title: item.title,
+        category: item.category,
+        url: item.url,
+        date: editionDate || new Date().toISOString().slice(0, 10)
+      };
+
+      if (action === 'like') {
+        if (hasUrl(prefs.likes, item.url)) {
+          prefs.likes = prefs.likes.filter(x => x.url !== item.url);
+        } else {
+          prefs.likes.push(meta);
+          prefs.dislikes = prefs.dislikes.filter(x => x.url !== item.url);
+        }
+      } else if (action === 'dislike') {
+        if (hasUrl(prefs.dislikes, item.url)) {
+          prefs.dislikes = prefs.dislikes.filter(x => x.url !== item.url);
+        } else {
+          prefs.dislikes.push(meta);
+          prefs.likes = prefs.likes.filter(x => x.url !== item.url);
+        }
+      } else if (action === 'save') {
+        if (hasUrl(prefs.saved, item.url)) {
+          prefs.saved = prefs.saved.filter(x => x.url !== item.url);
+        } else {
+          prefs.saved.push({
+            ...meta,
+            source: item.source || '',
+            full_article: item.full_article || ''
+          });
+        }
+      }
+
+      saveLocalPrefs();
+      updateActionBarUI(key);
+      syncPrefsToGitHub(key);
+    }
+
+    async function syncPrefsToGitHub(lastKey) {
+      const repo = localStorage.getItem('dn_gh_repo') || inferRepo();
+      const token = localStorage.getItem('dn_gh_token') || '';
+      const msgEl = lastKey ? document.getElementById(`act-msg-${lastKey}`) : null;
+
+      if (!token) {
+        if (msgEl) msgEl.textContent = '이 기기에만 저장됨 (설정에서 토큰 등록 시 다음 신문에 반영)';
+        return;
+      }
+
+      if (syncInFlight) {
+        syncPending = true;
+        return;
+      }
+      syncInFlight = true;
+      if (msgEl) msgEl.textContent = '동기화 중...';
+
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      };
+      const apiUrl = `https://api.github.com/repos/${repo}/contents/data/preferences.json`;
+
+      try {
+        let sha = undefined;
+        const getRes = await fetch(apiUrl, { headers });
+        if (getRes.ok) {
+          const cur = await getRes.json();
+          sha = cur.sha;
+        }
+        const putRes = await fetch(apiUrl, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({
+            message: 'Update reader preferences',
+            content: utf8ToBase64(JSON.stringify(prefs, null, 2)),
+            sha,
+          }),
+        });
+        if (!putRes.ok) throw new Error('저장 실패');
+        if (msgEl) msgEl.textContent = '반영 완료';
+      } catch (e) {
+        if (msgEl) msgEl.textContent = '기기 저장됨 (서버 동기화 실패)';
+      } finally {
+        syncInFlight = false;
+        if (syncPending) {
+          syncPending = false;
+          syncPrefsToGitHub(lastKey);
+        }
+      }
+    }
+
+    // ===== 보관함 모달 =====
+    function openArchive() {
+      renderArchiveList();
+      document.getElementById('archive-modal').classList.add('open');
+    }
+
+    function closeArchive() {
+      document.getElementById('archive-modal').classList.remove('open');
+    }
+
+    function renderArchiveList() {
+      document.getElementById('archive-title').textContent = `저장한 기사 보관함 (${prefs.saved.length}건)`;
+      const body = document.getElementById('archive-body');
+      if (!prefs.saved.length) {
+        body.innerHTML = '<p style="text-align:center; padding:24px 0; color:#555;">저장한 기사가 아직 없습니다. 기사 아래 저장 버튼을 눌러 보관해 보세요.</p>';
+        return;
+      }
+      const list = [...prefs.saved].reverse();
+      body.innerHTML = list.map((item, revIdx) => {
+        const realIdx = prefs.saved.length - 1 - revIdx;
+        return `
+          <div class="saved-item">
+            <div class="saved-item-meta">${item.category || '기사'} · ${item.source || ''} · ${item.date || ''}</div>
+            <div class="saved-item-title">${item.title}</div>
+            <div class="saved-item-btns">
+              <button class="btn-sm" onclick="readSavedArticle(${realIdx})">읽기</button>
+              <a class="btn-sm" style="text-decoration:none;" href="${item.url}" target="_blank">원문 출처</a>
+              <button class="btn-sm" onclick="removeSavedArticle(${realIdx})">삭제</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function readSavedArticle(idx) {
+      const item = prefs.saved[idx];
+      if (!item) return;
+      document.getElementById('archive-title').textContent = item.category || '저장한 기사';
+      document.getElementById('archive-body').innerHTML = `
+        <div style="margin-bottom:12px;">
+          <button class="btn-sm" onclick="renderArchiveList()">목록으로</button>
+        </div>
+        <h3 style="margin:0 0 6px; font-size:1.25em; line-height:1.35;">${item.title}</h3>
+        <div class="saved-item-meta" style="margin-bottom:14px;">${item.source || ''} · ${item.date || ''} · <a class="read-more" href="${item.url}" target="_blank">원문 출처</a></div>
+        <div class="article-body">${formatParagraphs(item.full_article || '본문이 저장되지 않았습니다. 원문 출처에서 확인해 주세요.', false)}</div>
+      `;
+    }
+
+    function removeSavedArticle(idx) {
+      const target = prefs.saved[idx];
+      if (!target) return;
+      prefs.saved.splice(idx, 1);
+      saveLocalPrefs();
+      renderArchiveList();
+      Object.keys(articleRegistry).forEach(k => {
+        if (articleRegistry[k].url === target.url) updateActionBarUI(k);
+      });
+      syncPrefsToGitHub(null);
+    }
+
+    // ===== 신문 렌더링 =====
     function renderResearch(r) {
       if (!r || !r.title) return '';
+      const key = 'research_0';
+      registerArticle(key, {
+        title: r.title,
+        category: r.source_name || '심리 실험 리포트',
+        source: r.journal_info || r.source_name || '',
+        url: r.url,
+        full_article: r.full_article || ''
+      });
       return `
         <section class="special-section">
-          <span class="cat-tag dark">오늘의 심리 실험 리포트 · ${r.source_name || 'RESEARCH'}</span>
+          <span class="cat-tag dark">오늘의 심리 실험 리포트 · ${r.source_name || '연구'}</span>
           <h3 style="margin:6px 0 4px; font-size:1.4em; line-height:1.35;">${r.title}</h3>
           <p class="special-meta">${r.journal_info || ''}</p>
           ${imgTag(r.image)}
           <div class="article-body">${formatParagraphs(r.full_article, true)}</div>
           ${r.takeaway ? `<div class="takeaway">핵심: ${r.takeaway}</div>` : ''}
           <div class="source-line"><a class="read-more" href="${r.url}" target="_blank">원문 연구 기사 보기</a></div>
+          ${renderActionBar(key, false)}
         </section>`;
     }
 
     function renderBlogs(blogs) {
       if (!blogs || blogs.length === 0) return '';
-      return blogs.map(b => `
-        <section class="special-section">
-          <span class="cat-tag">구독 아티클 · ${b.blog_name || 'BLOG'}</span>
-          <h3 style="margin:6px 0 8px; font-size:1.35em; line-height:1.35;">${b.title}</h3>
-          ${imgTag(b.image)}
-          <div class="article-body">${formatParagraphs(b.full_article, false)}</div>
-          <div class="source-line">${b.blog_name}${b.published ? ' · ' + b.published : ''} · <a class="read-more" href="${b.url}" target="_blank">블로그 원문 보기</a></div>
-        </section>`).join('');
+      return blogs.map((b, idx) => {
+        const key = `blog_${idx}`;
+        registerArticle(key, {
+          title: b.title,
+          category: b.blog_name || '구독 블로그',
+          source: b.blog_name || '',
+          url: b.url,
+          full_article: b.full_article || ''
+        });
+        return `
+          <section class="special-section">
+            <span class="cat-tag">구독 아티클 · ${b.blog_name || '블로그'}</span>
+            <h3 style="margin:6px 0 8px; font-size:1.35em; line-height:1.35;">${b.title}</h3>
+            ${imgTag(b.image)}
+            <div class="article-body">${formatParagraphs(b.full_article, false)}</div>
+            <div class="source-line">${b.blog_name}${b.published ? ' · ' + b.published : ''} · <a class="read-more" href="${b.url}" target="_blank">블로그 원문 보기</a></div>
+            ${renderActionBar(key, false)}
+          </section>`;
+      }).join('');
     }
 
     async function loadPaper() {
       try {
-        const edRes = await fetch('./data/today.json?t=' + Date.now());
+        const [edRes, prefRes] = await Promise.all([
+          fetch('./data/today.json?t=' + Date.now()),
+          fetch('./data/preferences.json?t=' + Date.now()).catch(() => null)
+        ]);
         if (!edRes.ok) throw new Error('아직 발행된 신문이 없습니다. GitHub Actions에서 수동 실행을 한 번 돌려주세요.');
+        if (prefRes && prefRes.ok) {
+          const remotePrefs = await prefRes.json();
+          mergePrefs(remotePrefs);
+        }
+
         const ed = await edRes.json();
+        editionDate = ed.date || '';
+        articleRegistry = {};
 
         document.getElementById('paper-name').textContent = ed.paper_name || 'DAILY NEWS';
         document.getElementById('paper-date').textContent = ed.date_kr || ed.date;
         document.getElementById('paper-quote').textContent = ed.edition_quote || '';
 
-        const weatherText = ed.weather ? `☀ ${ed.weather}` : '☀ 날씨 불러오는 중...';
-        const scheduleText = ed.schedule ? `📅 ${ed.schedule}` : '📅 일정 미연동';
+        const weatherText = ed.weather ? `날씨: ${ed.weather}` : '날씨: 불러오는 중';
+        const scheduleText = ed.schedule ? `일정: ${ed.schedule}` : '일정: 미연동';
         const briefingEl = document.getElementById('briefing-bar');
         briefingEl.innerHTML = `<span id="weather-slot"><b>${weatherText}</b></span><span>${scheduleText}</span>`;
         briefingEl.style.display = 'flex';
 
         const lead = ed.lead_story;
         const leadBody = lead.full_article || lead.summary || '';
+        registerArticle('lead', {
+          title: lead.title,
+          category: lead.category,
+          source: lead.source,
+          url: lead.url,
+          full_article: leadBody
+        });
+
         const frontHtml = `
           <section class="front-section">
             <article>
@@ -816,11 +1161,20 @@
               <div class="article-body">${formatParagraphs(leadBody, true)}</div>
               ${lead.takeaway ? `<div class="takeaway">핵심: ${lead.takeaway}</div>` : ''}
               <div class="source-line">${lead.source} · <a class="read-more" href="${lead.url}" target="_blank">원문 출처</a></div>
+              ${renderActionBar('lead', true)}
             </article>
           </section>`;
 
-        const articlesHtml = (ed.articles || []).map(a => {
+        const articlesHtml = (ed.articles || []).map((a, idx) => {
           const body = a.full_article || a.summary || '';
+          const key = `art_${idx}`;
+          registerArticle(key, {
+            title: a.title,
+            category: a.category,
+            source: a.source,
+            url: a.url,
+            full_article: body
+          });
           return `
             <section class="article-section">
               <span class="cat-tag">${a.category}</span>
@@ -828,6 +1182,7 @@
               ${imgTag(a.image)}
               <div class="article-body two-col-text">${formatParagraphs(body, false)}</div>
               <div class="source-line">${a.source} · <a class="read-more" href="${a.url}" target="_blank">원문 출처</a></div>
+              ${renderActionBar(key, true)}
             </section>`;
         }).join('');
 
@@ -941,7 +1296,7 @@
       const token = document.getElementById('gh-token').value.trim();
 
       if (!repo || !token) {
-        statusEl.textContent = '⚠ GitHub 저장소 이름과 토큰을 먼저 입력해 주세요.';
+        statusEl.textContent = '[안내] GitHub 저장소 이름과 토큰을 먼저 입력해 주세요.';
         return;
       }
       localStorage.setItem('dn_gh_repo', repo);
@@ -1001,19 +1356,19 @@
         if (!putRes.ok) throw new Error('config.json 저장 실패 (토큰의 Contents 쓰기 권한 확인)');
 
         if (triggerRun) {
-          statusEl.textContent = '저장 완료! 새 신문 발행을 요청하는 중...';
+          statusEl.textContent = '저장 완료. 새 신문 발행을 요청하는 중...';
           const runRes = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/daily.yml/dispatches`, {
             method: 'POST',
             headers,
             body: JSON.stringify({ ref: 'main' }),
           });
           if (!runRes.ok) throw new Error('설정은 저장되었으나 즉시 실행 실패 (토큰의 Actions 쓰기 권한 확인)');
-          statusEl.textContent = '✅ 저장 & 재발행 요청 완료! 약 1분 뒤 새로고침해 주세요.';
+          statusEl.textContent = '[완료] 저장 및 재발행 요청이 완료되었습니다. 약 1분 뒤 새로고침해 주세요.';
         } else {
-          statusEl.textContent = '✅ 설정이 저장되었습니다. 내일 오전 6시부터 반영됩니다.';
+          statusEl.textContent = '[완료] 설정이 저장되었습니다. 내일 오전 6시부터 반영됩니다.';
         }
       } catch (err) {
-        statusEl.textContent = '❌ ' + err.message;
+        statusEl.textContent = '[오류] ' + err.message;
       }
     }
 
