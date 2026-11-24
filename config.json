@@ -5,34 +5,48 @@
   "categories": [
     {
       "name": "심리학·인지",
-      "query": "심리학 OR 뇌과학 OR 정신건강"
+      "query": "심리학 OR 뇌과학 OR 행동심리 OR 정신건강 -MOU -협약 -개최 -모집 -캠페인"
     },
     {
       "name": "AI·테크",
-      "query": "생성형 AI OR 인공지능 자동화"
+      "query": "생성형 AI OR 클로드 OR 제미나이 OR AI 자동화 OR AI 저작권 -MOU -협약"
     },
     {
       "name": "보드게임",
-      "query": "보드게임 신작 OR 테이블탑"
+      "query": "보드게임 (리뷰 OR 분석 OR 전략 OR 신작 OR 펀딩 OR 머더미스터리) -할인 -쿠폰 -특가 -체험단 -이벤트"
     },
     {
       "name": "도서·문학",
-      "query": "신간 도서 OR SF 소설 OR 추리소설"
+      "query": "(서평 OR 비평 OR 인문학 OR 독서문화 OR 신간 도서) (SF OR 추리 OR 소설 OR 철학) -도서관 -북콘서트 -개최 -모집"
     },
     {
       "name": "경제·시사",
-      "query": "경제 핵심 뉴스 OR 산업 트렌드"
+      "query": "(빅테크 OR AI 반도체 OR 기술주 OR 나스닥) (투자 OR 실적 OR 전망 OR ETF) -급등주 -특징주 -추천주 -테마주"
+    },
+    {
+      "name": "사설·칼럼",
+      "query": "(\"사설\" OR \"칼럼\" OR \"시론\" OR \"만평\") (사회 OR 경제 OR 문화 OR 기술 OR 인문)"
     }
   ],
   "research_feeds": [
+    {
+      "name": "PsyBlog",
+      "url": "https://www.spring.org.uk/feed",
+      "enabled": true
+    },
+    {
+      "name": "PsyPost 심리실험",
+      "url": "https://www.psypost.org/feed/",
+      "enabled": true
+    },
     {
       "name": "ScienceDaily 심리연구",
       "url": "https://www.sciencedaily.com/rss/mind_brain/psychology.xml",
       "enabled": true
     },
     {
-      "name": "PsyPost 심리실험",
-      "url": "https://www.psypost.org/feed/",
+      "name": "Behavioral Scientist",
+      "url": "https://behavioralscientist.org/feed/",
       "enabled": true
     }
   ],
