@@ -78,7 +78,7 @@ def fetch_feed_safe(url):
 
 
 def fetch_weather(city_name):
-    city = (city_name or "경산").strip()
+    city = (city_name or "대구").strip()
     lat, lon = KR_CITY_COORDS.get(city, (None, None))
     if lat is None:
         try:
@@ -91,7 +91,7 @@ def fetch_weather(city_name):
         except Exception as e:
             print(f"도시 좌표 조회 실패 ({city}): {e}")
     if lat is None:
-        city, (lat, lon) = "경산", KR_CITY_COORDS["경산"]
+        city, (lat, lon) = "대구", KR_CITY_COORDS["대구"]
 
     try:
         w_url = (
@@ -125,7 +125,7 @@ def fetch_google_calendar_today():
     try:
         res = requests.get(GCAL_ICS_URL, headers=HEADERS, timeout=(5, 10))
         if res.status_code == 404:
-            print("구글 캘린더 404 오류: '공개 주소'가 아닌 'iCal 형식의 비공개 주소'(/private-.../basic.ics)를 등록해 주세요.")
+            print("구글 캘린더 404 오류: 비공개 iCal 주소를 확인해 주세요.")
             return "일정 주소 확인 필요"
         res.raise_for_status()
         cal = Calendar.from_ical(res.content)
@@ -189,7 +189,6 @@ def get_candidate_models():
     except Exception as e:
         print(f"모델 목록 조회 중 경고: {e}")
 
-    # 응답 속도가 빠르고 무료 한도가 넉넉한 lite 계열 우선, 상위 5개만 시도
     ordered = stable_lite + stable_flash + preview_lite + preview_flash
     deduped = []
     for name in ordered:
@@ -221,6 +220,22 @@ def save_history(history):
     history["blogs"] = history.get("blogs", [])[-120:]
     with open("data/published_history.json", "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
+
+
+def load_preferences():
+    path = "data/preferences.json"
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    data.setdefault("likes", [])
+                    data.setdefault("dislikes", [])
+                    data.setdefault("saved", [])
+                    return data
+        except Exception:
+            pass
+    return {"likes": [], "dislikes": [], "saved": []}
 
 
 def reset_image_dir():
@@ -361,8 +376,10 @@ def scrape_generic_article(url, max_len=3200):
     return image_url, full_text
 
 
-def fetch_rss_news(categories):
+# 1단계: 제목만 대량 수집 (크롤링 없이 빠르고 넓게 후보 확보)
+def fetch_rss_candidates(categories):
     collected = []
+    seen_titles = set()
     idx = 0
     for cat in categories:
         if not cat.get("query"):
@@ -370,25 +387,39 @@ def fetch_rss_news(categories):
         q = urllib.parse.quote(cat["query"])
         url = f"https://news.google.com/rss/search?q={q}&hl=ko&gl=KR&ceid=KR:ko"
         feed = fetch_feed_safe(url)
-        for entry in feed.entries[:2]:
-            raw_link = entry.get("link", "")
-            real_url = resolve_real_url(raw_link)
-            img, body = scrape_generic_article(real_url)
+        count = 0
+        for entry in feed.entries[:14]:
             title = entry.get("title", "").split(" - ")[0].strip()
+            if not title or title in seen_titles:
+                continue
+            seen_titles.add(title)
             collected.append({
                 "id": idx,
                 "category": cat["name"],
                 "title": title,
-                "url": real_url,
+                "raw_link": entry.get("link", ""),
                 "source": entry.get("source", {}).get("title", "뉴스"),
-                "image": img,
-                "full_article": body if body else f"{title} 관련 보도입니다. 자세한 내용은 하단 원문 출처에서 확인하실 수 있습니다.",
-                "has_image": bool(img),
-                "has_body": len(body) > 200,
             })
             idx += 1
-    print(f"총 {len(collected)}건 뉴스 수집 완료")
+            count += 1
+            if count >= 10:
+                break
+    print(f"총 {len(collected)}건 뉴스 후보 제목 수집 완료")
     return collected
+
+
+# 3단계: AI가 최종 선별한 6건만 실제 본문과 사진 추출
+def hydrate_selected_article(item):
+    real_url = resolve_real_url(item["raw_link"])
+    img, body = scrape_generic_article(real_url)
+    return {
+        "category": item["category"],
+        "title": item["title"],
+        "full_article": body if body else f"{item['title']} 관련 보도입니다. 자세한 내용은 하단 원문 출처에서 확인하실 수 있습니다.",
+        "source": item["source"],
+        "url": real_url,
+        "image": img,
+    }
 
 
 def fetch_research_candidates(research_feeds, published_urls):
@@ -513,7 +544,7 @@ def fetch_blog_articles(blogs_cfg, published_urls):
                 raw_img, body = scrape_generic_article(link, max_len=4000)
                 img = download_local_image(raw_img, f"blog_{img_idx}.jpg", referer=link) or raw_img
 
-            if len(body) >= 250:
+            if len(body) >= 180:
                 selected_post = {
                     "blog_name": b.get("name", "구독 블로그"),
                     "title": title,
@@ -547,24 +578,22 @@ def fetch_blog_articles(blogs_cfg, published_urls):
     return picked
 
 
-def fallback_editor(news_items):
+def fallback_editor(news_candidates):
     print("Gemini 서버 일시 과부하 — 자동 선별 안전망 모드로 신문을 발행합니다.")
-    scored = sorted(
-        news_items,
-        key=lambda x: (int(x["has_body"]), int(x["has_image"]), len(x["full_article"])),
-        reverse=True,
-    )
-    lead_id = scored[0]["id"] if scored else 0
-    article_ids = []
-    seen_cats = {scored[0]["category"]} if scored else set()
+    if not news_candidates:
+        return {"edition_quote": "오늘도 차분한 시선으로 하루를 시작합니다.", "lead_id": 0, "lead_takeaway": "", "article_ids": [], "research_report": None}
 
-    for item in scored[1:]:
+    lead_id = news_candidates[0]["id"]
+    article_ids = []
+    seen_cats = {news_candidates[0]["category"]}
+
+    for item in news_candidates[1:]:
         if item["category"] not in seen_cats:
             article_ids.append(item["id"])
             seen_cats.add(item["category"])
         if len(article_ids) >= 5:
             break
-    for item in scored[1:]:
+    for item in news_candidates[1:]:
         if item["id"] not in article_ids:
             article_ids.append(item["id"])
         if len(article_ids) >= 5:
@@ -579,17 +608,19 @@ def fallback_editor(news_items):
     }
 
 
-def call_gemini_editor(news_items, research_candidates, text_models):
+def call_gemini_editor(news_candidates, research_candidates, preferences, text_models):
     compact_news = [
         {
             "id": item["id"],
             "category": item["category"],
             "title": item["title"],
-            "has_image": item["has_image"],
-            "has_body": item["has_body"],
+            "source": item["source"],
         }
-        for item in news_items
+        for item in news_candidates
     ]
+
+    liked_titles = [f"[{x.get('category', '')}] {x.get('title', '')}" for x in preferences.get("likes", [])[-15:]]
+    disliked_titles = [f"[{x.get('category', '')}] {x.get('title', '')}" for x in preferences.get("dislikes", [])[-15:]]
 
     research_block = [
         {
@@ -603,11 +634,15 @@ def call_gemini_editor(news_items, research_candidates, text_models):
     prompt = f"""
 고전 신문 'DAILY NEWS'({TODAY_KR}) 편집장으로서 아래 JSON 스키마로만 간결하게 응답하세요.
 
+[독자 선호도 기록]
+- 독자가 좋아요를 누른 기사 스타일(유사한 깊이·주제 우선 선별): {json.dumps(liked_titles, ensure_ascii=False)}
+- 독자가 싫어요를 누른 기사 스타일(유사한 주제·단순 협약·행사 홍보 기사는 철저히 제외): {json.dumps(disliked_titles, ensure_ascii=False)}
+
 [규칙]
-1. edition_quote: 제호 아래 짧은 한 줄 문구
-2. lead_id: 1면 톱기사 id 1개 (has_body, has_image가 true인 기사 우선)
+1. edition_quote: 제호 아래 짧은 한 줄 문구 (이모티콘 금지)
+2. lead_id: 독자 취향에 가장 잘 맞고 읽을거리가 풍부한 1면 톱기사 id 1개
 3. lead_takeaway: 1면 기사 핵심 한 줄
-4. article_ids: 나머지 뉴스 중 카테고리별 5개 id (lead_id 제외)
+4. article_ids: 나머지 뉴스 중 카테고리별로 골고루 독자 취향에 맞는 5개 id (lead_id 제외, 단순 행사 홍보·MOU·보도자료 제외)
 5. research_report: 아래 [연구]가 있으면 한국어 3~4문단(\\n\\n 구분)으로 흥미롭게 번역·정리(질문·실험·결과·시사점). 없으면 null.
 
 [JSON 스키마]
@@ -625,7 +660,7 @@ def call_gemini_editor(news_items, research_candidates, text_models):
   }}
 }}
 
-[뉴스]
+[뉴스 후보]
 {json.dumps(compact_news, ensure_ascii=False)}
 
 [연구]
@@ -659,7 +694,7 @@ def call_gemini_editor(news_items, research_candidates, text_models):
                 print(f"[{model_name}] 요청 예외: {e}")
                 break
 
-    return fallback_editor(news_items)
+    return fallback_editor(news_candidates)
 
 
 def send_gmail(edition, site_url):
@@ -678,10 +713,10 @@ def send_gmail(edition, site_url):
     )
     extra_html = ""
     if research:
-        extra_html += f"<div style='background:#efe9dc;border:1px solid #111;padding:12px;margin-top:14px;'><b>🔬 최신 심리 실험 리포트</b><br>{research['title']}</div>"
+        extra_html += f"<div style='background:#efe9dc;border:1px solid #111;padding:12px;margin-top:14px;'><b>[최신 심리 실험 리포트]</b><br>{research['title']}</div>"
     if blogs:
-        b_titles = "<br>".join(f"• [{b['blog_name']}] {b['title']}" for b in blogs)
-        extra_html += f"<div style='background:#f7f4ec;border:1px solid #111;padding:12px;margin-top:10px;'><b>✍️ 구독 블로그 아티클</b><br>{b_titles}</div>"
+        b_titles = "<br>".join(f"- [{b['blog_name']}] {b['title']}" for b in blogs)
+        extra_html += f"<div style='background:#f7f4ec;border:1px solid #111;padding:12px;margin-top:10px;'><b>[구독 블로그 아티클]</b><br>{b_titles}</div>"
 
     html = f"""
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; padding: 20px; border: 2px solid #111; background: #faf7f0; color: #111;">
@@ -697,7 +732,7 @@ def send_gmail(edition, site_url):
       {extra_html}
       <div style="text-align: center; margin-top: 24px;">
         <a href="{site_url}" style="display: inline-block; padding: 12px 24px; background: #111; color: #fff; text-decoration: none; font-weight: bold;">
-          📰 오늘의 신문 전체 읽기
+          오늘의 신문 전체 읽기
         </a>
       </div>
     </div>
@@ -720,49 +755,34 @@ def main():
 
     reset_image_dir()
     history = load_history()
+    preferences = load_preferences()
 
-    weather_str = fetch_weather(config.get("weather_city", "경산"))
+    weather_str = fetch_weather(config.get("weather_city", "대구"))
     schedule_str = fetch_google_calendar_today()
 
     text_models = get_candidate_models()
-    news = fetch_rss_news(config.get("categories", []))
+    news_candidates = fetch_rss_candidates(config.get("categories", []))
     research_candidates = fetch_research_candidates(config.get("research_feeds", []), history["research"])
     blog_articles = fetch_blog_articles(config.get("blogs", []), history["blogs"])
 
-    news_map = {item["id"]: item for item in news}
-    ai_data = call_gemini_editor(news, research_candidates, text_models)
+    news_map = {item["id"]: item for item in news_candidates}
+    ai_data = call_gemini_editor(news_candidates, research_candidates, preferences, text_models)
 
     lead_id = ai_data.get("lead_id", 0)
-    lead_item = news_map.get(lead_id, news[0])
-    lead_story = {
-        "category": lead_item["category"],
-        "title": lead_item["title"],
-        "full_article": lead_item["full_article"],
-        "takeaway": ai_data.get("lead_takeaway", ""),
-        "source": lead_item["source"],
-        "url": lead_item["url"],
-        "image": lead_item["image"],
-    }
+    lead_item = news_map.get(lead_id, news_candidates[0])
+    lead_story = hydrate_selected_article(lead_item)
+    lead_story["takeaway"] = ai_data.get("lead_takeaway", "")
 
     chosen_ids = [i for i in ai_data.get("article_ids", []) if i in news_map and i != lead_item["id"]]
-    if len(chosen_ids) < 4:
-        for item in news:
+    if len(chosen_ids) < 5:
+        for item in news_candidates:
             if item["id"] != lead_item["id"] and item["id"] not in chosen_ids:
                 chosen_ids.append(item["id"])
             if len(chosen_ids) >= 5:
                 break
 
-    articles = [
-        {
-            "category": news_map[i]["category"],
-            "title": news_map[i]["title"],
-            "full_article": news_map[i]["full_article"],
-            "source": news_map[i]["source"],
-            "url": news_map[i]["url"],
-            "image": news_map[i]["image"],
-        }
-        for i in chosen_ids[:5]
-    ]
+    articles = [hydrate_selected_article(news_map[i]) for i in chosen_ids[:5]]
+    print(f"선별된 {1 + len(articles)}건 기사 본문 및 사진 추출 완료")
 
     research_report = None
     ai_research = ai_data.get("research_report")
