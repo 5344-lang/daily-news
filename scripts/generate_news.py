@@ -11,7 +11,11 @@ import feedparser
 import requests
 from bs4 import BeautifulSoup
 import trafilatura
-from googlenewsdecoder import new_decoderv1
+
+try:
+    import googlenewsdecoder
+except Exception:
+    googlenewsdecoder = None
 
 KST = timezone(timedelta(hours=9))
 TODAY = datetime.now(KST).strftime("%Y-%m-%d")
@@ -81,13 +85,72 @@ def save_psych_history(history, new_topic):
         json.dump(history[-60:], f, ensure_ascii=False, indent=2)
 
 
+def decode_google_news_builtin(google_url):
+    parsed = urllib.parse.urlparse(google_url)
+    parts = parsed.path.split("/")
+    if "articles" in parts:
+        b64_str = parts[parts.index("articles") + 1]
+    elif "read" in parts:
+        b64_str = parts[parts.index("read") + 1]
+    else:
+        return None
+
+    res = requests.get(f"https://news.google.com/articles/{b64_str}", headers=HEADERS, timeout=10)
+    soup = BeautifulSoup(res.text, "html.parser")
+    tag = soup.find(attrs={"data-n-a-sg": True, "data-n-a-ts": True})
+    if not tag:
+        return None
+
+    sg = tag["data-n-a-sg"]
+    ts = tag["data-n-a-ts"]
+    req_inner = json.dumps([
+        "garturlreq",
+        [["X", "X", ["X", "X"], None, None, 1, 1, "US:en", None, 1, None, None, None, None, None, 0, 1], "X", "X", 1, [1, 1, 1], 1, 1, None, 0, 0, None, 0],
+        b64_str,
+        int(ts),
+        sg
+    ], separators=(",", ":"))
+    f_req = json.dumps([[["Fbv4je", req_inner, None, "generic"]]], separators=(",", ":"))
+
+    post_res = requests.post(
+        "https://news.google.com/_/DotsSplashUi/data/batchexecute",
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+            "User-Agent": HEADERS["User-Agent"],
+        },
+        data={"f.req": f_req},
+        timeout=10,
+    )
+    for line in post_res.text.splitlines():
+        if "garturlres" in line:
+            outer = json.loads(line)
+            inner = json.loads(outer[0][2])
+            if len(inner) > 1 and isinstance(inner[1], str) and inner[1].startswith("http"):
+                return inner[1]
+    return None
+
+
 def resolve_real_url(google_url):
+    if googlenewsdecoder is not None:
+        for fn_name in ("new_decoderv1", "gnewsdecoder", "decoderv1"):
+            fn = getattr(googlenewsdecoder, fn_name, None)
+            if callable(fn):
+                try:
+                    decoded = fn(google_url)
+                    if isinstance(decoded, dict) and decoded.get("status") and decoded.get("decoded_url"):
+                        return decoded["decoded_url"]
+                    if isinstance(decoded, str) and decoded.startswith("http"):
+                        return decoded
+                except Exception:
+                    pass
+
     try:
-        decoded = new_decoderv1(google_url, interval=1)
-        if decoded.get("status") and decoded.get("decoded_url"):
-            return decoded["decoded_url"]
+        builtin = decode_google_news_builtin(google_url)
+        if builtin:
+            return builtin
     except Exception:
         pass
+
     try:
         r = requests.get(google_url, headers=HEADERS, timeout=10, allow_redirects=True)
         return r.url
@@ -108,7 +171,7 @@ def scrape_article(google_url):
         og_img = soup.find("meta", property="og:image") or soup.find("meta", attrs={"name": "twitter:image"})
         if og_img and og_img.get("content"):
             cand = og_img["content"].strip()
-            if cand.startswith("http"):
+            if cand.startswith("http") and "googleusercontent.com" not in cand:
                 image_url = cand
 
         extracted = trafilatura.extract(html, include_comments=False, include_tables=False)
@@ -231,7 +294,6 @@ def generate_psych_illustration(image_prompt, image_models):
     os.makedirs("data", exist_ok=True)
     img_path = "data/today_psych.png"
 
-    # 1순위: Gemini 이미지 모델 시도
     payload = {
         "contents": [{"parts": [{"text": image_prompt}]}],
         "generationConfig": {"responseModalities": ["TEXT", "IMAGE"]},
@@ -253,7 +315,6 @@ def generate_psych_illustration(image_prompt, image_models):
         except Exception:
             pass
 
-    # 2순위: 무료 무키 이미지 생성 폴백 (Pollinations)
     try:
         encoded = urllib.parse.quote(image_prompt)
         seed = random.randint(1, 999999)
