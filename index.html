@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>DAILY NEWS</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect x='6' y='8' width='52' height='48' rx='4' fill='%23faf7f0' stroke='%23161616' stroke-width='5'/><rect x='14' y='16' width='36' height='8' fill='%23161616'/><rect x='14' y='30' width='16' height='18' fill='%23161616'/><line x1='35' y1='32' x2='50' y2='32' stroke='%23161616' stroke-width='4'/><line x1='35' y1='40' x2='50' y2='40' stroke='%23161616' stroke-width='4'/><line x1='35' y1='48' x2='46' y2='48' stroke='%23161616' stroke-width='4'/></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
   <style>
@@ -1269,7 +1270,7 @@ function makeRowHtml(type, name = '', val = '', enabled = true, mode = 'unread')
       document.getElementById('cfg-blogs').innerHTML = '';
       (loadedConfig.blogs || [
         { name: '똑심마인드 블로그', url: 'https://rss.blog.naver.com/talk_sim_mind.xml', enabled: true }
-      }).forEach(b => addBlogRow(b.name, b.url, b.enabled !== false, b.mode || 'unread'));
+      ]).forEach(b => addBlogRow(b.name, b.url, b.enabled !== false, b.mode || 'unread'));
 
       document.getElementById('settings-modal').classList.add('open');
     }
