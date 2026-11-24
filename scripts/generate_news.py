@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import base64
 import random
 import smtplib
@@ -33,7 +34,7 @@ HEADERS = {
 
 def get_candidate_models():
     url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
-    stable_text, preview_text = [], []
+    stable_flash, stable_lite, stable_pro, preview_text = [], [], [], []
     stable_image, preview_image = [], []
     try:
         res = requests.get(url, timeout=30)
@@ -44,22 +45,27 @@ def get_candidate_models():
             if "generateContent" not in methods:
                 continue
             lower = name.lower()
-            is_preview = any(x in lower for x in ["preview", "exp", "omni"])
+            if any(x in lower for x in ["tts", "audio", "embedding", "omni", "robotics", "computer-use"]):
+                continue
+            is_preview = any(x in lower for x in ["preview", "exp"])
             if "image" in lower:
                 (preview_image if is_preview else stable_image).append(name)
-            elif "flash" in lower and not any(x in lower for x in ["tts", "audio", "embedding", "lite"]):
-                (preview_text if is_preview else stable_text).append(name)
-        stable_text.sort(reverse=True)
-        preview_text.sort(reverse=True)
-        stable_image.sort(reverse=True)
-        preview_image.sort(reverse=True)
+            elif "flash" in lower and "lite" in lower:
+                (preview_text if is_preview else stable_lite).append(name)
+            elif "flash" in lower:
+                (preview_text if is_preview else stable_flash).append(name)
+            elif "pro" in lower:
+                (preview_text if is_preview else stable_pro).append(name)
+
+        for lst in (stable_flash, stable_lite, stable_pro, preview_text, stable_image, preview_image):
+            lst.sort(reverse=True)
     except Exception as e:
         print(f"모델 목록 조회 중 경고: {e}")
 
-    text_models = stable_text + preview_text
+    text_models = stable_flash + stable_lite + stable_pro + preview_text
     image_models = stable_image + preview_image
 
-    for fb in ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"]:
+    for fb in ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-flash-latest"]:
         if fb not in text_models:
             text_models.append(fb)
     for fb in ["gemini-2.5-flash-image", "gemini-2.0-flash-exp-image-generation"]:
@@ -163,7 +169,7 @@ def scrape_article(google_url):
     image_url = ""
     full_text = ""
     try:
-        res = requests.get(real_url, headers=HEADERS, timeout=12)
+        res = requests.get(real_url, headers=HEADERS, timeout=10)
         res.encoding = res.apparent_encoding or "utf-8"
         html = res.text
 
@@ -179,11 +185,11 @@ def scrape_article(google_url):
             full_text = extracted.strip()
         else:
             paras = [p.get_text(" ", strip=True) for p in soup.find_all("p") if len(p.get_text(strip=True)) > 30]
-            full_text = "\n\n".join(paras[:15])
+            full_text = "\n\n".join(paras[:12])
     except Exception as e:
         print(f"본문 추출 건너뜀 ({real_url[:50]}): {e}")
 
-    return real_url, image_url, full_text[:2800]
+    return real_url, image_url, full_text[:1600]
 
 
 def fetch_rss_news(categories):
@@ -192,7 +198,7 @@ def fetch_rss_news(categories):
         q = urllib.parse.quote(cat["query"])
         url = f"https://news.google.com/rss/search?q={q}&hl=ko&gl=KR&ceid=KR:ko"
         feed = feedparser.parse(url)
-        for entry in feed.entries[:3]:
+        for entry in feed.entries[:2]:
             raw_link = entry.get("link", "")
             real_url, img, body = scrape_article(raw_link)
             collected.append({
@@ -214,11 +220,11 @@ def call_gemini_text(news_items, past_topics, text_models):
 
 [요구사항]
 1. lead_story: 오늘 가장 흥미롭고 중요한 1면 톱기사 1건
-   - full_article: 수집된 raw_body의 핵심 사실, 수치, 인용구를 빠짐없이 살려 4~6문단으로 충실하게 정리한 전체 기사 본문 (문단 구분은 \\n\\n 사용). raw_body가 부족하면 제목과 맥락을 바탕으로 충실히 보완할 것.
+   - full_article: 수집된 raw_body의 핵심 사실, 수치, 인용구를 빠짐없이 살려 4~5문단으로 충실하게 정리한 전체 기사 본문 (문단 구분은 \\n\\n 사용). raw_body가 부족하면 제목과 맥락을 바탕으로 충실히 보완할 것.
    - takeaway: 핵심 포인트 한 줄
    - image: 입력 데이터의 image URL을 그대로 유지
 2. articles: 카테고리별로 골고루 5건 선별
-   - full_article: 독자가 원문을 따로 찾아보지 않아도 되도록 핵심 내용·배경·전망을 3~5문단으로 충실하게 담은 전체 기사 본문 (문단 구분은 \\n\\n 사용)
+   - full_article: 독자가 원문을 따로 찾아보지 않아도 되도록 핵심 내용·배경·전망을 3~4문단으로 충실하게 담은 전체 기사 본문 (문단 구분은 \\n\\n 사용)
    - image: 입력 데이터의 image URL을 그대로 유지
 3. psych_column: 매일 1개의 흥미로운 심리학·인지과학·상담이론 개념 소개
    - 이미 다룬 주제({json.dumps(past_topics, ensure_ascii=False)})는 제외할 것.
@@ -277,13 +283,28 @@ def call_gemini_text(news_items, past_topics, text_models):
 
     for model_name in text_models:
         endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
-        res = requests.post(endpoint, json=payload, timeout=90)
-        if res.status_code != 200:
-            print(f"[{model_name}] 건너뜀 ({res.status_code})")
-            continue
-        print(f"사용된 텍스트 모델: {model_name}")
-        text = res.json()["candidates"][0]["content"]["parts"][0]["text"]
-        return json.loads(text)
+        max_tries = 3
+        for attempt in range(max_tries):
+            try:
+                res = requests.post(endpoint, json=payload, timeout=90)
+                if res.status_code == 200:
+                    print(f"사용된 텍스트 모델: {model_name}")
+                    text = res.json()["candidates"][0]["content"]["parts"][0]["text"]
+                    return json.loads(text)
+                if res.status_code == 503 and attempt < max_tries - 1:
+                    wait = (attempt + 1) * 5
+                    print(f"[{model_name}] 서버 일시 과부하(503) — {wait}초 후 재시도...")
+                    time.sleep(wait)
+                    continue
+                if res.status_code == 429 and attempt == 0:
+                    print(f"[{model_name}] 속도 제한(429) — 5초 후 1회 재시도...")
+                    time.sleep(5)
+                    continue
+                print(f"[{model_name}] 건너뜀 ({res.status_code})")
+                break
+            except Exception as e:
+                print(f"[{model_name}] 요청 예외: {e}")
+                break
 
     raise RuntimeError("사용 가능한 Gemini 텍스트 모델을 찾지 못했습니다.")
 
