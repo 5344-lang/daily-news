@@ -2,8 +2,7 @@ import os
 import re
 import json
 import time
-import base64
-import random
+import shutil
 import smtplib
 import urllib.parse
 from datetime import datetime, timezone, timedelta
@@ -31,13 +30,15 @@ TO_EMAIL = os.environ.get("TO_EMAIL", GMAIL_USER).strip()
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 }
+MOBILE_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Linux; Android 14; SM-S928N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36"
+}
 
 
 def get_candidate_models():
     url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
     stable_flash, stable_lite, stable_pro, preview_text = [], [], [], []
-    stable_image, preview_image = [], []
-    excluded = ["tts", "audio", "embedding", "omni", "robotics", "computer-use", "banana", "imagen", "veo", "lyria"]
+    excluded = ["tts", "audio", "embedding", "omni", "robotics", "computer-use", "banana", "imagen", "veo", "lyria", "image"]
     try:
         res = requests.get(url, timeout=30)
         res.raise_for_status()
@@ -47,12 +48,9 @@ def get_candidate_models():
             if "generateContent" not in methods:
                 continue
             lower = name.lower()
-            is_preview = any(x in lower for x in ["preview", "exp"])
-            if "image" in lower:
-                (preview_image if is_preview else stable_image).append(name)
-                continue
             if any(x in lower for x in excluded):
                 continue
+            is_preview = any(x in lower for x in ["preview", "exp"])
             if "flash" in lower and "lite" in lower:
                 (preview_text if is_preview else stable_lite).append(name)
             elif "flash" in lower:
@@ -60,38 +58,64 @@ def get_candidate_models():
             elif "pro" in lower:
                 (preview_text if is_preview else stable_pro).append(name)
 
-        for lst in (stable_flash, stable_lite, stable_pro, preview_text, stable_image, preview_image):
+        for lst in (stable_flash, stable_lite, stable_pro, preview_text):
             lst.sort(reverse=True)
     except Exception as e:
         print(f"모델 목록 조회 중 경고: {e}")
 
     text_models = stable_flash + stable_lite + stable_pro + preview_text
-    image_models = stable_image + preview_image
-
     for fb in ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-flash-latest"]:
         if fb not in text_models:
             text_models.append(fb)
-    for fb in ["gemini-2.5-flash-image", "gemini-2.0-flash-exp-image-generation"]:
-        if fb not in image_models:
-            image_models.append(fb)
-
-    return text_models, image_models
+    return text_models
 
 
-def load_psych_history():
-    path = "data/psych_history.json"
+def load_history():
+    path = "data/published_history.json"
     if os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    data.setdefault("research", [])
+                    data.setdefault("blogs", [])
+                    return data
+        except Exception:
+            pass
+    return {"research": [], "blogs": []}
 
 
-def save_psych_history(history, new_topic):
-    if new_topic and new_topic not in history:
-        history.append(new_topic)
+def save_history(history):
     os.makedirs("data", exist_ok=True)
-    with open("data/psych_history.json", "w", encoding="utf-8") as f:
-        json.dump(history[-60:], f, ensure_ascii=False, indent=2)
+    history["research"] = history.get("research", [])[-120:]
+    history["blogs"] = history.get("blogs", [])[-120:]
+    with open("data/published_history.json", "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False, indent=2)
+
+
+def reset_image_dir():
+    img_dir = "data/images"
+    if os.path.exists(img_dir):
+        shutil.rmtree(img_dir)
+    os.makedirs(img_dir, exist_ok=True)
+
+
+def download_local_image(img_url, filename, referer=""):
+    if not img_url or not img_url.startswith("http"):
+        return ""
+    try:
+        headers = dict(MOBILE_HEADERS)
+        if referer:
+            headers["Referer"] = referer
+        res = requests.get(img_url, headers=headers, timeout=15)
+        if res.status_code == 200 and len(res.content) > 2000:
+            path = f"data/images/{filename}"
+            with open(path, "wb") as f:
+                f.write(res.content)
+            return f"./{path}"
+    except Exception as e:
+        print(f"이미지 다운로드 건너뜀 ({filename}): {e}")
+    return ""
 
 
 def decode_google_news_builtin(google_url):
@@ -152,14 +176,12 @@ def resolve_real_url(google_url):
                         return decoded
                 except Exception:
                     pass
-
     try:
         builtin = decode_google_news_builtin(google_url)
         if builtin:
             return builtin
     except Exception:
         pass
-
     try:
         r = requests.get(google_url, headers=HEADERS, timeout=10, allow_redirects=True)
         return r.url
@@ -167,33 +189,31 @@ def resolve_real_url(google_url):
         return google_url
 
 
-def clean_article_text(text):
+def clean_article_text(text, max_len=3600):
     if not text:
         return ""
     lines = []
     for line in text.splitlines():
-        s = line.strip()
+        s = line.replace("\u200b", "").strip()
         if not s:
             continue
-        # 저작권/기자 이메일 등 불필요한 꼬리말 정리
         if any(k in s for k in ["무단전재", "재배포 금지", "저작권자", "ⓒ", "Copyright", "제보하기", "구독하기"]):
             continue
         s = re.sub(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", "", s).strip()
-        if len(s) >= 15:
+        if len(s) >= 12:
             lines.append(s)
-    return "\n\n".join(lines)[:3200]
+    return "\n\n".join(lines)[:max_len]
 
 
-def scrape_article(google_url):
-    real_url = resolve_real_url(google_url)
+def scrape_generic_article(url, max_len=3200):
     image_url = ""
     full_text = ""
     try:
-        res = requests.get(real_url, headers=HEADERS, timeout=10)
+        res = requests.get(url, headers=HEADERS, timeout=12)
         res.encoding = res.apparent_encoding or "utf-8"
         html = res.text
-
         soup = BeautifulSoup(html, "html.parser")
+
         og_img = soup.find("meta", property="og:image") or soup.find("meta", attrs={"name": "twitter:image"})
         if og_img and og_img.get("content"):
             cand = og_img["content"].strip()
@@ -202,26 +222,28 @@ def scrape_article(google_url):
 
         extracted = trafilatura.extract(html, include_comments=False, include_tables=False)
         if extracted and len(extracted.strip()) > 120:
-            full_text = clean_article_text(extracted)
+            full_text = clean_article_text(extracted, max_len)
         else:
-            paras = [p.get_text(" ", strip=True) for p in soup.find_all("p") if len(p.get_text(strip=True)) > 30]
-            full_text = clean_article_text("\n".join(paras[:15]))
+            paras = [p.get_text(" ", strip=True) for p in soup.find_all("p") if len(p.get_text(strip=True)) > 25]
+            full_text = clean_article_text("\n".join(paras[:18]), max_len)
     except Exception as e:
-        print(f"본문 추출 건너뜀 ({real_url[:50]}): {e}")
-
-    return real_url, image_url, full_text
+        print(f"본문 추출 건너뜀 ({url[:50]}): {e}")
+    return image_url, full_text
 
 
 def fetch_rss_news(categories):
     collected = []
     idx = 0
     for cat in categories:
+        if not cat.get("query"):
+            continue
         q = urllib.parse.quote(cat["query"])
         url = f"https://news.google.com/rss/search?q={q}&hl=ko&gl=KR&ceid=KR:ko"
         feed = feedparser.parse(url)
         for entry in feed.entries[:3]:
             raw_link = entry.get("link", "")
-            real_url, img, body = scrape_article(raw_link)
+            real_url = resolve_real_url(raw_link)
+            img, body = scrape_generic_article(real_url)
             title = entry.get("title", "").split(" - ")[0].strip()
             collected.append({
                 "id": idx,
@@ -235,13 +257,171 @@ def fetch_rss_news(categories):
                 "has_body": len(body) > 200,
             })
             idx += 1
-    print(f"총 {len(collected)}건 기사 수집 및 원문/사진 추출 완료")
+    print(f"총 {len(collected)}건 뉴스 수집 완료")
     return collected
 
 
-def call_gemini_editor(news_items, past_topics, text_models):
-    # Gemini에는 제목과 앞부분 160자만 가볍게 전달하여 503 과부하 방지
-    compact_list = [
+def fetch_research_candidates(research_feeds, published_urls):
+    candidates = []
+    for feed_cfg in research_feeds:
+        if not feed_cfg.get("enabled", True) or not feed_cfg.get("url"):
+            continue
+        feed = feedparser.parse(feed_cfg["url"])
+        for entry in feed.entries[:8]:
+            link = entry.get("link", "").strip()
+            if not link or link in published_urls:
+                continue
+            img, body = scrape_generic_article(link, max_len=2400)
+            if not body:
+                raw_sum = BeautifulSoup(entry.get("summary", ""), "html.parser").get_text(" ", strip=True)
+                body = raw_sum[:2000]
+            if len(body) < 200:
+                continue
+            candidates.append({
+                "source_name": feed_cfg.get("name", "심리학 연구"),
+                "title": entry.get("title", "").strip(),
+                "url": link,
+                "image": img,
+                "body": body,
+            })
+            if len(candidates) >= 3:
+                break
+        if len(candidates) >= 3:
+            break
+    print(f"최신 심리 실험 연구 후보 {len(candidates)}건 수집 완료")
+    return candidates
+
+
+def normalize_blog_rss(raw_url):
+    u = raw_url.strip()
+    if not u:
+        return ""
+    if "rss.blog.naver.com" in u:
+        return u
+    m = re.search(r"blog\.naver\.com/([a-zA-Z0-9_-]+)", u)
+    if m:
+        return f"https://rss.blog.naver.com/{m.group(1)}.xml"
+    if not u.startswith("http") and re.match(r"^[a-zA-Z0-9_-]+$", u):
+        return f"https://rss.blog.naver.com/{u}.xml"
+    return u
+
+
+def scrape_naver_blog_post(url, img_idx):
+    clean_url = url.split("?")[0]
+    m = re.search(r"blog\.naver\.com/([^/?]+)/(\d+)", clean_url)
+    if not m:
+        img, body = scrape_generic_article(url, max_len=4500)
+        local_img = download_local_image(img, f"blog_{img_idx}.jpg", referer=url)
+        return local_img or img, body
+
+    blog_id, log_no = m.group(1), m.group(2)
+    mobile_url = f"https://m.blog.naver.com/{blog_id}/{log_no}"
+    image_url = ""
+    full_text = ""
+
+    try:
+        res = requests.get(mobile_url, headers=MOBILE_HEADERS, timeout=15)
+        res.encoding = "utf-8"
+        soup = BeautifulSoup(res.text, "html.parser")
+
+        container = soup.select_one(".se-main-container") or soup.select_one("#postViewArea") or soup.select_one(".post_ct")
+        if container:
+            paras = []
+            se_paras = container.select(".se-text-paragraph")
+            if se_paras:
+                for p in se_paras:
+                    t = p.get_text(" ", strip=True).replace("\u200b", "").strip()
+                    if t:
+                        paras.append(t)
+                full_text = "\n\n".join(paras)[:4500]
+            else:
+                full_text = clean_article_text(container.get_text("\n", strip=True), max_len=4500)
+
+            for img_tag in container.select("img"):
+                src = img_tag.get("data-lazy-src") or img_tag.get("src") or ""
+                if src.startswith("http") and "sticker" not in src and "emoticon" not in src and "profile" not in src:
+                    src = re.sub(r"type=w\d+(_blur)?", "type=w966", src)
+                    image_url = src
+                    break
+
+        if not image_url:
+            og = soup.find("meta", property="og:image")
+            if og and og.get("content"):
+                image_url = og["content"].strip()
+
+        if not full_text:
+            extracted = trafilatura.extract(res.text, include_comments=False, include_tables=False)
+            full_text = clean_article_text(extracted, max_len=4500)
+    except Exception as e:
+        print(f"네이버 블로그 추출 오류 ({mobile_url}): {e}")
+
+    local_img = download_local_image(image_url, f"blog_{img_idx}.jpg", referer=mobile_url)
+    return local_img, full_text
+
+
+def fetch_blog_articles(blogs_cfg, published_urls):
+    picked = []
+    img_idx = 0
+    for b in blogs_cfg:
+        if not b.get("enabled", True) or not b.get("url"):
+            continue
+        rss_url = normalize_blog_rss(b["url"])
+        feed = feedparser.parse(rss_url)
+        if not feed.entries:
+            print(f"블로그 RSS 비어있음: {rss_url}")
+            continue
+
+        # 아직 발행되지 않은 글 우선, 모두 발행했다면 최신 글 1편 폴백
+        fresh_entries = [e for e in feed.entries[:15] if e.get("link", "").split("?")[0] not in published_urls]
+        candidates = fresh_entries if fresh_entries else feed.entries[:3]
+
+        selected_post = None
+        for entry in candidates:
+            link = entry.get("link", "").split("?")[0]
+            title = entry.get("title", "").strip()
+            if "blog.naver.com" in link:
+                img, body = scrape_naver_blog_post(link, img_idx)
+            else:
+                raw_img, body = scrape_generic_article(link, max_len=4500)
+                img = download_local_image(raw_img, f"blog_{img_idx}.jpg", referer=link) or raw_img
+
+            if len(body) >= 300:
+                selected_post = {
+                    "blog_name": b.get("name", "구독 블로그"),
+                    "title": title,
+                    "url": link,
+                    "image": img,
+                    "full_article": body,
+                    "published": entry.get("published", "")[:16],
+                }
+                img_idx += 1
+                break
+
+        # 300자 이상 글이 하나도 없으면 첫 번째 글이라도 수집
+        if not selected_post and candidates:
+            entry = candidates[0]
+            link = entry.get("link", "").split("?")[0]
+            raw_sum = BeautifulSoup(entry.get("summary", ""), "html.parser").get_text("\n", strip=True)
+            selected_post = {
+                "blog_name": b.get("name", "구독 블로그"),
+                "title": entry.get("title", "").strip(),
+                "url": link,
+                "image": "",
+                "full_article": clean_article_text(raw_sum, max_len=3500) or "원문 링크에서 전체 내용을 확인하세요.",
+                "published": entry.get("published", "")[:16],
+            }
+
+        if selected_post:
+            picked.append(selected_post)
+            if len(picked) >= 3:
+                break
+
+    print(f"구독 블로그 아티클 {len(picked)}편 수집 완료")
+    return picked
+
+
+def call_gemini_editor(news_items, research_candidates, text_models):
+    compact_news = [
         {
             "id": item["id"],
             "category": item["category"],
@@ -249,62 +429,68 @@ def call_gemini_editor(news_items, past_topics, text_models):
             "source": item["source"],
             "has_image": item["has_image"],
             "has_body": item["has_body"],
-            "preview": item["full_article"][:160],
+            "preview": item["full_article"][:140],
         }
         for item in news_items
     ]
 
+    research_block = [
+        {
+            "idx": i,
+            "source_name": r["source_name"],
+            "title": r["title"],
+            "body": r["body"][:1800],
+        }
+        for i, r in enumerate(research_candidates[:2])
+    ]
+
     prompt = f"""
-당신은 고전 신문 'DAILY NEWS'의 편집장 겸 심리학 칼럼니스트입니다.
-오늘({TODAY_KR}) 수집된 기사 후보 목록을 보고 가장 읽기 좋은 기사를 고른 뒤, 오늘의 심리학 학습만화 칼럼을 작성해 JSON으로만 응답하세요.
+당신은 고전 신문 'DAILY NEWS'의 편집장 겸 심리학 과학 저널리스트입니다.
+오늘({TODAY_KR}) 수집된 뉴스 후보와 최신 심리학 실험 논문 기사를 바탕으로 JSON으로만 응답하세요.
 
 [요구사항]
-1. lead_id: 오늘 1면 톱기사로 가장 적합한 기사 id 1개 (가급적 has_body와 has_image가 모두 true인 기사 우선 선택)
-2. lead_takeaway: 선택한 1면 톱기사의 핵심 통찰 한 줄 요약
-3. article_ids: 나머지 기사 중 카테고리별로 골고루 5개의 id 선택 (lead_id와 중복 금지, has_body가 true인 기사 우선)
-4. psych_column: 매일 1개의 흥미로운 심리학·인지과학·상담이론 개념 소개
-   - 이미 다룬 주제({json.dumps(past_topics, ensure_ascii=False)})는 제외할 것.
-   - concept_name: 심리학 용어명
-   - title: 흥미로운 칼럼 제목
-   - caption: 만화 하단에 들어갈 묵직한 한 줄 요약 및 학자/연도 (예: "능력이 낮을수록 자신의 오류를 알아차릴 인지 도구도 없다. (Flavell, 1979)")
-   - summary: 개념 설명 3~4문장
-   - real_case: 일상 예시 또는 유명 심리학 실험 사례 2~3문장
-   - image_prompt: 아래 스타일 가이드에 맞춘 **영어** 이미지 생성 프롬프트.
-     * 스타일: Clean modern Korean educational comic webtoon illustration, bold black ink outlines, expressive cartoon characters, flat cel-shading, contrasting warm and cool split background colors, wide 16:9 comic panel.
-     * 구도: 주제에 맞춰 '좌우 2단 비교 컷(Split-screen comparison)', '시소/저울 같은 직관적 시각 비유', 또는 '실제 실험 장면 스토리텔링' 중 하나를 구체적으로 묘사할 것.
-     * 중요: 이미지 안에 글자/텍스트/말풍선 글씨는 절대 넣지 말 것 ("no text, no words, no letters, no speech bubbles"). 표정과 시각적 상징물만으로 표현할 것.
+1. edition_quote: 신문 제호 아래 들어갈 짧은 명언 또는 편집장 한마디
+2. lead_id: 1면 톱기사로 가장 적합한 뉴스 id 1개 (has_body와 has_image가 true인 기사 우선)
+3. lead_takeaway: 1면 톱기사 핵심 통찰 한 줄
+4. article_ids: 나머지 뉴스 중 카테고리별로 골고루 4~5개의 id 선택 (lead_id 중복 금지, has_body 우선)
+5. research_report: 아래 [심리학 실험 연구 후보]가 비어 있지 않다면, 그중 가장 흥미롭고 재미있는 최신 실험 연구 1편을 골라 독자가 몰입해서 읽을 수 있는 한국어 심층 기사로 번역·재구성할 것. (후보가 비어 있으면 null 반환)
+   - selected_idx: 선택한 연구의 idx 번호
+   - title: 호기심을 끄는 한국어 기사 제목
+   - journal_info: 원문에서 언급된 학술지명/연구기관/저자 정보 (없으면 출처명)
+   - full_article: 4개 문단(\\n\\n 구분)으로 풍성하게 작성 — ① 왜 이 실험을 했는가(흥미로운 질문) ② 구체적인 실험 방법 및 참가자 ③ 의외의 실험 결과 ④ 우리 일상에 주는 시사점
+   - takeaway: 연구 핵심 한 줄 요약
 
 [출력 JSON 스키마]
 {{
-  "edition_quote": "오늘 신문 제호 아래 들어갈 짧은 명언 또는 편집장 한마디",
+  "edition_quote": "문장",
   "lead_id": 0,
-  "lead_takeaway": "핵심 포인트 한 줄",
-  "article_ids": [1, 3, 5, 7, 9],
-  "psych_column": {{
-    "concept_name": "심리학 용어명",
-    "title": "칼럼 제목",
-    "caption": "만화 하단 한 줄 통찰 (학자, 연도)",
-    "summary": "개념 설명",
-    "real_case": "실험 또는 일상 사례",
-    "image_prompt": "English comic illustration prompt..."
+  "lead_takeaway": "핵심 한 줄",
+  "article_ids": [1, 3, 5, 7],
+  "research_report": {{
+    "selected_idx": 0,
+    "title": "한국어 제목",
+    "journal_info": "학술지 또는 연구기관 정보",
+    "full_article": "문단1\\n\\n문단2\\n\\n문단3\\n\\n문단4",
+    "takeaway": "핵심 한 줄"
   }}
 }}
 
-[기사 후보 목록]
-{json.dumps(compact_list, ensure_ascii=False)}
+[뉴스 후보]
+{json.dumps(compact_news, ensure_ascii=False)}
+
+[심리학 실험 연구 후보]
+{json.dumps(research_block, ensure_ascii=False)}
 """
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {
-            "responseMimeType": "application/json",
-        },
+        "generationConfig": {"responseMimeType": "application/json"},
     }
 
     for model_name in text_models:
         endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
         for attempt in range(3):
             try:
-                res = requests.post(endpoint, json=payload, timeout=60)
+                res = requests.post(endpoint, json=payload, timeout=70)
                 if res.status_code == 200:
                     print(f"사용된 텍스트 모델: {model_name}")
                     text = res.json()["candidates"][0]["content"]["parts"][0]["text"]
@@ -326,81 +512,42 @@ def call_gemini_editor(news_items, past_topics, text_models):
     raise RuntimeError("사용 가능한 Gemini 텍스트 모델을 찾지 못했습니다.")
 
 
-def generate_psych_illustration(image_prompt, image_models):
-    if not image_prompt:
-        return ""
-    os.makedirs("data", exist_ok=True)
-    img_path = "data/today_psych.png"
-
-    payload = {
-        "contents": [{"parts": [{"text": image_prompt}]}],
-        "generationConfig": {"responseModalities": ["TEXT", "IMAGE"]},
-    }
-    for model_name in image_models:
-        endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
-        try:
-            res = requests.post(endpoint, json=payload, timeout=90)
-            if res.status_code != 200:
-                continue
-            parts = res.json()["candidates"][0]["content"]["parts"]
-            for part in parts:
-                inline = part.get("inlineData") or part.get("inline_data")
-                if inline and inline.get("data"):
-                    with open(img_path, "wb") as f:
-                        f.write(base64.b64decode(inline["data"]))
-                    print(f"Gemini 삽화 생성 완료! ({model_name})")
-                    return "./data/today_psych.png"
-        except Exception:
-            pass
-
-    try:
-        encoded = urllib.parse.quote(image_prompt)
-        seed = random.randint(1, 999999)
-        free_url = f"https://image.pollinations.ai/prompt/{encoded}?width=1024&height=576&nologo=true&seed={seed}"
-        res = requests.get(free_url, headers=HEADERS, timeout=60)
-        if res.status_code == 200 and len(res.content) > 5000:
-            with open(img_path, "wb") as f:
-                f.write(res.content)
-            print("무료 이미지 생성기(Pollinations)로 심리학 학습만화 삽화 저장 완료!")
-            return "./data/today_psych.png"
-    except Exception as e:
-        print(f"무료 이미지 폴백 오류: {e}")
-
-    return ""
-
-
 def send_gmail(edition, site_url):
     if not (GMAIL_USER and GMAIL_APP_PASSWORD and TO_EMAIL):
         print("Gmail 설정이 없어 메일 발송을 건너뜁니다.")
         return
 
     lead = edition["lead_story"]
-    psych = edition.get("psych_column", {})
+    research = edition.get("research_report")
+    blogs = edition.get("blog_articles", [])
     lead_preview = lead.get("full_article", "").split("\n\n")[0]
+
     items_html = "".join(
         f"<li style='margin-bottom:8px;'><b>[{a['category']}]</b> {a['title']}</li>"
         for a in edition["articles"][:5]
     )
+    extra_html = ""
+    if research:
+        extra_html += f"<div style='background:#efe9dc;border:1px solid #111;padding:12px;margin-top:14px;'><b>🔬 최신 심리 실험 리포트</b><br>{research['title']}</div>"
+    if blogs:
+        b_titles = "<br>".join(f"• [{b['blog_name']}] {b['title']}" for b in blogs)
+        extra_html += f"<div style='background:#f7f4ec;border:1px solid #111;padding:12px;margin-top:10px;'><b>✍️ 구독 블로그 아티클</b><br>{b_titles}</div>"
+
     html = f"""
     <div style="font-family: Georgia, serif; max-width: 560px; margin: 0 auto; padding: 20px; border: 2px solid #111; background: #faf7f0; color: #111;">
       <div style="text-align: center; border-bottom: 3px double #111; padding-bottom: 10px; margin-bottom: 16px;">
-        <h1 style="margin: 0; letter-spacing: 3px;">DAILY NEWS</h1>
+        <h1 style="margin: 0; letter-spacing: 3px;">{edition.get('paper_name', 'DAILY NEWS')}</h1>
         <p style="margin: 4px 0 0; font-size: 13px;">{TODAY_KR} 조간 발행</p>
       </div>
       <p style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">[1면 톱기사 · {lead['category']}]</p>
       <h2 style="margin-top: 0;">{lead['title']}</h2>
       <p style="line-height: 1.6;">{lead_preview}</p>
       <hr style="border: 0; border-top: 1px solid #111; margin: 18px 0;">
-      <p style="font-weight: bold;">오늘의 주요 기사</p>
       <ul style="padding-left: 18px; line-height: 1.6;">{items_html}</ul>
-      <div style="background: #efe9dc; border: 1px solid #111; padding: 12px; margin-top: 16px;">
-        <p style="margin: 0 0 4px; font-size: 12px; font-weight: bold;">🧠 오늘의 심리학 학습만화</p>
-        <p style="margin: 0; font-weight: bold;">{psych.get('title', '')}</p>
-        <p style="margin: 4px 0 0; font-size: 13px;">{psych.get('caption', '')}</p>
-      </div>
+      {extra_html}
       <div style="text-align: center; margin-top: 24px;">
         <a href="{site_url}" style="display: inline-block; padding: 12px 24px; background: #111; color: #fff; text-decoration: none; font-weight: bold;">
-          📰 오늘의 신문 전체 기사 & 만화 읽기
+          📰 오늘의 신문 전체 읽기
         </a>
       </div>
     </div>
@@ -421,12 +568,16 @@ def main():
     with open("config.json", "r", encoding="utf-8") as f:
         config = json.load(f)
 
-    text_models, image_models = get_candidate_models()
-    past_topics = load_psych_history()
-    news = fetch_rss_news(config["categories"])
-    news_map = {item["id"]: item for item in news}
+    reset_image_dir()
+    history = load_history()
+    text_models = get_candidate_models()
 
-    ai_data = call_gemini_editor(news, past_topics, text_models)
+    news = fetch_rss_news(config.get("categories", []))
+    research_candidates = fetch_research_candidates(config.get("research_feeds", []), history["research"])
+    blog_articles = fetch_blog_articles(config.get("blogs", []), history["blogs"])
+
+    news_map = {item["id"]: item for item in news}
+    ai_data = call_gemini_editor(news, research_candidates, text_models)
 
     lead_id = ai_data.get("lead_id", 0)
     lead_item = news_map.get(lead_id, news[0])
@@ -441,7 +592,7 @@ def main():
     }
 
     chosen_ids = [i for i in ai_data.get("article_ids", []) if i in news_map and i != lead_item["id"]]
-    if len(chosen_ids) < 5:
+    if len(chosen_ids) < 4:
         for item in news:
             if item["id"] != lead_item["id"] and item["id"] not in chosen_ids:
                 chosen_ids.append(item["id"])
@@ -460,9 +611,31 @@ def main():
         for i in chosen_ids[:5]
     ]
 
-    psych = ai_data.get("psych_column", {})
-    psych["image"] = generate_psych_illustration(psych.get("image_prompt", ""), image_models)
-    save_psych_history(past_topics, psych.get("concept_name", ""))
+    research_report = None
+    ai_research = ai_data.get("research_report")
+    if ai_research and research_candidates:
+        sel = ai_research.get("selected_idx", 0)
+        if not isinstance(sel, int) or sel < 0 or sel >= len(research_candidates):
+            sel = 0
+        src_r = research_candidates[sel]
+        local_r_img = download_local_image(src_r["image"], "research_0.jpg", referer=src_r["url"])
+        research_report = {
+            "source_name": src_r["source_name"],
+            "title": ai_research.get("title", src_r["title"]),
+            "journal_info": ai_research.get("journal_info", src_r["source_name"]),
+            "full_article": ai_research.get("full_article", ""),
+            "takeaway": ai_research.get("takeaway", ""),
+            "url": src_r["url"],
+            "image": local_r_img or src_r["image"],
+        }
+        if src_r["url"] not in history["research"]:
+            history["research"].append(src_r["url"])
+
+    for b in blog_articles:
+        if b["url"] not in history["blogs"]:
+            history["blogs"].append(b["url"])
+
+    save_history(history)
 
     edition = {
         "date": TODAY,
@@ -471,7 +644,8 @@ def main():
         "edition_quote": ai_data.get("edition_quote", ""),
         "lead_story": lead_story,
         "articles": articles,
-        "psych_column": psych,
+        "research_report": research_report,
+        "blog_articles": blog_articles,
     }
 
     os.makedirs("data", exist_ok=True)
