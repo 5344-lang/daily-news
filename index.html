@@ -1215,15 +1215,21 @@
       return String(s || '').replace(/"/g, '&quot;');
     }
 
-    function makeRowHtml(type, name = '', val = '', enabled = true) {
+function makeRowHtml(type, name = '', val = '', enabled = true, mode = 'unread') {
       const ph1 = type === 'cat' ? '카테고리명' : '이름';
       const ph2 = type === 'cat' ? '검색 키워드 (OR로 연결)' : 'RSS 주소 또는 네이버 블로그 아이디';
       const chk = type === 'cat' ? '' : `<input type="checkbox" class="inp-en" ${enabled ? 'checked' : ''} />`;
+      const modeSel = type === 'blog' ? `
+        <select class="inp-mode" style="padding:5px; border:1px solid #333; background:#fff; font-family:inherit; font-size:12px;">
+          <option value="unread" ${mode !== 'new_only' ? 'selected' : ''}>안 읽은 글</option>
+          <option value="new_only" ${mode === 'new_only' ? 'selected' : ''}>새 글만</option>
+        </select>` : '';
       return `
         <div class="row-item">
           ${chk}
           <input type="text" class="small-input inp-name" value="${escapeAttr(name)}" placeholder="${ph1}" />
           <input type="text" class="inp-val" value="${escapeAttr(val)}" placeholder="${ph2}" />
+          ${modeSel}
           <button class="btn-sm" onclick="this.parentElement.remove()">삭제</button>
         </div>`;
     }
@@ -1234,10 +1240,9 @@
     function addResearchRow(n = '', u = '', en = true) {
       document.getElementById('cfg-research').insertAdjacentHTML('beforeend', makeRowHtml('res', n, u, en));
     }
-    function addBlogRow(n = '', u = '', en = true) {
-      document.getElementById('cfg-blogs').insertAdjacentHTML('beforeend', makeRowHtml('blog', n, u, en));
+    function addBlogRow(n = '', u = '', en = true, mode = 'unread') {
+      document.getElementById('cfg-blogs').insertAdjacentHTML('beforeend', makeRowHtml('blog', n, u, en, mode));
     }
-
     async function openSettings() {
       document.getElementById('settings-status').textContent = '';
       document.getElementById('gh-repo').value = inferRepo();
@@ -1264,7 +1269,7 @@
       document.getElementById('cfg-blogs').innerHTML = '';
       (loadedConfig.blogs || [
         { name: '똑심마인드 블로그', url: 'https://rss.blog.naver.com/talk_sim_mind.xml', enabled: true }
-      ]).forEach(b => addBlogRow(b.name, b.url, b.enabled !== false));
+      }).forEach(b => addBlogRow(b.name, b.url, b.enabled !== false, b.mode || 'unread'));
 
       document.getElementById('settings-modal').classList.add('open');
     }
@@ -1316,6 +1321,7 @@
       const blogs = Array.from(document.querySelectorAll('#cfg-blogs .row-item')).map(row => ({
         name: row.querySelector('.inp-name').value.trim(),
         url: normalizeBlogUrl(row.querySelector('.inp-val').value),
+        mode: row.querySelector('.inp-mode') ? row.querySelector('.inp-mode').value : 'unread',
         enabled: row.querySelector('.inp-en').checked,
       })).filter(b => b.name && b.url);
 
