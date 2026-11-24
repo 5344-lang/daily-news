@@ -1,6 +1,6 @@
 import os
 import json
-import re
+import base64
 import smtplib
 import urllib.parse
 from datetime import datetime, timezone, timedelta
@@ -17,6 +17,53 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 GMAIL_USER = os.environ.get("GMAIL_USER", "").strip()
 GMAIL_APP_PASSWORD = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
 TO_EMAIL = os.environ.get("TO_EMAIL", GMAIL_USER).strip()
+
+
+def get_candidate_models():
+    url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
+    text_models = []
+    image_models = []
+    try:
+        res = requests.get(url, timeout=30)
+        res.raise_for_status()
+        for m in res.json().get("models", []):
+            name = m.get("name", "").replace("models/", "")
+            methods = m.get("supportedGenerationMethods", [])
+            if "generateContent" not in methods:
+                continue
+            lower = name.lower()
+            if "image" in lower:
+                image_models.append(name)
+            elif "flash" in lower and not any(x in lower for x in ["tts", "audio", "embedding", "lite"]):
+                text_models.append(name)
+        text_models.sort(reverse=True)
+        image_models.sort(reverse=True)
+    except Exception as e:
+        print(f"모델 목록 조회 중 경고: {e}")
+
+    for fb in ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"]:
+        if fb not in text_models:
+            text_models.append(fb)
+    for fb in ["gemini-2.5-flash-image", "gemini-2.0-flash-exp-image-generation"]:
+        if fb not in image_models:
+            image_models.append(fb)
+    return text_models, image_models
+
+
+def load_psych_history():
+    path = "data/psych_history.json"
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+
+def save_psych_history(history, new_topic):
+    if new_topic and new_topic not in history:
+        history.append(new_topic)
+    os.makedirs("data", exist_ok=True)
+    with open("data/psych_history.json", "w", encoding="utf-8") as f:
+        json.dump(history[-60:], f, ensure_ascii=False, indent=2)
 
 
 def fetch_rss_news(categories):
@@ -40,18 +87,25 @@ def fetch_rss_news(categories):
     return collected
 
 
-def call_gemini(news_items):
-    endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+def call_gemini_text(news_items, past_topics, text_models):
     prompt = f"""
-당신은 고전 신문 'DAILY NEWS'의 편집장입니다.
-아래 오늘({TODAY_KR}) 수집된 뉴스 목록을 보고 중복을 제거한 뒤, 독자가 아침에 읽기 좋게 엄선하여 JSON으로만 응답하세요.
+당신은 고전 신문 'DAILY NEWS'의 편집장 겸 심리학 칼럼니스트입니다.
+아래 오늘({TODAY_KR}) 수집된 뉴스를 엄선하고, 마지막 면에 실을 '오늘의 심리학 학습만화 칼럼'을 작성해 JSON으로만 응답하세요.
 
 [요구사항]
 1. lead_story: 오늘 가장 흥미롭고 중요한 1면 톱기사 1건 (요약 4~5문장, 핵심 한 줄 포함)
 2. articles: 카테고리별로 골고루 6~8건 선별 (각 요약 2~3문장, 품격 있는 신문 문어체)
-3. crossword_words: 오늘 기사 내용 및 상식과 관련된 2~4글자 한글 단어 12개와 힌트(열쇠).
-   - 반드시 한글만 사용(띄어쓰기/숫자/영어 금지).
-   - 십자말풀이로 교차하기 좋게 서로 겹치는 글자(예: 심, 리, 기, 술, 인, 공, 경, 제, 사, 회, 문, 화 등)가 포함된 단어들로 구성할 것.
+3. psych_column: 매일 1개의 흥미로운 심리학·인지과학·상담이론 개념 소개
+   - 이미 다룬 주제({json.dumps(past_topics, ensure_ascii=False)})는 제외할 것.
+   - concept_name: 심리학 용어명 (예: 더닝-크루거 효과, 확증 편향, 자이가르닉 효과 등)
+   - title: 흥미로운 칼럼 제목
+   - caption: 만화 하단에 들어갈 묵직한 한 줄 요약 및 학자/연도 (예: "능력이 낮을수록 자신의 오류를 알아차릴 인지 도구도 없다. (Flavell, 1979)")
+   - summary: 개념 설명 3~4문장 (쉽고 명쾌하게)
+   - real_case: 일상 예시 또는 유명 심리학 실험 사례 2~3문장
+   - image_prompt: 아래 스타일 가이드에 맞춘 **영어** 이미지 생성 프롬프트.
+     * 스타일: Clean modern Korean educational comic / webtoon illustration style, crisp bold black ink outlines, expressive cartoon characters, flat cel-shading with contrasting warm and cool split background colors, 16:9 wide horizontal comic panel.
+     * 구도: 주제에 맞춰 '좌우 2단 비교 컷(Split-screen comparison)', '시소/저울 같은 직관적 시각 비유', 또는 '실제 실험 장면 스토리텔링' 중 하나를 선택해 구체적으로 묘사할 것.
+     * 중요: 이미지 안에 글자/텍스트/말풍선 글씨는 절대 넣지 말 것 ("No text, no speech bubbles, no letters, no words inside the image"). 오직 표정, 행동, 아이콘(별, 물음표, 돋보기, 전구 등)만으로 개념이 직관적으로 이해되게 묘사할 것.
 
 [출력 JSON 스키마]
 {{
@@ -75,9 +129,14 @@ def call_gemini(news_items):
       "image": "이미지 URL (없으면 빈 문자열)"
     }}
   ],
-  "crossword_words": [
-    {{ "word": "한글단어", "clue": "힌트 설명" }}
-  ]
+  "psych_column": {{
+    "concept_name": "심리학 용어명",
+    "title": "칼럼 제목",
+    "caption": "만화 하단 한 줄 통찰 (학자, 연도)",
+    "summary": "개념 설명",
+    "real_case": "실험 또는 일상 사례",
+    "image_prompt": "English comic illustration prompt..."
+  }}
 }}
 
 [수집된 뉴스]
@@ -87,125 +146,49 @@ def call_gemini(news_items):
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"responseMimeType": "application/json"},
     }
-    res = requests.post(endpoint, json=payload, timeout=60)
-    res.raise_for_status()
-    text = res.json()["candidates"][0]["content"]["parts"][0]["text"]
-    return json.loads(text)
+
+    for model_name in text_models:
+        endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+        res = requests.post(endpoint, json=payload, timeout=60)
+        if res.status_code == 404:
+            print(f"[{model_name}] 사용 불가(404), 다음 모델 시도...")
+            continue
+        res.raise_for_status()
+        print(f"사용된 텍스트 모델: {model_name}")
+        text = res.json()["candidates"][0]["content"]["parts"][0]["text"]
+        return json.loads(text)
+
+    raise RuntimeError("사용 가능한 Gemini 텍스트 모델을 찾지 못했습니다. API 키를 확인해 주세요.")
 
 
-def build_crossword(candidates, size=9):
-    clean = []
-    seen = set()
-    for item in candidates:
-        w = re.sub(r"[^가-힣]", "", item.get("word", ""))
-        if 2 <= len(w) <= 5 and w not in seen:
-            seen.add(w)
-            clean.append({"word": w, "clue": item.get("clue", "")})
-
-    grid = [["" for _ in range(size)] for _ in range(size)]
-    placed = []
-
-    if not clean:
-        return {"size": 0, "grid": [], "across": [], "down": [], "tiles": []}
-
-    # 첫 단어 중앙 가로 배치
-    first = clean.pop(0)
-    r0 = size // 2
-    c0 = (size - len(first["word"])) // 2
-    for i, ch in enumerate(first["word"]):
-        grid[r0][c0 + i] = ch
-    placed.append({"word": first["word"], "clue": first["clue"], "row": r0, "col": c0, "dir": "across"})
-
-    def can_place(word, row, col, direction):
-        dr, dc = (0, 1) if direction == "across" else (1, 0)
-        if row < 0 or col < 0 or row + dr * (len(word) - 1) >= size or col + dc * (len(word) - 1) >= size:
-            return False
-        # 앞뒤 칸 비어있는지 확인
-        br, bc = row - dr, col - dc
-        ar, ac = row + dr * len(word), col + dc * len(word)
-        if 0 <= br < size and 0 <= bc < size and grid[br][bc] != "":
-            return False
-        if 0 <= ar < size and 0 <= ac < size and grid[ar][ac] != "":
-            return False
-
-        intersections = 0
-        for i, ch in enumerate(word):
-            r, c = row + dr * i, col + dc * i
-            cur = grid[r][c]
-            if cur != "":
-                if cur != ch:
-                    return False
-                intersections += 1
-            else:
-                # 교차하지 않는 칸의 양옆이 이미 차있으면 인접 충돌 방지
-                if direction == "across":
-                    if (r > 0 and grid[r - 1][c] != "") or (r < size - 1 and grid[r + 1][c] != ""):
-                        return False
-                else:
-                    if (c > 0 and grid[r][c - 1] != "") or (c < size - 1 and grid[r][c + 1] != ""):
-                        return False
-        return intersections >= 1
-
-    for _ in range(2):
-        for item in list(clean):
-            if len(placed) >= 6:
-                break
-            w = item["word"]
-            found = False
-            for p in placed:
-                if found:
-                    break
-                new_dir = "down" if p["dir"] == "across" else "across"
-                for pi, pch in enumerate(p["word"]):
-                    if found:
-                        break
-                    for wi, wch in enumerate(w):
-                        if pch == wch:
-                            pr = p["row"] + (pi if p["dir"] == "down" else 0)
-                            pc = p["col"] + (pi if p["dir"] == "across" else 0)
-                            sr = pr - (wi if new_dir == "down" else 0)
-                            sc = pc - (wi if new_dir == "across" else 0)
-                            if can_place(w, sr, sc, new_dir):
-                                dr, dc = (0, 1) if new_dir == "across" else (1, 0)
-                                for i, ch in enumerate(w):
-                                    grid[sr + dr * i][sc + dc * i] = ch
-                                placed.append({"word": w, "clue": item["clue"], "row": sr, "col": sc, "dir": new_dir})
-                                clean.remove(item)
-                                found = True
-                                break
-
-    # 여백 자르기
-    rows = [r for r in range(size) for c in range(size) if grid[r][c]]
-    cols = [c for r in range(size) for c in range(size) if grid[r][c]]
-    min_r, max_r = min(rows), max(rows)
-    min_c, max_c = min(cols), max(cols)
-
-    cropped = [row[min_c:max_c + 1] for row in grid[min_r:max_r + 1]]
-    num_map = {}
-    num = 1
-    across, down = [], []
-
-    for p in sorted(placed, key=lambda x: (x["row"], x["col"])):
-        r, c = p["row"] - min_r, p["col"] - min_c
-        if (r, c) not in num_map:
-            num_map[(r, c)] = num
-            num += 1
-        entry = {"num": num_map[(r, c)], "row": r, "col": c, "length": len(p["word"]), "clue": p["clue"], "answer": p["word"]}
-        if p["dir"] == "across":
-            across.append(entry)
-        else:
-            down.append(entry)
-
-    tiles = sorted(list({ch for row in cropped for ch in row if ch}))
-    return {
-        "rows": len(cropped),
-        "cols": len(cropped[0]),
-        "grid": cropped,
-        "numbers": {f"{r},{c}": n for (r, c), n in num_map.items()},
-        "across": across,
-        "down": down,
-        "tiles": tiles,
+def generate_psych_illustration(image_prompt, image_models):
+    if not image_prompt:
+        return ""
+    payload = {
+        "contents": [{"parts": [{"text": image_prompt}]}],
+        "generationConfig": {"responseModalities": ["TEXT", "IMAGE"]},
     }
+    for model_name in image_models:
+        endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+        try:
+            res = requests.post(endpoint, json=payload, timeout=90)
+            if res.status_code != 200:
+                print(f"[{model_name}] 이미지 생성 건너뜀 ({res.status_code})")
+                continue
+            parts = res.json()["candidates"][0]["content"]["parts"]
+            for part in parts:
+                inline = part.get("inlineData") or part.get("inline_data")
+                if inline and inline.get("data"):
+                    os.makedirs("data", exist_ok=True)
+                    img_path = "data/today_psych.png"
+                    with open(img_path, "wb") as f:
+                        f.write(base64.b64decode(inline["data"]))
+                    print(f"심리학 학습만화 삽화 생성 완료! (모델: {model_name})")
+                    return "./data/today_psych.png"
+        except Exception as e:
+            print(f"[{model_name}] 삽화 생성 오류: {e}")
+    print("사용 가능한 이미지 모델이 없어 텍스트 칼럼만 발행합니다.")
+    return ""
 
 
 def send_gmail(edition, site_url):
@@ -214,6 +197,7 @@ def send_gmail(edition, site_url):
         return
 
     lead = edition["lead_story"]
+    psych = edition.get("psych_column", {})
     items_html = "".join(
         f"<li style='margin-bottom:8px;'><b>[{a['category']}]</b> {a['title']}</li>"
         for a in edition["articles"][:5]
@@ -230,9 +214,14 @@ def send_gmail(edition, site_url):
       <hr style="border: 0; border-top: 1px solid #111; margin: 18px 0;">
       <p style="font-weight: bold;">오늘의 주요 단신</p>
       <ul style="padding-left: 18px; line-height: 1.6;">{items_html}</ul>
+      <div style="background: #efe9dc; border: 1px solid #111; padding: 12px; margin-top: 16px;">
+        <p style="margin: 0 0 4px; font-size: 12px; font-weight: bold;">🧠 오늘의 심리학 학습만화</p>
+        <p style="margin: 0; font-weight: bold;">{psych.get('title', '')}</p>
+        <p style="margin: 4px 0 0; font-size: 13px;">{psych.get('caption', '')}</p>
+      </div>
       <div style="text-align: center; margin-top: 24px;">
         <a href="{site_url}" style="display: inline-block; padding: 12px 24px; background: #111; color: #fff; text-decoration: none; font-weight: bold;">
-          📰 오늘의 신문 & 십자말풀이 열기
+          📰 오늘의 신문 & 심리학 만화 보기
         </a>
       </div>
     </div>
@@ -253,9 +242,14 @@ def main():
     with open("config.json", "r", encoding="utf-8") as f:
         config = json.load(f)
 
+    text_models, image_models = get_candidate_models()
+    past_topics = load_psych_history()
     news = fetch_rss_news(config["categories"])
-    ai_data = call_gemini(news)
-    crossword = build_crossword(ai_data.get("crossword_words", []))
+    ai_data = call_gemini_text(news, past_topics, text_models)
+
+    psych = ai_data.get("psych_column", {})
+    psych["image"] = generate_psych_illustration(psych.get("image_prompt", ""), image_models)
+    save_psych_history(past_topics, psych.get("concept_name", ""))
 
     edition = {
         "date": TODAY,
@@ -264,7 +258,7 @@ def main():
         "edition_quote": ai_data.get("edition_quote", ""),
         "lead_story": ai_data["lead_story"],
         "articles": ai_data["articles"],
-        "crossword": crossword,
+        "psych_column": psych,
     }
 
     os.makedirs("data", exist_ok=True)
