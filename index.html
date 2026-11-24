@@ -14,6 +14,7 @@
       --muted: #555;
       --border: #1a1a1a;
       --font-size: 16px;
+      --line-height: 28px;
     }
     body.eink {
       --bg: #ffffff;
@@ -32,7 +33,7 @@
       color: var(--ink);
       font-family: 'Noto Serif KR', Georgia, serif;
       font-size: var(--font-size);
-      line-height: 1.78;
+      line-height: var(--line-height);
     }
     .container {
       max-width: 860px;
@@ -59,7 +60,7 @@
       font-size: 13px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       gap: 6px;
       flex-wrap: wrap;
       flex-shrink: 0;
@@ -82,7 +83,6 @@
       background: var(--ink);
       color: var(--paper);
     }
-    /* 이북 세로 맞춤 가로 칼럼 뷰포트 */
     .eink-viewport {
       width: 100%;
     }
@@ -101,7 +101,7 @@
       text-align: center;
       border-bottom: 4px double var(--border);
       padding-bottom: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       break-inside: avoid;
     }
     .masthead {
@@ -122,25 +122,32 @@
       font-size: 12px;
       font-weight: 700;
     }
+    /* 오늘 날씨 & 일정 한 줄 바 */
+    .briefing-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      padding: 5px 2px;
+      font-size: 12.5px;
+      line-height: 1.45;
+      text-align: left;
+    }
+    .briefing-bar span {
+      word-break: break-all;
+    }
     .quote {
       font-size: 13px;
       font-style: italic;
       color: var(--muted);
       margin: 6px 0 0;
+      line-height: 1.5;
     }
-    .front-grid {
-      display: grid;
-      grid-template-columns: 2.2fr 1fr;
-      gap: 20px;
+    .front-section {
       border-bottom: 2px solid var(--border);
-      padding-bottom: 20px;
-      margin-bottom: 22px;
-    }
-    @media (max-width: 700px) {
-      .front-grid { grid-template-columns: 1fr; }
-    }
-    body.eink .front-grid {
-      display: block;
+      padding-bottom: 18px;
+      margin-bottom: 20px;
     }
     .cat-tag {
       display: inline-block;
@@ -150,6 +157,7 @@
       padding: 1px 6px;
       margin-bottom: 6px;
       letter-spacing: 0.5px;
+      line-height: 1.4;
     }
     .cat-tag.dark {
       background: var(--ink);
@@ -160,7 +168,7 @@
       page-break-after: avoid;
     }
     .lead-title {
-      font-size: 1.6em;
+      font-size: 1.55em;
       font-weight: 900;
       line-height: 1.32;
       margin: 4px 0 10px;
@@ -175,19 +183,17 @@
       display: block;
       break-inside: avoid;
     }
-    body.eink .news-img {
-      max-height: 34vh;
-    }
-    /* 글자 단위 줄바꿈 + 양쪽 정렬 */
     .article-body p {
       margin: 0 0 11px;
       text-align: justify;
       word-break: break-all;
       overflow-wrap: break-word;
+      orphans: 2;
+      widows: 2;
     }
     .dropcap::first-letter {
       float: left;
-      font-size: 2.9em;
+      font-size: 2.8em;
       line-height: 0.85;
       padding-right: 7px;
       padding-top: 3px;
@@ -201,24 +207,7 @@
       font-weight: 700;
       break-inside: avoid;
     }
-    .creator-box {
-      border: 2px solid var(--border);
-      padding: 12px 14px;
-      height: fit-content;
-      break-inside: avoid;
-      margin-top: 12px;
-    }
-    .creator-box h3 {
-      margin: 4px 0 6px;
-      font-size: 1.05em;
-      line-height: 1.35;
-    }
-    .creator-box p {
-      font-size: 0.88em;
-      margin: 0 0 8px;
-      word-break: break-all;
-    }
-    .creator-box a, .read-more {
+    .read-more {
       color: var(--ink);
       font-weight: 700;
       font-size: 0.85em;
@@ -270,7 +259,7 @@
       align-items: center;
       border-top: 2px solid var(--border);
       padding-top: 8px;
-      margin-top: 8px;
+      margin-top: 6px;
       flex-shrink: 0;
     }
     body.eink .eink-nav { display: flex; }
@@ -284,7 +273,12 @@
       font-weight: 900;
       cursor: pointer;
     }
-    /* 설정 모달 (방식 B) */
+    .eink-nav .page-jump-btn {
+      border: 1px dashed var(--border);
+      padding: 5px 14px;
+      font-weight: 700;
+    }
+    /* 모달 공통 */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -306,6 +300,10 @@
       overflow-y: auto;
       padding: 18px 20px;
       font-size: 14px;
+      line-height: 1.5;
+    }
+    .modal.compact {
+      max-width: 380px;
     }
     .modal-header {
       display: flex;
@@ -315,7 +313,7 @@
       padding-bottom: 8px;
       margin-bottom: 14px;
     }
-    .modal-header h3 { margin: 0; font-size: 1.15em; }
+    .modal-header h3 { margin: 0; font-size: 1.1em; }
     .modal-sec {
       margin-bottom: 16px;
       padding-bottom: 12px;
@@ -328,7 +326,7 @@
       margin-bottom: 6px;
       align-items: center;
     }
-    .row-item input[type="text"], .row-item input[type="password"] {
+    .row-item input[type="text"], .row-item input[type="password"], .row-item input[type="number"] {
       flex: 1;
       padding: 6px 8px;
       border: 1px solid #333;
@@ -352,7 +350,7 @@
       background: #111;
       color: #fff;
       border: 1px solid #111;
-      padding: 9px 14px;
+      padding: 8px 14px;
       font-family: inherit;
       font-weight: 700;
       cursor: pointer;
@@ -361,7 +359,7 @@
       background: #fff;
       color: #111;
       border: 1px solid #111;
-      padding: 9px 14px;
+      padding: 8px 14px;
       font-family: inherit;
       font-weight: 700;
       cursor: pointer;
@@ -382,6 +380,26 @@
       color: #555;
       margin: 4px 0 8px;
       line-height: 1.5;
+    }
+    /* 페이지 바로 이동 버튼 그리드 */
+    .page-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .page-num-btn {
+      padding: 8px 0;
+      border: 1px solid #111;
+      background: #fff;
+      color: #111;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .page-num-btn.current {
+      background: #111;
+      color: #fff;
     }
   </style>
 </head>
@@ -407,6 +425,7 @@
             <span id="paper-date">발행 준비 중</span>
             <span>PERSONAL MORNING EDITION</span>
           </div>
+          <div class="briefing-bar" id="briefing-bar"></div>
           <p class="quote" id="paper-quote"></p>
         </header>
 
@@ -418,47 +437,68 @@
 
     <div class="eink-nav" id="eink-nav">
       <button onclick="movePage(-1)">◀ 이전</button>
-      <span id="page-indicator">1 / 1</span>
+      <button class="page-jump-btn" id="page-indicator" onclick="openPageJump()">1 / 1</button>
       <button onclick="movePage(1)">다음 ▶</button>
     </div>
   </div>
 
-  <!-- 신문 내 설정 모달 (방식 B) -->
+  <!-- 페이지 바로 이동 모달 -->
+  <div class="modal-backdrop" id="jump-modal" onclick="if(event.target===this) closePageJump()">
+    <div class="modal compact">
+      <div class="modal-header">
+        <h3>페이지 이동</h3>
+        <button class="btn-sm" onclick="closePageJump()">닫기 ✕</button>
+      </div>
+      <div class="row-item">
+        <input type="number" id="jump-input" min="1" placeholder="페이지 번호 입력" onkeydown="if(event.key==='Enter') jumpToInputPage()" />
+        <button class="btn-primary" onclick="jumpToInputPage()">이동</button>
+      </div>
+      <div class="page-grid" id="page-grid"></div>
+    </div>
+  </div>
+
+  <!-- 신문 내 설정 모달 -->
   <div class="modal-backdrop" id="settings-modal">
     <div class="modal">
       <div class="modal-header">
-        <h3>⚙ 신문 관심사 & 구독 블로그 설정</h3>
+        <h3>⚙ 신문 관심사 & 구독 설정</h3>
         <button class="btn-sm" onclick="closeSettings()">닫기 ✕</button>
       </div>
 
       <div class="modal-sec">
-        <h4>1. 관심 뉴스 키워드</h4>
+        <h4>1. 오늘 날씨 지역</h4>
+        <div class="row-item">
+          <input type="text" id="cfg-weather-city" placeholder="도시명 (예: 경산, 대구, 서울)" />
+        </div>
+      </div>
+
+      <div class="modal-sec">
+        <h4>2. 관심 뉴스 키워드</h4>
         <div id="cfg-categories"></div>
         <button class="btn-sm" onclick="addCategoryRow()">+ 뉴스 카테고리 추가</button>
       </div>
 
       <div class="modal-sec">
-        <h4>2. 최신 심리학 실험 논문 피드 (자동 번역·해설)</h4>
+        <h4>3. 최신 심리학 실험 논문 피드</h4>
         <div id="cfg-research"></div>
         <button class="btn-sm" onclick="addResearchRow()">+ 연구 RSS 추가</button>
       </div>
 
       <div class="modal-sec">
-        <h4>3. 구독 블로그 (원문 전체 수록)</h4>
-        <p class="help-text">네이버 블로그는 아이디(예: <code>talk_sim_mind</code>)나 블로그 주소만 넣어도 RSS로 자동 변환됩니다. 티스토리·브런치 등은 RSS 주소를 입력하세요.</p>
+        <h4>4. 구독 블로그 (원문 전체 수록)</h4>
+        <p class="help-text">네이버 블로그는 아이디(예: <code>talk_sim_mind</code>)나 주소만 넣어도 자동 변환됩니다.</p>
         <div id="cfg-blogs"></div>
         <button class="btn-sm" onclick="addBlogRow()">+ 블로그 추가</button>
       </div>
 
       <div class="modal-sec">
-        <h4>4. GitHub 저장소 연동 (이 기기에만 저장)</h4>
+        <h4>5. GitHub 저장소 연동 (이 기기에만 저장)</h4>
         <div class="row-item">
           <input type="text" id="gh-repo" placeholder="아이디/저장소 (예: 5344-lang/daily-news)" />
         </div>
         <div class="row-item">
-          <input type="password" id="gh-token" placeholder="GitHub Personal Access Token (최초 1회 입력)" />
+          <input type="password" id="gh-token" placeholder="GitHub Personal Access Token" />
         </div>
-        <p class="help-text">토큰은 브라우저 내부(localStorage)에만 저장되며 서버나 코드에 공개되지 않습니다.</p>
       </div>
 
       <div class="modal-actions">
@@ -477,13 +517,18 @@
     let totalPages = 1;
     let loadedConfig = null;
 
-    document.documentElement.style.setProperty('--font-size', fontSize + 'px');
+    function applyTypography() {
+      const lh = Math.round(fontSize * 1.75);
+      document.documentElement.style.setProperty('--font-size', fontSize + 'px');
+      document.documentElement.style.setProperty('--line-height', lh + 'px');
+    }
+    applyTypography();
 
     function changeFont(delta) {
       fontSize = Math.min(24, Math.max(13, fontSize + delta));
-      document.documentElement.style.setProperty('--font-size', fontSize + 'px');
       localStorage.setItem('dn_font', fontSize);
-      if (mode === 'eink') setTimeout(updateEinkLayout, 50);
+      applyTypography();
+      if (mode === 'eink') setTimeout(updateEinkLayout, 60);
     }
 
     function setMode(newMode) {
@@ -503,6 +548,7 @@
         track.style.columnWidth = '';
         track.style.columnGap = '';
         track.style.transform = '';
+        document.querySelectorAll('.news-img').forEach(img => img.style.maxHeight = '');
       }
     }
 
@@ -514,7 +560,14 @@
       const vh = vp.clientHeight;
       if (!vw || !vh) return;
 
-      track.style.height = vh + 'px';
+      // 하단 글자 잘림 방지를 위해 뷰포트보다 22px 여유를 두고 칼럼 높이 고정
+      const safeHeight = Math.max(180, vh - 22);
+      const maxImgH = Math.max(120, Math.floor(safeHeight * 0.34));
+      document.querySelectorAll('.news-img').forEach(img => {
+        img.style.maxHeight = maxImgH + 'px';
+      });
+
+      track.style.height = safeHeight + 'px';
       track.style.width = vw + 'px';
       track.style.columnWidth = vw + 'px';
       track.style.columnGap = COLUMN_GAP + 'px';
@@ -528,12 +581,41 @@
       document.getElementById('page-indicator').textContent = `${currentPage + 1} / ${totalPages}`;
     }
 
-    function movePage(delta) {
+    function goToPage(pageIdx) {
       if (mode !== 'eink') return;
-      const next = currentPage + delta;
-      if (next >= 0 && next < totalPages) {
-        currentPage = next;
-        updateEinkLayout();
+      currentPage = Math.max(0, Math.min(totalPages - 1, pageIdx));
+      updateEinkLayout();
+    }
+
+    function movePage(delta) {
+      goToPage(currentPage + delta);
+    }
+
+    function openPageJump() {
+      if (mode !== 'eink') return;
+      const input = document.getElementById('jump-input');
+      input.max = totalPages;
+      input.value = currentPage + 1;
+
+      const grid = document.getElementById('page-grid');
+      let html = '';
+      for (let i = 1; i <= totalPages; i++) {
+        const cls = (i - 1 === currentPage) ? 'page-num-btn current' : 'page-num-btn';
+        html += `<button class="${cls}" onclick="goToPage(${i - 1}); closePageJump();">${i}</button>`;
+      }
+      grid.innerHTML = html;
+      document.getElementById('jump-modal').classList.add('open');
+    }
+
+    function closePageJump() {
+      document.getElementById('jump-modal').classList.remove('open');
+    }
+
+    function jumpToInputPage() {
+      const val = parseInt(document.getElementById('jump-input').value, 10);
+      if (!isNaN(val) && val >= 1 && val <= totalPages) {
+        goToPage(val - 1);
+        closePageJump();
       }
     }
 
@@ -547,7 +629,7 @@
     }
 
     document.addEventListener('keydown', (e) => {
-      if (document.getElementById('settings-modal').classList.contains('open')) return;
+      if (document.querySelector('.modal-backdrop.open')) return;
       if (mode !== 'eink') return;
       if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
         e.preventDefault();
@@ -558,11 +640,12 @@
       }
     });
 
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(updateEinkLayout, 120);
-    });
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(() => {
+        if (mode === 'eink') updateEinkLayout();
+      });
+      ro.observe(document.getElementById('eink-viewport'));
+    }
 
     function imgTag(src) {
       if (!src) return '';
@@ -583,7 +666,7 @@
       return `
         <section class="special-section">
           <span class="cat-tag dark">오늘의 심리 실험 리포트 · ${r.source_name || 'RESEARCH'}</span>
-          <h3 style="margin:6px 0 4px; font-size:1.45em; line-height:1.35;">${r.title}</h3>
+          <h3 style="margin:6px 0 4px; font-size:1.4em; line-height:1.35;">${r.title}</h3>
           <p class="special-meta">${r.journal_info || ''}</p>
           ${imgTag(r.image)}
           <div class="article-body">${formatParagraphs(r.full_article, true)}</div>
@@ -597,7 +680,7 @@
       return blogs.map(b => `
         <section class="special-section">
           <span class="cat-tag">구독 아티클 · ${b.blog_name || 'BLOG'}</span>
-          <h3 style="margin:6px 0 8px; font-size:1.4em; line-height:1.35;">${b.title}</h3>
+          <h3 style="margin:6px 0 8px; font-size:1.35em; line-height:1.35;">${b.title}</h3>
           ${imgTag(b.image)}
           <div class="article-body">${formatParagraphs(b.full_article, false)}</div>
           <div class="source-line">${b.blog_name}${b.published ? ' · ' + b.published : ''} · <a class="read-more" href="${b.url}" target="_blank">블로그 원문 보기</a></div>
@@ -606,31 +689,28 @@
 
     async function loadPaper() {
       try {
-        const [edRes, colRes] = await Promise.all([
-          fetch('./data/today.json?t=' + Date.now()),
-          fetch('./creator_column.json?t=' + Date.now()).catch(() => null)
-        ]);
+        const edRes = await fetch('./data/today.json?t=' + Date.now());
         if (!edRes.ok) throw new Error('아직 발행된 신문이 없습니다. GitHub Actions에서 수동 실행을 한 번 돌려주세요.');
         const ed = await edRes.json();
-        const col = colRes && colRes.ok ? await colRes.json() : null;
 
         document.getElementById('paper-name').textContent = ed.paper_name || 'DAILY NEWS';
         document.getElementById('paper-date').textContent = ed.date_kr || ed.date;
         document.getElementById('paper-quote').textContent = ed.edition_quote || '';
 
+        const weatherText = ed.weather ? `☀ ${ed.weather}` : '';
+        const scheduleText = ed.schedule ? `📅 ${ed.schedule}` : '📅 일정 미연동';
+        const briefingEl = document.getElementById('briefing-bar');
+        if (weatherText || ed.schedule) {
+          briefingEl.innerHTML = `<span><b>${weatherText}</b></span><span>${scheduleText}</span>`;
+          briefingEl.style.display = 'flex';
+        } else {
+          briefingEl.style.display = 'none';
+        }
+
         const lead = ed.lead_story;
         const leadBody = lead.full_article || lead.summary || '';
-        const colUrl = col && col.url ? (col.url.startsWith('http') ? col.url : 'https://' + col.url) : '#';
-        const colHtml = col ? `
-          <aside class="creator-box">
-            <span class="cat-tag">${col.badge || 'COLUMN'}</span>
-            <h3>${col.title}</h3>
-            <p>${col.summary}</p>
-            <a href="${colUrl}" target="_blank">${col.link_text || '읽어보기 →'}</a>
-          </aside>` : '';
-
         const frontHtml = `
-          <section class="front-grid">
+          <section class="front-section">
             <article>
               <span class="cat-tag">${lead.category}</span>
               <h2 class="lead-title">${lead.title}</h2>
@@ -639,7 +719,6 @@
               ${lead.takeaway ? `<div class="takeaway">핵심: ${lead.takeaway}</div>` : ''}
               <div class="source-line">${lead.source} · <a class="read-more" href="${lead.url}" target="_blank">원문 출처</a></div>
             </article>
-            ${colHtml}
           </section>`;
 
         const articlesHtml = (ed.articles || []).map(a => {
@@ -666,7 +745,7 @@
       }
     }
 
-    // ===== 설정 모달 (방식 B) =====
+    // ===== 설정 모달 =====
     function inferRepo() {
       const saved = localStorage.getItem('dn_gh_repo');
       if (saved) return saved;
@@ -678,10 +757,14 @@
       return '5344-lang/daily-news';
     }
 
+    function escapeAttr(s) {
+      return String(s || '').replace(/"/g, '&quot;');
+    }
+
     function makeRowHtml(type, name = '', val = '', enabled = true) {
-      const ph1 = type === 'cat' ? '카테고리명' : '이름 (예: 똑심마인드)';
+      const ph1 = type === 'cat' ? '카테고리명' : '이름';
       const ph2 = type === 'cat' ? '검색 키워드 (OR로 연결)' : 'RSS 주소 또는 네이버 블로그 아이디';
-      const chk = type === 'cat' ? '' : `<input type="checkbox" class="inp-en" ${enabled ? 'checked' : ''} title="사용 여부" />`;
+      const chk = type === 'cat' ? '' : `<input type="checkbox" class="inp-en" ${enabled ? 'checked' : ''} />`;
       return `
         <div class="row-item">
           ${chk}
@@ -689,10 +772,6 @@
           <input type="text" class="inp-val" value="${escapeAttr(val)}" placeholder="${ph2}" />
           <button class="btn-sm" onclick="this.parentElement.remove()">삭제</button>
         </div>`;
-    }
-
-    function escapeAttr(s) {
-      return String(s || '').replace(/"/g, '&quot;');
     }
 
     function addCategoryRow(n = '', q = '') {
@@ -717,13 +796,15 @@
         loadedConfig = {};
       }
 
+      document.getElementById('cfg-weather-city').value = loadedConfig.weather_city || '경산';
+
       document.getElementById('cfg-categories').innerHTML = '';
       (loadedConfig.categories || []).forEach(c => addCategoryRow(c.name, c.query));
 
       document.getElementById('cfg-research').innerHTML = '';
       (loadedConfig.research_feeds || [
-        { name: 'PsyPost 심리실험', url: 'https://www.psypost.org/feed/', enabled: true },
-        { name: 'ScienceDaily 심리연구', url: 'https://www.sciencedaily.com/rss/mind_brain/psychology.xml', enabled: true }
+        { name: 'ScienceDaily 심리연구', url: 'https://www.sciencedaily.com/rss/mind_brain/psychology.xml', enabled: true },
+        { name: 'PsyPost 심리실험', url: 'https://www.psypost.org/feed/', enabled: true }
       ]).forEach(r => addResearchRow(r.name, r.url, r.enabled !== false));
 
       document.getElementById('cfg-blogs').innerHTML = '';
@@ -787,6 +868,7 @@
       const newConfig = {
         paper_name: (loadedConfig && loadedConfig.paper_name) || 'DAILY NEWS',
         site_url: (loadedConfig && loadedConfig.site_url) || location.href.split('?')[0],
+        weather_city: document.getElementById('cfg-weather-city').value.trim() || '경산',
         categories,
         research_feeds,
         blogs,
@@ -817,17 +899,17 @@
             sha,
           }),
         });
-        if (!putRes.ok) throw new Error('config.json 저장 실패 (토큰의 Contents 쓰기 권한을 확인해 주세요)');
+        if (!putRes.ok) throw new Error('config.json 저장 실패 (토큰의 Contents 쓰기 권한 확인)');
 
         if (triggerRun) {
-          statusEl.textContent = '저장 완료! 지금 새 신문 발행을 시작하는 중...';
+          statusEl.textContent = '저장 완료! 새 신문 발행을 요청하는 중...';
           const runRes = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/daily.yml/dispatches`, {
             method: 'POST',
             headers,
             body: JSON.stringify({ ref: 'main' }),
           });
-          if (!runRes.ok) throw new Error('설정은 저장되었으나 즉시 실행 실패 (토큰의 Actions 쓰기 권한을 확인해 주세요)');
-          statusEl.textContent = '✅ 저장 & 신문 재발행 요청 완료! 약 1분 뒤 새로고침하면 새 신문이 반영됩니다.';
+          if (!runRes.ok) throw new Error('설정은 저장되었으나 즉시 실행 실패 (토큰의 Actions 쓰기 권한 확인)');
+          statusEl.textContent = '✅ 저장 & 재발행 요청 완료! 약 1분 뒤 새로고침해 주세요.';
         } else {
           statusEl.textContent = '✅ 설정이 저장되었습니다. 내일 오전 6시부터 반영됩니다.';
         }
