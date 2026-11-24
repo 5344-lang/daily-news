@@ -25,11 +25,11 @@
     },
     {
       "name": "사설·칼럼",
-      "query": "(\"사설\" OR \"칼럼\" OR \"시론\" OR \"만평\") (사회 OR 경제 OR 문화 OR 기술 OR 인문) -여야 -정쟁 -공천"
+      "query": "(사설 OR 칼럼 OR 시론 OR 만평) (사회 OR 경제 OR 문화 OR 기술 OR 인문) -여야 -정쟁 -공천"
     },
     {
       "name": "임용·교육",
-      "query": "상담심리 OR 상담교사 OR 전문상담 OR 대구 교육청 OR 임용"
+      "query": "상담심리 OR 상담교사 OR 전문상담교사 OR 대구 교육청 OR 임용"
     }
   ],
   "research_feeds": [
@@ -50,7 +50,7 @@
     },
     {
       "name": "Behavioral Scientist",
-      "url": "https://behavioralscientist.org/feed/",
+      "url": "https://behavioralscientist.org/feed",
       "enabled": true
     }
   ],
@@ -58,4 +58,12 @@
     {
       "name": "똑심마인드 블로그",
       "url": "https://rss.blog.naver.com/talk_sim_mind.xml",
-      "enabled":
+      "enabled": true
+    },
+    {
+      "name": "pppoem",
+      "url": "https://pppoem.tistory.com/rss",
+      "enabled": true
+    }
+  ]
+}
