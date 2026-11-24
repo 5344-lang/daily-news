@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DAILY NEWS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4efe6;
+      --paper: #faf7f0;
+      --ink: #161616;
+      --muted: #555;
+      --border: #1a1a1a;
+      --font-size: 16px;
+    }
+    body.eink {
+      --bg: #ffffff;
+      --paper: #ffffff;
+      --ink: #000000;
+      --muted: #222222;
+      --border: #000000;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Noto Serif KR', Georgia, serif;
+      font-size: var(--font-size);
+      line-height: 1.75;
+    }
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      background: var(--paper);
+      padding: 20px 24px 60px;
+      min-height: 100vh;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+    /* 상단 툴바 */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 14px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .toolbar button {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--ink);
+      padding: 4px 10px;
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .toolbar button.active {
+      background: var(--ink);
+      color: var(--paper);
+    }
+    /* 제호 */
+    header {
+      text-align: center;
+      border-bottom: 4px double var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    .masthead {
+      font-family: 'Playfair Display', 'Noto Serif KR', serif;
+      font-size: clamp(2.2rem, 6vw, 3.6rem);
+      font-weight: 900;
+      letter-spacing: 4px;
+      margin: 0;
+      line-height: 1.1;
+    }
+    .meta-bar {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-top: 10px;
+      padding: 4px 2px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .quote {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--muted);
+      margin: 8px 0 0;
+    }
+    /* 1면 톱기사 + 제작자 칼럼 */
+    .front-grid {
+      display: grid;
+      grid-template-columns: 2.2fr 1fr;
+      gap: 20px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 20px;
+      margin-bottom: 22px;
+    }
+    @media (max-width: 700px) {
+      .front-grid { grid-template-columns: 1fr; }
+    }
+    .cat-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 900;
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .lead-title {
+      font-size: 1.75em;
+      font-weight: 900;
+      line-height: 1.3;
+      margin: 4px 0 12px;
+    }
+    .news-img {
+      width: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      filter: grayscale(100%) contrast(1.25);
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .dropcap::first-letter {
+      float: left;
+      font-size: 3.1em;
+      line-height: 0.85;
+      padding-right: 8px;
+      padding-top: 4px;
+      font-weight: 900;
+    }
+    .takeaway {
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-left: 3px solid var(--border);
+      font-size: 0.92em;
+      font-weight: 700;
+    }
+    /* 제작자 칼럼 박스 */
+    .creator-box {
+      border: 2px solid var(--border);
+      padding: 14px;
+      height: fit-content;
+    }
+    .creator-box h3 {
+      margin: 6px 0 8px;
+      font-size: 1.1em;
+      line-height: 1.35;
+    }
+    .creator-box p {
+      font-size: 0.88em;
+      margin: 0 0 10px;
+    }
+    .creator-box a, .read-more {
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 0.85em;
+      text-decoration: underline;
+    }
+    /* 단신 2단 컬럼 */
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+    @media (max-width: 640px) {
+      .articles-grid { grid-template-columns: 1fr; }
+    }
+    .article-card {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+    .article-card h3 {
+      margin: 4px 0 8px;
+      font-size: 1.15em;
+      line-height: 1.35;
+    }
+    .source-line {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    /* 십자말풀이 */
+    .crossword-section {
+      margin-top: 30px;
+      border-top: 4px double var(--border);
+      padding-top: 20px;
+    }
+    .cw-wrap {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 680px) {
+      .cw-wrap { grid-template-columns: 1fr; }
+    }
+    .cw-grid {
+      display: grid;
+      gap: 2px;
+      background: var(--border);
+      border: 2px solid var(--border);
+      width: fit-content;
+    }
+    .cw-cell {
+      width: 40px;
+      height: 40px;
+      background: var(--paper);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .cw-cell.black { background: var(--ink); cursor: default; }
+    .cw-cell.selected { outline: 3px solid var(--ink); outline-offset: -3px; background: #e5dfd2; }
+    body.eink .cw-cell.selected { background: #dcdcdc; }
+    .cw-cell.correct { background: #d7e8d4; }
+    body.eink .cw-cell.correct { background: #efefef; }
+    .cw-num {
+      position: absolute;
+      top: 1px;
+      left: 3px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .tile-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .tile-btn {
+      min-width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      background: var(--paper);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .clues h4 { margin: 0 0 6px; border-bottom: 1px solid var(--border); }
+    .clues ul { margin: 0 0 14px; padding-left: 18px; font-size: 0.9em; }
+    /* 이북 페이지 넘김 */
+    .eink-nav {
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 2px solid var(--border);
+      padding-top: 12px;
+      margin-top: 20px;
+    }
+    body.eink .eink-nav { display: flex; }
+    .eink-nav button {
+      border: 2px solid var(--border);
+      background: #fff;
+      color: #000;
+      padding: 8px 18px;
+      font-family: inherit;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="toolbar">
+      <div>
+        <button id="btn-paper" class="active" onclick="setMode('paper')">신문지 모드</button>
+        <button id="btn-eink" onclick="setMode('eink')">이북 모드 (페이지 넘김)</button>
+      </div>
+      <div>
+        <button onclick="changeFont(-1)">가-</button>
+        <button onclick="changeFont(1)">가+</button>
+      </div>
+    </div>
+
+    <header>
+      <h1 class="masthead" id="paper-name">DAILY NEWS</h1>
+      <div class="meta-bar">
+        <span id="paper-date">발행 준비 중</span>
+        <span>PERSONAL MORNING EDITION</span>
+      </div>
+      <p class="quote" id="paper-quote"></p>
+    </header>
+
+    <main id="content">
+      <p style="text-align:center; padding: 40px 0;">오늘의 신문을 불러오는 중입니다...</p>
+    </main>
+
+    <div class="eink-nav" id="eink-nav">
+      <button onclick="movePage(-1)">◀ 이전 면</button>
+      <span id="page-indicator">1 / 1 면</span>
+      <button onclick="movePage(1)">다음 면 ▶</button>
+    </div>
+  </div>
+
+  <script>
+    let mode = localStorage.getItem('dn_mode') || 'paper';
+    let fontSize = parseInt(localStorage.getItem('dn_font') || '16', 10);
+    let currentPage = 0;
+    let pages = [];
+    let selectedCell = null;
+    let cwData = null;
+
+    document.documentElement.style.setProperty('--font-size', fontSize + 'px');
+
+    function changeFont(delta) {
+      fontSize = Math.min(24, Math.max(13, fontSize + delta));
+      document.documentElement.style.setProperty('--font-size', fontSize + 'px');
+      localStorage.setItem('dn_font', fontSize);
+    }
+
+    function setMode(newMode) {
+      mode = newMode;
+      localStorage.setItem('dn_mode', mode);
+      document.body.classList.toggle('eink', mode === 'eink');
+      document.getElementById('btn-paper').classList.toggle('active', mode === 'paper');
+      document.getElementById('btn-eink').classList.toggle('active', mode === 'eink');
+      applyPagination();
+    }
+
+    function applyPagination() {
+      pages = Array.from(document.querySelectorAll('.paper-page'));
+      if (mode === 'eink' && pages.length > 0) {
+        currentPage = Math.min(currentPage, pages.length - 1);
+        pages.forEach((el, idx) => el.classList.toggle('hidden', idx !== currentPage));
+        document.getElementById('page-indicator').textContent = `${currentPage + 1} / ${pages.length} 면`;
+        window.scrollTo(0, 0);
+      } else {
+        pages.forEach(el => el.classList.remove('hidden'));
+      }
+    }
+
+    function movePage(delta) {
+      const next = currentPage + delta;
+      if (next >= 0 && next < pages.length) {
+        currentPage = next;
+        applyPagination();
+      }
+    }
+
+    function imgTag(src) {
+      if (!src) return '';
+      return `<img class="news-img" src="${src}" alt="기사 사진" onerror="this.style.display='none'" />`;
+    }
+
+    function renderCrossword(cw) {
+      if (!cw || !cw.grid || cw.grid.length === 0) return '';
+      cwData = cw;
+      let cellsHtml = '';
+      for (let r = 0; r < cw.rows; r++) {
+        for (let c = 0; c < cw.cols; c++) {
+          const ans = cw.grid[r][c];
+          if (!ans) {
+            cellsHtml += `<div class="cw-cell black"></div>`;
+          } else {
+            const num = cw.numbers[`${r},${c}`] || '';
+            cellsHtml += `<div class="cw-cell" data-r="${r}" data-c="${c}" data-ans="${ans}" onclick="selectCell(this)">
+              ${num ? `<span class="cw-num">${num}</span>` : ''}
+              <span class="cw-val"></span>
+            </div>`;
+          }
+        }
+      }
+      const tilesHtml = cw.tiles.map(t => `<button class="tile-btn" onclick="fillTile('${t}')">${t}</button>`).join('')
+        + `<button class="tile-btn" onclick="fillTile('')">지움</button>`;
+      const acrossHtml = cw.across.map(a => `<li><b>${a.num}.</b> ${a.clue} (${a.length}자)</li>`).join('');
+      const downHtml = cw.down.map(d => `<li><b>${d.num}.</b> ${d.clue} (${d.length}자)</li>`).join('');
+
+      return `
+        <section class="paper-page crossword-section">
+          <span class="cat-tag">오늘의 퍼즐</span>
+          <h2 style="margin:4px 0 14px;">가로세로 십자말풀이</h2>
+          <div class="cw-wrap">
+            <div>
+              <div class="cw-grid" style="grid-template-columns: repeat(${cw.cols}, 40px);">${cellsHtml}</div>
+              <div class="tile-bank">${tilesHtml}</div>
+              <div style="margin-top:10px;">
+                <button class="tile-btn" style="padding:0 12px; font-size:13px;" onclick="checkCrossword()">정답 확인</button>
+                <button class="tile-btn" style="padding:0 12px; font-size:13px;" onclick="revealCrossword()">정답 보기</button>
+              </div>
+            </div>
+            <div class="clues">
+              <h4>가로 열쇠</h4><ul>${acrossHtml}</ul>
+              <h4>세로 열쇠</h4><ul>${downHtml}</ul>
+            </div>
+          </div>
+        </section>`;
+    }
+
+    function selectCell(el) {
+      document.querySelectorAll('.cw-cell.selected').forEach(c => c.classList.remove('selected'));
+      selectedCell = el;
+      el.classList.add('selected');
+    }
+
+    function fillTile(ch) {
+      if (!selectedCell) return;
+      selectedCell.querySelector('.cw-val').textContent = ch;
+      selectedCell.classList.remove('correct');
+    }
+
+    function checkCrossword() {
+      let total = 0, ok = 0;
+      document.querySelectorAll('.cw-cell[data-ans]').forEach(el => {
+        total++;
+        const val = el.querySelector('.cw-val').textContent.trim();
+        if (val === el.dataset.ans) {
+          el.classList.add('correct');
+          ok++;
+        } else {
+          el.classList.remove('correct');
+        }
+      });
+      alert(ok === total ? '🎉 모든 칸을 맞혔습니다!' : `${total}칸 중 ${ok}칸 정답입니다.`);
+    }
+
+    function revealCrossword() {
+      document.querySelectorAll('.cw-cell[data-ans]').forEach(el => {
+        el.querySelector('.cw-val').textContent = el.dataset.ans;
+        el.classList.add('correct');
+      });
+    }
+
+    // 키보드 직접 입력 지원 (PC/스마트폰)
+    document.addEventListener('keydown', (e) => {
+      if (!selectedCell) return;
+      if (e.key === 'Backspace') fillTile('');
+      else if (/^[가-힣]$/.test(e.key)) fillTile(e.key);
+    });
+
+    async function loadPaper() {
+      try {
+        const [edRes, colRes] = await Promise.all([
+          fetch('./data/today.json?t=' + Date.now()),
+          fetch('./creator_column.json?t=' + Date.now()).catch(() => null)
+        ]);
+        if (!edRes.ok) throw new Error('아직 발행된 신문이 없습니다. GitHub Actions에서 수동 실행을 한 번 돌려주세요.');
+        const ed = await edRes.json();
+        const col = colRes && colRes.ok ? await colRes.json() : null;
+
+        document.getElementById('paper-name').textContent = ed.paper_name || 'DAILY NEWS';
+        document.getElementById('paper-date').textContent = ed.date_kr || ed.date;
+        document.getElementById('paper-quote').textContent = ed.edition_quote || '';
+
+        const lead = ed.lead_story;
+        const colHtml = col ? `
+          <aside class="creator-box">
+            <span class="cat-tag">${col.badge || 'COLUMN'}</span>
+            <h3>${col.title}</h3>
+            <p>${col.summary}</p>
+            <a href="${col.url}" target="_blank">${col.link_text || '읽어보기 →'}</a>
+          </aside>` : '';
+
+        const page1 = `
+          <section class="paper-page front-grid">
+            <article>
+              <span class="cat-tag">${lead.category}</span>
+              <h2 class="lead-title">${lead.title}</h2>
+              ${imgTag(lead.image)}
+              <p class="dropcap">${lead.summary}</p>
+              ${lead.takeaway ? `<div class="takeaway">핵심: ${lead.takeaway}</div>` : ''}
+              <div class="source-line">${lead.source} · <a class="read-more" href="${lead.url}" target="_blank">원문 보기</a></div>
+            </article>
+            ${colHtml}
+          </section>`;
+
+        // 단신은 이북 모드 가독성을 위해 2건씩 페이지 분할
+        let articlePages = '';
+        for (let i = 0; i < ed.articles.length; i += 2) {
+          const chunk = ed.articles.slice(i, i + 2).map(a => `
+            <article class="article-card">
+              <span class="cat-tag">${a.category}</span>
+              <h3>${a.title}</h3>
+              ${imgTag(a.image)}
+              <p>${a.summary}</p>
+              <div class="source-line">${a.source} · <a class="read-more" href="${a.url}" target="_blank">원문 보기</a></div>
+            </article>`).join('');
+          articlePages += `<section class="paper-page articles-grid">${chunk}</section>`;
+        }
+
+        document.getElementById('content').innerHTML = page1 + articlePages + renderCrossword(ed.crossword);
+        setMode(mode);
+      } catch (err) {
+        document.getElementById('content').innerHTML = `<p style="text-align:center; padding:40px 0;">${err.message}</p>`;
+      }
+    }
+
+    loadPaper();
+  </script>
+</body>
+</html>
