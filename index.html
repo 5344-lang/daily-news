@@ -265,6 +265,21 @@
       column-count: 1;
       column-rule: none;
     }
+    /* 이북 모드: 기사가 끝나면 다음 기사/섹션은 반드시 새 페이지에서 시작 */
+    body.eink .front-section,
+    body.eink .article-section {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    body.eink .article-section,
+    body.eink .special-section {
+      break-before: column;
+      -webkit-column-break-before: always;
+      page-break-before: always;
+      border-top: none;
+      margin-top: 0;
+      padding-top: 4px;
+    }
     .source-line {
       font-size: 12px;
       color: var(--muted);
@@ -1153,7 +1168,7 @@
       document.getElementById('archive-modal').classList.add('open');
     }
 
-async function sendScrapEmailNow() {
+    async function sendScrapEmailNow() {
       const statusEl = document.getElementById('scrap-mail-status');
       if (!prefs.saved.length) {
         statusEl.textContent = '보낼 스크랩 기사가 없습니다.';
@@ -1375,6 +1390,7 @@ async function sendScrapEmailNow() {
               <h3>${escapeHtml(a.title)}</h3>
               ${imgTag(a.image)}
               <div class="article-body two-col-text">${formatParagraphs(body, false)}</div>
+              ${a.takeaway ? `<div class="takeaway">핵심: ${escapeHtml(a.takeaway)}</div>` : ''}
               <div class="source-line">${escapeHtml(a.source || '')} · <a class="read-more" href="${escapeHtml(safeUrl(a.url))}" target="_blank" rel="noopener noreferrer">원문 출처</a></div>
               ${renderActionBar(key, true)}
             </section>`;
