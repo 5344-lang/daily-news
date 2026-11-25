@@ -619,12 +619,14 @@ def main():
         if url:
             raw_img, _ = scrape_generic_article(url, max_len=500)
         local_img = download_local_image(raw_img, img_name, referer=url) if raw_img else ""
+        final_img = local_img or raw_img
+        print(f"[이미지] {img_name} | 링크변환={'성공' if 'news.google.com' not in url else '실패'} | 원본={bool(raw_img)} | 저장={bool(local_img)}")
         return {
             "category": item.get("category") or src.get("category", "뉴스"),
             "title": item.get("title") or src.get("title", ""),
             "source": src.get("source", "뉴스"),
             "url": url,
-            "image": local_img,
+            "image": final_img,
             "full_article": item.get("full_article", ""),
             "takeaway": item.get("takeaway", ""),
         }
