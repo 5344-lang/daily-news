@@ -3,43 +3,25 @@
   "date": "2026-11-25",
   "date_kr": "2026년 11월 25일 (수)",
   "show_weather": true,
-  "weather": "대구 대체로 맑음 -10°/3° (강수 0%)",
-  "edition_quote": "기술의 비약적 발전과 인간 내면의 심리적 변화가 교차하는 시대, 오늘의 뉴스는 AI 혁신과 정신 건강의 조화로운 공존을 탐구합니다.",
+  "weather": "",
+  "edition_quote": "기술의 진보가 업무의 효율을 넘어 인간의 심리와 사회적 안전망을 어떻게 재편하고 있는지 주목해야 할 시점입니다.",
   "lead_story": {
-    "category": "경제·시사",
-    "title": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 - 한국경제",
-    "source": "한국경제",
-    "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5MVTM2UU82dlpELVV2RENMdnpHTmJkbFFNV2xNVDhwM2pQdW1fNkp0OW1ob0lpcmNwdFdNaUIzcWpCbmRscmlmbGtpRks2QjA4VVJINjlGYllPZw?oc=5",
+    "category": "AI·테크",
+    "title": "코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 - www.cio.com",
+    "source": "www.cio.com",
+    "url": "https://news.google.com/rss/articles/CBMi2gJBVV95cUxPZWVlLVJ5Wk5oSWMzQ2lKUEk1RGlSVWZjcEY3QlZOUzVyaEdiTG1hbnczMkVXTTctTE5oMTZEQ250QmxtUnYwcUxqMzR0NkRuaWFKMDlYU1FQcGh6X3pWTW9NWWJqNzlxR3NwcjNFMnNScFFfVXpKSVlkRzh5YVkzalR0RGdGbDk0RVZqWE1qS3ZnMVZ4Z1RkcEpaanljVUpCTzVvT0FrcklOTWZkemFReUlkbmxlejNjR3p1Ukxsd0ZzX1JYZVBQTENzMF9oMEVtLU1qSWdqNkRnaU1pTEk1RFBpbGhLRF82OUNMN3ZiOGthWGdhbEhhMDhmOHpEc2p3WHpib0tkSkpadk9DdWRMZjc3WnhJQUdLdkNYZUJZdXF2Qzhnd2ZlRjFYVnRoc2QxX0pibUtnTkFEYnlCSHdKNGxRcmZmSW9PcnFlMU13REpOeXg3SjFmVGl3?oc=5",
     "image": "",
-    "full_article": "[원문 추출 실패 · RSS 요약] \"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 한국경제",
+    "full_article": "코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 www.cio.com",
     "takeaway": ""
   },
   "articles": [
-    {
-      "category": "AI·테크",
-      "title": "코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 - www.cio.com",
-      "source": "www.cio.com",
-      "url": "https://news.google.com/rss/articles/CBMi2gJBVV95cUxPZWVlLVJ5Wk5oSWMzQ2lKUEk1RGlSVWZjcEY3QlZOUzVyaEdiTG1hbnczMkVXTTctTE5oMTZEQ250QmxtUnYwcUxqMzR0NkRuaWFKMDlYU1FQcGh6X3pWTW9NWWJqNzlxR3NwcjNFMnNScFFfVXpKSVlkRzh5YVkzalR0RGdGbDk0RVZqWE1qS3ZnMVZ4Z1RkcEpaanljVUpCTzVvT0FrcklOTWZkemFReUlkbmxlejNjR3p1Ukxsd0ZzX1JYZVBQTENzMF9oMEVtLU1qSWdqNkRnaU1pTEk1RFBpbGhLRF82OUNMN3ZiOGthWGdhbEhhMDhmOHpEc2p3WHpib0tkSkpadk9DdWRMZjc3WnhJQUdLdkNYZUJZdXF2Qzhnd2ZlRjFYVnRoc2QxX0pibUtnTkFEYnlCSHdKNGxRcmZmSW9PcnFlMU13REpOeXg3SjFmVGl3?oc=5",
-      "image": "",
-      "full_article": "[원문 추출 실패 · RSS 요약] 코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 www.cio.com",
-      "takeaway": ""
-    },
-    {
-      "category": "AI·테크",
-      "title": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 - 아시아투데이",
-      "source": "아시아투데이",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9EU2pQWkstazNIb0RUZ25VQzNpQmtRcnZzWHVQcVlrVmFVb1hmVnNWN2V1LWtuZG9HRlNvekFkQzBZR0RyQU5EWHlYTmF3alZ6VVJjMnk2Q25tU1lnMldHMjdRWTJObENVWWdDRDJR?oc=5",
-      "image": "",
-      "full_article": "[원문 추출 실패 · RSS 요약] 챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 아시아투데이",
-      "takeaway": ""
-    },
     {
       "category": "심리학·인지",
       "title": "혐오스러운데 자꾸 보게 되는 여드름 압출 영상…뇌과학적 이유는? - 메디컬투데이",
       "source": "메디컬투데이",
       "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5rdXF0b2c0VnFaQTAySWlYY3N4Ynd1YnlpZFFDTkFwMHJJUFk3MHZ3bEUtYWQtamtFZHVFR0IzYjBvWVBuUndzcTlVMDdPdDRYbXVrWTFZNktOUEFQdDFtREljUW95aU9EbTNuYQ?oc=5",
       "image": "",
-      "full_article": "[원문 추출 실패 · RSS 요약] 혐오스러운데 자꾸 보게 되는 여드름 압출 영상…뇌과학적 이유는? 메디컬투데이",
+      "full_article": "혐오스러운데 자꾸 보게 되는 여드름 압출 영상…뇌과학적 이유는? 메디컬투데이",
       "takeaway": ""
     },
     {
@@ -48,7 +30,25 @@
       "source": "시민행정신문",
       "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9pQ2pvSlRRRU16OU9fRDRGMkpnc0M2R3UtVnVscEtxNUNHVXNiNDZyRFo5VzNNWDdnZmN3cnk3ZXQxNWpPRlpwVGVsdzJFcE01dEVjS2M0SWk0ZEFUdS1CUU80amEwTjRXeDdreVRR?oc=5",
       "image": "",
-      "full_article": "[원문 추출 실패 · RSS 요약] 삼척시정신건강복지센터, 재난 심리지원을 위한 '심리적 응급처치 교육(PFA)' 실시 시민행정신문",
+      "full_article": "삼척시정신건강복지센터, 재난 심리지원을 위한 '심리적 응급처치 교육(PFA)' 실시 시민행정신문",
+      "takeaway": ""
+    },
+    {
+      "category": "경제·시사",
+      "title": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 - 한국경제",
+      "source": "한국경제",
+      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5MVTM2UU82dlpELVV2RENMdnpHTmJkbFFNV2xNVDhwM2pQdW1fNkp0OW1ob0lpcmNwdFdNaUIzcWpCbmRscmlmbGtpRks2QjA4VVJINjlGYllPZw?oc=5",
+      "image": "",
+      "full_article": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 한국경제",
+      "takeaway": ""
+    },
+    {
+      "category": "경제·시사",
+      "title": "에스이노베이션스, 72억 원 규모 엣지 AI 반도체 사업 참여…자율주행 로봇 적용·실증 추진 - 인공지능신문",
+      "source": "인공지능신문",
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBaWFlJZlBhR2xfMmJ1LTMyLWR1UHpwVE9XbHpmZEl2enlEWGNudnI0dXo3dlRnMjdBOTJDVF9oVi1YVko3WTZYR0V6T2VFSkNoMWExRVFXYVd2Z3Z5WUtCUk5Fd09CbU0?oc=5",
+      "image": "",
+      "full_article": "에스이노베이션스, 72억 원 규모 엣지 AI 반도체 사업 참여…자율주행 로봇 적용·실증 추진 인공지능신문",
       "takeaway": ""
     },
     {
@@ -57,7 +57,7 @@
       "source": "더에듀",
       "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE05dGFqVVFmSEZxcy03SWhHejhHLTVuNE9GekF3aUJVeURNSGcweTVJX1RYNURibFNSTlM5a1lMXzItN3pKajRXc1ZSVGdudC1MQW5nOWNVR3VtLUU?oc=5",
       "image": "",
-      "full_article": "[원문 추출 실패 · RSS 요약] 교사 임용시험까지…‘부정행위 차단’ 앞치마 지급 더에듀",
+      "full_article": "교사 임용시험까지…‘부정행위 차단’ 앞치마 지급 더에듀",
       "takeaway": ""
     },
     {
@@ -66,7 +66,7 @@
       "source": "연합뉴스",
       "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFAydGNtWkxFMktnVGxzTUEtMVZsRksyTW1OZDU5eUlzUU83UlhnMXZja2ZVYktiLWszRFZUTUFxZF8yMldjS1lhWE8wbzI1ZUJucE1TSnNZMGxMRUNLbF9nTNIBYEFVX3lxTFAydGNtWkxFMktnVGxzTUEtMVZsRksyTW1OZDU5eUlzUU83UlhnMXZja2ZVYktiLWszRFZUTUFxZF8yMldjS1lhWE8wbzI1ZUJucE1TSnNZMGxMRUNLbF9nTA?oc=5",
       "image": "",
-      "full_article": "[원문 추출 실패 · RSS 요약] \"교육예산이 지역경제 살린다\" 대구교육청, 상생정책 추진 연합뉴스",
+      "full_article": "\"교육예산이 지역경제 살린다\" 대구교육청, 상생정책 추진 연합뉴스",
       "takeaway": ""
     },
     {
@@ -75,27 +75,27 @@
       "source": "https://www.didimkorea.net/",
       "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE40WFhLa0pxOHJrbzByUThiXzUxSDBiQUR3WGZsdk5ZVUFxS19KeVVfeWxKT3V1OWV1WmFhTmtBbXo2U0V1cnIzWUp3NUdBRzQ?oc=5",
       "image": "",
-      "full_article": "[원문 추출 실패 · RSS 요약] 인간의 창의성과 인공지능의 창의성…부평도서관 올빼미 인문학 https://www.didimkorea.net/",
+      "full_article": "인간의 창의성과 인공지능의 창의성…부평도서관 올빼미 인문학 https://www.didimkorea.net/",
       "takeaway": ""
     },
     {
       "category": "사설·칼럼",
-      "title": "공정한 시험이라는 신화 [홍성수 칼럼] - 한겨레",
-      "source": "한겨레",
-      "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1VU0dxREpRbmFjWHAzRldqWXA4TUdFVlZDc2RKY3BSa21qQ2xHYWhnMVBOMHViRzY0SDJweGNMM0I4QkFWSng2YWI3cWdoYUE4RGxUSFFvSjJpTHZQcmY0RS1zbGlodw?oc=5",
+      "title": "칼럼 | AI가 고친 코드 한 줄, 어디까지 검증해야 할까 - www.cio.com",
+      "source": "www.cio.com",
+      "url": "https://news.google.com/rss/articles/CBMixAJBVV95cUxNQkQzT0xUdnBPWUNyLXJ6MGZ0N2VWNkNTQlpQbzM0M041Xzd2dm5ockFkY3ZEV3dRS3lRQWtYMGxoZjdmYzFJWTdXNWZGbHZoLUhScl93c0ZHaUVEUGcxeFlBMXVJSzhjVzlMTDk2cDVSOXpoSmlYeHE1X0ZVc21tSERMUjJXWkwxeHJlN2FTU2ZGdzhianNUS051UXptSjNMa2ZyQkFZODl5VU1RQVo0Xy1xQUQ5cUpCZnJkalR4WUhzeDlyZ25FWGlIOGp6cmdfV0x6Q1ZnTXJwcmRKRzhtMVJvVTN6ZmItQXJXS3BuR3ZYdDJ3NFhpdEo5NXFpblZFdGxrNjg0a3dMeDh1ejlWVDgwRi15UkhQV2UwUms4MDZjR0lhcHpmMngwUllWcktRWGJ2MHZzTTVGM0NnT3pUX0lUMTg?oc=5",
       "image": "",
-      "full_article": "[원문 추출 실패 · RSS 요약] 공정한 시험이라는 신화 [홍성수 칼럼] 한겨레",
+      "full_article": "칼럼 | AI가 고친 코드 한 줄, 어디까지 검증해야 할까 www.cio.com",
       "takeaway": ""
     }
   ],
   "research_report": {
-    "source_name": "ScienceDaily 심리연구",
-    "title": "우울증, 알츠하이머병의 초기 경고 신호일 수 있다",
-    "journal_info": "ScienceDaily 심리연구 / 브랜다이스 대학교 Teodora Markova 연구팀",
-    "url": "https://www.sciencedaily.com/releases/2026/11/261121221134.htm",
+    "source_name": "Behavioral Scientist",
+    "title": "우편 배달부의 삶을 통해 본 노동의 의미와 '느린 호기심'",
+    "journal_info": "Behavioral Scientist, 댄 히스(Dan Heath)의 인터뷰 시리즈 'What It’s Like to Be…'",
+    "url": "https://behavioralscientist.org/what-its-like-to-be-a-mail-carrier/",
     "image": "./data/images/research_0.jpg",
-    "full_article": "노년기에 나타나는 기분 변화는 기억력이나 사고력 문제가 눈에 띄기 전, 뇌 내부에서 일어나는 변화를 알려주는 중요한 단서가 될 수 있습니다. 최근 연구에 따르면 알츠하이머병과 밀접하게 연관된 단백질인 '타우(tau)'의 축적이 노년층의 우울 증상을 악화시키는 데 기여할 수 있다는 사실이 밝혀졌습니다.\n\n브랜다이스 대학교의 테오도라 마르코바 연구팀은 알츠하이머병 신경영상 이니셔티브(ADNI) 데이터를 분석하여 정상적인 노화 과정과 알츠하이머병 관련 인지 장애를 겪는 사람들의 타우 수치와 우울증 간의 상관관계를 조사했습니다. 연구진은 타우 축적을 감지하기 위한 뇌 스캔과 우울 증상 설문조사를 병행하여 시간에 따른 뇌 건강 변화를 추적했습니다.\n\n이번 연구는 우울증이 단순한 심리적 문제를 넘어, 뇌 내 단백질 축적이라는 생물학적 변화를 반영하는 초기 지표일 가능성을 시사합니다. 이는 인지 기능 저하가 본격적으로 나타나기 전, 기분 변화를 면밀히 관찰하는 것이 조기 진단과 예방에 중요한 열쇠가 될 수 있음을 보여줍니다.",
-    "takeaway": "노년기의 우울 증상 악화는 알츠하이머병의 초기 신호일 수 있으므로, 단순 기분 변화로 치부하지 말고 뇌 건강을 점검하는 계기로 삼아야 합니다."
+    "full_article": "로스앤젤레스의 은퇴한 우편 배달부 존 아얄라의 일상을 통해, 우리가 매일 마주하는 우편 서비스 이면의 노동 현장을 조명합니다. 그는 매일 아침 트럭을 채우고, 사나운 개와 궂은 날씨를 견디며 지역 사회를 연결하는 역할을 수행했습니다.\n\n댄 히스는 이 인터뷰를 통해 타인의 직업적 신발을 신고 걷는다는 것이 어떤 의미인지 탐구합니다. 특히 아얄라가 골프채를 활용해 소포를 배달했던 독특한 경험과, 배달되는 우편물을 통해 주민들의 삶을 관찰하며 얻은 통찰은 노동의 가치를 다시 생각하게 합니다.\n\n이 프로젝트는 '느린 호기심(slow curiosity)'이라는 철학을 바탕으로 합니다. 단순히 정보를 소비하는 것을 넘어, 타인의 삶을 깊이 있게 이해하려는 시도는 현대 사회에서 우리가 잃어버린 연결성을 회복하는 중요한 열쇠가 됩니다.",
+    "takeaway": "타인의 일상을 깊이 관찰하는 '느린 호기심'은 기술 중심 사회에서 인간적 연결과 노동의 본질을 이해하는 핵심 동력입니다."
   },
   "blog_articles": []
 }
