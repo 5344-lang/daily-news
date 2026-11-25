@@ -4,98 +4,98 @@
   "date_kr": "2026년 11월 25일 (수)",
   "show_weather": true,
   "weather": "대구 대체로 맑음 -10°/3° (강수 0%)",
-  "edition_quote": "기술의 비약적 발전과 심리적 안녕이 교차하는 시대, 우리는 도구로서의 AI를 넘어 인간 본연의 인지적 건강과 윤리적 기준을 재정립해야 합니다.",
+  "edition_quote": "기술의 발전이 가져온 효율성의 이면에서, 이제는 인간의 마음을 돌보고 제도를 정교화하는 '내면의 혁신'이 필요한 시점입니다.",
   "lead_story": {
     "category": "심리학·인지",
     "title": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 - 한국일보",
     "source": "한국일보",
-    "url": "https://angular.dev/license",
-    "image": "./data/images/lead.jpg",
-    "full_article": "Copyright (c) 2010-2026 Google LLC. https://angular.dev/license\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+    "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1leVJOZGZmVVctTHJ2VjJtLURkMmUxUVNTaVJEWlZUMjRhdjJ2VjVJT2xYVHBmSnB2UGh6a1lXb2RUTk5teWJlSl96c2IwVUxLOWpJb0NqM2hLSlhVMktzZVRfeFJPc2V0YWFSWjZn?oc=5",
+    "image": "",
+    "full_article": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 한국일보",
     "takeaway": ""
   },
   "articles": [
     {
       "category": "심리학·인지",
+      "title": "정신건강 상담은 ‘있는 줄 몰라서’, 노인돌봄은 ‘자격 안 돼서’···필요해도 못 쓰는 사회서비스 - 경향신문",
+      "source": "경향신문",
+      "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5WYkU4LXVNeHhFN2hrQlJNQ1MyZlNYN3ZiR3lmSVBLVV9XRi1lZGZweERBTmRURmp3WXlqYU10cXh4TzFaZFQxU09Vb1N1bjRpM3FtYlNTWjBaby1yUmww0gFfQVVfeXFMTlZiRTgtdU14eEU3aGtCUk1DUzJmU1g3dmJHeWZJUEtVX1dGLWVkZnB4REFOZFRGandZeWphTXRxeHhPMVpkVDFTT1VvU3VuNGkzcW1iU1NaMFpvLXJSbDA?oc=5",
+      "image": "",
+      "full_article": "정신건강 상담은 ‘있는 줄 몰라서’, 노인돌봄은 ‘자격 안 돼서’···필요해도 못 쓰는 사회서비스 경향신문",
+      "takeaway": ""
+    },
+    {
+      "category": "심리학·인지",
       "title": "혐오스러운데 자꾸 보게 되는 여드름 압출 영상…뇌과학적 이유는? - 메디컬투데이",
       "source": "메디컬투데이",
-      "url": "https://angular.dev/license",
-      "image": "./data/images/art_0.jpg",
-      "full_article": "Copyright (c) 2010-2026 Google LLC. https://angular.dev/license\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5rdXF0b2c0VnFaQTAySWlYY3N4Ynd1YnlpZFFDTkFwMHJJUFk3MHZ3bEUtYWQtamtFZHVFR0IzYjBvWVBuUndzcTlVMDdPdDRYbXVrWTFZNktOUEFQdDFtREljUW95aU9EbTNuYQ?oc=5",
+      "image": "",
+      "full_article": "혐오스러운데 자꾸 보게 되는 여드름 압출 영상…뇌과학적 이유는? 메디컬투데이",
       "takeaway": ""
     },
     {
       "category": "AI·테크",
       "title": "코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 - www.cio.com",
       "source": "www.cio.com",
-      "url": "https://angular.dev/license",
-      "image": "./data/images/art_1.jpg",
-      "full_article": "Copyright (c) 2010-2026 Google LLC. https://angular.dev/license\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+      "url": "https://news.google.com/rss/articles/CBMi2gJBVV95cUxPZWVlLVJ5Wk5oSWMzQ2lKUEk1RGlSVWZjcEY3QlZOUzVyaEdiTG1hbnczMkVXTTctTE5oMTZEQ250QmxtUnYwcUxqMzR0NkRuaWFKMDlYU1FQcGh6X3pWTW9NWWJqNzlxR3NwcjNFMnNScFFfVXpKSVlkRzh5YVkzalR0RGdGbDk0RVZqWE1qS3ZnMVZ4Z1RkcEpaanljVUpCTzVvT0FrcklOTWZkemFReUlkbmxlejNjR3p1Ukxsd0ZzX1JYZVBQTENzMF9oMEVtLU1qSWdqNkRnaU1pTEk1RFBpbGhLRF82OUNMN3ZiOGthWGdhbEhhMDhmOHpEc2p3WHpib0tkSkpadk9DdWRMZjc3WnhJQUdLdkNYZUJZdXF2Qzhnd2ZlRjFYVnRoc2QxX0pibUtnTkFEYnlCSHdKNGxRcmZmSW9PcnFlMU13REpOeXg3SjFmVGl3?oc=5",
+      "image": "",
+      "full_article": "코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 www.cio.com",
       "takeaway": ""
     },
     {
       "category": "AI·테크",
       "title": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 - 아시아투데이",
       "source": "아시아투데이",
-      "url": "https://angular.dev/license",
-      "image": "./data/images/art_2.jpg",
-      "full_article": "Copyright (c) 2010-2026 Google LLC. https://angular.dev/license\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9EU2pQWkstazNIb0RUZ25VQzNpQmtRcnZzWHVQcVlrVmFVb1hmVnNWN2V1LWtuZG9HRlNvekFkQzBZR0RyQU5EWHlYTmF3alZ6VVJjMnk2Q25tU1lnMldHMjdRWTJObENVWWdDRDJR?oc=5",
+      "image": "",
+      "full_article": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 아시아투데이",
       "takeaway": ""
     },
     {
       "category": "경제·시사",
       "title": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 - 한국경제",
       "source": "한국경제",
-      "url": "https://angular.dev/license",
-      "image": "./data/images/art_3.jpg",
-      "full_article": "Copyright (c) 2010-2026 Google LLC. https://angular.dev/license\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5MVTM2UU82dlpELVV2RENMdnpHTmJkbFFNV2xNVDhwM2pQdW1fNkp0OW1ob0lpcmNwdFdNaUIzcWpCbmRscmlmbGtpRks2QjA4VVJINjlGYllPZw?oc=5",
+      "image": "",
+      "full_article": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 한국경제",
       "takeaway": ""
     },
     {
       "category": "경제·시사",
       "title": "에스이노베이션스, 72억 원 규모 엣지 AI 반도체 사업 참여…자율주행 로봇 적용·실증 추진 - 인공지능신문",
       "source": "인공지능신문",
-      "url": "https://angular.dev/license",
-      "image": "./data/images/art_4.jpg",
-      "full_article": "Copyright (c) 2010-2026 Google LLC. https://angular.dev/license\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBaWFlJZlBhR2xfMmJ1LTMyLWR1UHpwVE9XbHpmZEl2enlEWGNudnI0dXo3dlRnMjdBOTJDVF9oVi1YVko3WTZYR0V6T2VFSkNoMWExRVFXYVd2Z3Z5WUtCUk5Fd09CbU0?oc=5",
+      "image": "",
+      "full_article": "에스이노베이션스, 72억 원 규모 엣지 AI 반도체 사업 참여…자율주행 로봇 적용·실증 추진 인공지능신문",
       "takeaway": ""
     },
     {
       "category": "임용·교육",
-      "title": "앞치마에 열화상 탐지기까지…서울교육청, 중등 임용시험 'AI 부정행위' 차단 총력 - 뉴스핌",
-      "source": "뉴스핌",
-      "url": "https://angular.dev/license",
-      "image": "./data/images/art_5.jpg",
-      "full_article": "Copyright (c) 2010-2026 Google LLC. https://angular.dev/license\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+      "title": "예비 교사도 예외 없다... 임용시험도 앞치마 입고 치른다 - 한국일보",
+      "source": "한국일보",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTFBWZHpSV2ZtWmVSbmgxUlZKS1ZWVUZ0clNTZDVSMHUzTHNGSmJhR2p4UGhfb1RmWU1ZeXhIOWlFN1N4eHYxYVNqdVAyOW1kS0U2dXN3azI4aE1YQU9LeWRGTzE5UlkzQ2ZsQjlmOEtB?oc=5",
+      "image": "",
+      "full_article": "예비 교사도 예외 없다... 임용시험도 앞치마 입고 치른다 한국일보",
       "takeaway": ""
     },
     {
       "category": "도서·문학",
       "title": "[특집 인터뷰] 오석진 대전시교육감 “AI 시대 해법은 인간 중심 인문학…교직원 모두 지키는 ‘교육가족 보호’ 실현할 것” - 프레시안",
       "source": "프레시안",
-      "url": "https://angular.dev/license",
-      "image": "./data/images/art_6.jpg",
-      "full_article": "Copyright (c) 2010-2026 Google LLC. https://angular.dev/license\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
-      "takeaway": ""
-    },
-    {
-      "category": "사설·칼럼",
-      "title": "칼럼 | AI가 고친 코드 한 줄, 어디까지 검증해야 할까 - www.cio.com",
-      "source": "www.cio.com",
-      "url": "https://angular.dev/license",
-      "image": "./data/images/art_7.jpg",
-      "full_article": "Copyright (c) 2010-2026 Google LLC. https://angular.dev/license\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+      "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5lVE56TlBCcWhCdXRWNnowajl0NG1qbW9GUVpmTXdTYU5xZ2RrZDhzYmtCZzZEZU1XeEREQ1BSQklJRXdNckNFNG9PSUdIc1plTnhEQk1ZNmJMYnRBcndndW9xd2JBT0lKTWxB?oc=5",
+      "image": "",
+      "full_article": "[특집 인터뷰] 오석진 대전시교육감 “AI 시대 해법은 인간 중심 인문학…교직원 모두 지키는 ‘교육가족 보호’ 실현할 것” 프레시안",
       "takeaway": ""
     }
   ],
   "research_report": {
-    "source_name": "PsyBlog",
-    "title": "청소년기 식습관, 불안과 우울증 발병에 장기적 영향 미친다",
-    "journal_info": "출처: PsyBlog / 연구진: 청소년 대상 3년간 추적 조사",
-    "url": "https://www.spring.org.uk/2026/11/food-habit-depression.php",
+    "source_name": "ScienceDaily 심리연구",
+    "title": "정신건강을 지키는 운동의 핵심은 '강도'보다 '빈도'",
+    "journal_info": "PLOS One, 마이클 그라스달스모엔(웨스턴 노르웨이 응용과학대) 연구팀",
+    "url": "https://www.sciencedaily.com/releases/2026/11/261119194601.htm",
     "image": "./data/images/research_0.jpg",
-    "full_article": "최근 연구에 따르면 청소년기의 식습관이 향후 불안 및 우울증 증상 발현과 밀접한 연관이 있는 것으로 나타났습니다. 연구진은 청소년들을 최대 3년간 추적 조사하여 이들이 섭취하는 영양소와 정신 건강 지표 사이의 상관관계를 분석했습니다.\n\n조사 결과, 특정 식습관을 유지한 청소년 그룹에서 정신 건강 문제의 발병률이 유의미하게 낮게 나타났습니다. 이는 단순히 신체적 성장을 넘어 뇌의 발달 과정에 있는 청소년들에게 균형 잡힌 영양 공급이 정서적 안정성을 유지하는 데 필수적인 요소임을 시사합니다.\n\n연구진은 이번 결과가 청소년기 정신 건강을 관리하기 위한 비약물적 개입 방안으로서 '식단 관리'의 중요성을 강조한다고 설명했습니다. 올바른 식습관 형성이 장기적인 심리적 회복탄력성을 높이는 기초가 될 수 있다는 점을 입증한 것입니다.",
-    "takeaway": "청소년기의 건강한 식습관은 미래의 불안과 우울증을 예방하는 가장 기초적이고 강력한 심리적 방어 기제가 됩니다."
+    "full_article": "최근 1만 명 이상의 대학생을 대상으로 진행된 연구에 따르면, 정신건강을 개선하기 위해서는 운동의 강도나 시간보다 '얼마나 자주' 운동하느냐가 더 중요한 것으로 나타났습니다. 운동 빈도가 낮은 학생들은 1년 후 우울증이나 불안 증상을 겪을 확률이 더 높았습니다.\n\n연구진은 대학 시절이 학업과 사회적 책임 등 새로운 환경에 적응해야 하는 시기인 만큼, 정신건강을 보호하기 위한 일상적인 습관을 파악하는 것이 중요하다고 강조합니다. 무리하게 고강도 운동을 하는 것보다 꾸준한 운동 루틴을 유지하는 것이 심리적 웰빙에 훨씬 효과적입니다.\n\n이번 연구 결과는 신체 활동이 심리적 건강과 밀접한 관련이 있음을 다시 한번 확인시켜 줍니다. 정신건강을 위해 거창한 계획을 세우기보다는, 매일 혹은 정기적으로 몸을 움직이는 작은 습관을 만드는 것이 장기적인 정신건강 유지의 핵심입니다.",
+    "takeaway": "정신건강을 위해서는 고강도 운동보다 꾸준한 운동 빈도를 유지하는 것이 훨씬 효과적입니다."
   },
   "blog_articles": []
 }
