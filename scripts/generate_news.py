@@ -513,16 +513,39 @@ def generate_edition_with_gemini(config, news_candidates, research_candidates, p
     last_err = None
     for attempt in range(4):
         try:
-            models_to_try = [
-        "gemini-3.8-flash",
-        "gemini-2.5-flash-lite",
-        "gemini-2.0-flash",
-    ]
+            # 사용 가능한 Gemini 모델 목록을 자동으로 조회해 덜 붐비는 순으로 시도
+    candidate_models = []
+    try:
+        for m in client.models.list():
+            name = (m.name or "").replace("models/", "")
+            if (
+                name.startswith("gemini-")
+                and not any(x in name for x in ["embedding", "imagen", "veo", "tts", "audio", "vision", "robotics", "computer-use"])
+            ):
+                candidate_models.append(name)
+    except Exception as e:
+        print(f"[경고] 모델 목록 자동 조회 실패: {e}")
+
+    if not candidate_models:
+        candidate_models = ["gemini-3.8-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"]
+
+    def model_priority(name):
+        if "flash-lite" in name:
+            return (0, name)
+        if "flash" in name:
+            return (1, name)
+        if "pro" in name:
+            return (2, name)
+        return (3, name)
+
+    models_to_try = sorted(set(candidate_models), key=model_priority)[:6]
+    print(f"[안내] 시도할 모델 순서: {models_to_try}")
+
     last_err = None
     for model_name in models_to_try:
-        for attempt in range(3):
+        for attempt in range(2):
             try:
-                print(f"[안내] {model_name} 모델로 편집 요청 중... ({attempt + 1}/3)")
+                print(f"[안내] {model_name} 모델로 편집 요청 중... ({attempt + 1}/2)")
                 response = client.models.generate_content(
                     model=model_name,
                     contents=prompt,
@@ -535,11 +558,11 @@ def generate_edition_with_gemini(config, news_candidates, research_candidates, p
             except Exception as e:
                 last_err = e
                 err_str = str(e)
-                if "404" in err_str or "NOT_FOUND" in err_str:
+                if "404" in err_str or "NOT_FOUND" in err_str or "400" in err_str:
                     print(f"[안내] {model_name} 사용 불가, 다음 모델로 전환합니다.")
                     break
                 if "503" in err_str or "429" in err_str or "UNAVAILABLE" in err_str:
-                    wait_sec = 10 * (attempt + 1)
+                    wait_sec = 6 * (attempt + 1)
                     print(f"[안내] {model_name} 서버 혼잡. {wait_sec}초 후 재시도...")
                     time.sleep(wait_sec)
                 else:
