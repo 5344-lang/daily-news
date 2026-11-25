@@ -30,6 +30,9 @@ except ImportError:
     gnewsdecoder = None
 
 
+import base64
+from urllib.parse import unquote, urljoin, urlparse
+
 BLOCKED_DECODE_HOSTS = (
     "news.google.com",
     "google.com",
@@ -44,16 +47,48 @@ BLOCKED_DECODE_HOSTS = (
     "fonts.gstatic.com",
     "fonts.googleapis.com",
     "googleusercontent.com",
+    "w3.org",
+    "www.w3.org",
 )
 
 
 def is_valid_article_url(u):
     if not u or not u.startswith(("http://", "https://")):
         return False
-    host = (urlparse(u).hostname or "").lower()
+    parsed = urlparse(u)
+    host = (parsed.hostname or "").lower()
     if not host:
         return False
-    return not any(host == b or host.endswith("." + b) for b in BLOCKED_DECODE_HOSTS)
+    if any(host == b or host.endswith("." + b) for b in BLOCKED_DECODE_HOSTS):
+        return False
+    if "w3.org/2000/svg" in u or "w3.org/1999/xhtml" in u:
+        return False
+    return True
+
+
+def _extract_url_from_cbmi_token(url):
+    try:
+        parts = [p for p in urlparse(url).path.split("/") if p]
+        if "articles" not in parts:
+            return ""
+        idx = parts.index("articles")
+        if idx + 1 >= len(parts):
+            return ""
+        token = parts[idx + 1].split("?")[0]
+        padded = token + "=" * ((4 - len(token) % 4) % 4)
+        for fn in (base64.urlsafe_b64decode, base64.b64decode):
+            try:
+                raw = fn(padded)
+                text = raw.decode("latin-1", errors="ignore")
+                for m in re.findall(r"https?://[A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]+", text):
+                    cand = unquote(m).strip().rstrip(".,);'\"\\")
+                    if is_valid_article_url(cand):
+                        return cand
+            except Exception:
+                continue
+    except Exception:
+        pass
+    return ""
 
 
 def decode_google_news_url(url):
@@ -69,9 +104,14 @@ def decode_google_news_url(url):
                 if is_valid_article_url(decoded):
                     return decoded
         except Exception as e:
-            print(f"[안내] googlenewsdecoder 실패, 페이지 추적 전환: {e}")
+            print(f"[안내] googlenewsdecoder 실패, 대체 경로 전환: {e}")
 
-    # 2차: 구글 뉴스 articles 페이지에서 실제 외부 언론사 링크만 선별
+    # 2차: CBMi 토큰 내 평문/인코딩 URL 추출
+    cbmi_url = _extract_url_from_cbmi_token(url)
+    if cbmi_url:
+        return cbmi_url
+
+    # 3차: 리다이렉트 및 HTML 내 유효 외부 언론사 링크 탐색
     try:
         resp = requests.get(url, headers=HEADERS, timeout=12, allow_redirects=True)
         final_url = (resp.url or url).strip()
@@ -94,7 +134,9 @@ def decode_google_news_url(url):
         unescaped = html.replace("\\/", "/").replace("\\u003d", "=").replace("\\u0026", "&")
         for match in re.findall(r"https?://[^\s\"'<>\\]+", unescaped):
             cand = unquote(match).strip().rstrip(".,);'\"")
-            if is_valid_article_url(cand) and not cand.lower().endswith((".js", ".css", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".ico")):
+            if is_valid_article_url(cand) and not cand.lower().endswith(
+                (".js", ".css", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".ico")
+            ):
                 return cand
     except Exception as e:
         print(f"[경고] 구글 뉴스 페이지 링크 추출 실패: {e}")
