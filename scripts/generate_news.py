@@ -158,7 +158,7 @@ def download_local_image(img_url, filename, referer=None):
         return ""
 
 
-def scrape_generic_article(url, max_len=2000):
+def scrape_generic_article(url, max_len=3500):
     try:
         resp = requests.get(url, headers=HEADERS, timeout=12, allow_redirects=True)
         resp.raise_for_status()
@@ -182,6 +182,17 @@ def scrape_generic_article(url, max_len=2000):
         )
         if not container:
             return og_img, ""
+
+        # og:image가 없을 경우 본문 영역 내 첫 번째 유효 이미지 탐색
+        if not og_img:
+            for img in container.find_all("img"):
+                cand = img.get("data-src") or img.get("data-lazy-src") or img.get("src") or ""
+                if not cand:
+                    continue
+                full_img = urljoin(resp.url, cand.strip())
+                if not is_ignored_image(full_img):
+                    og_img = full_img
+                    break
 
         paragraphs = [p.get_text(" ", strip=True) for p in container.find_all(["p", "div"]) if p.name == "p" or not p.find("p")]
         raw_text = "\n".join(paragraphs) if paragraphs else container.get_text("\n", strip=True)
@@ -530,17 +541,12 @@ def generate_edition_with_gemini(config, news_candidates, research_candidates, p
   "edition_quote": "문자열",
   "lead_story": {{
     "id": 0,
-    "category": "카테고리명",
-    "title": "정돈된 신문 헤드라인",
-    "full_article": "문단1\\n\\n문단2\\n\\n문단3",
-    "takeaway": "핵심 한 줄 요약"
+    "category": "카테고리명"
   }},
   "articles": [
     {{
       "id": 1,
-      "category": "카테고리명",
-      "title": "정돈된 헤드라인",
-      "full_article": "문단1\\n\\n문단2\\n\\n문단3"
+      "category": "카테고리명"
     }}
   ],
   "research_report": {{
@@ -644,8 +650,9 @@ def main():
             raw_img, scraped_body = scrape_generic_article(url, max_len=4000)
         local_img = download_local_image(raw_img, img_name, referer=url) if raw_img else ""
         final_img = local_img or raw_img
-        final_body = scraped_body or src.get("snippet") or ""
-        print(f"[수집] {img_name} | URL={'원문' if url and 'news.google.com' not in url else '구글'} | 사진={bool(final_img)} | 본문길이={len(final_body)}")
+        final_body = scraped_body or f"[원문 추출 실패 · RSS 요약] {src.get('snippet') or ''}"
+        본문출처 = "원문추출" if scraped_body else "RSS요약"
+        print(f"[수집] {img_name} | {본문출처} | 사진={bool(final_img)} | 길이={len(final_body)} | URL={url[:60]}")
         return {
             "category": item.get("category") or src.get("category", "뉴스"),
             "title": src.get("title") or item.get("title", ""),
