@@ -673,7 +673,13 @@ def main():
         if not item:
             return None
         src = cand_map.get(item.get("id"), {})
-        url = decode_google_news_url(src.get("url", ""))
+        raw_url = src.get("url", "")
+        url = decode_google_news_url(raw_url)
+        is_decoded = bool(url) and ("news.google.com" not in url)
+        print(
+            f"[디버그URL] {img_name} | 변환성공={is_decoded} | "
+            f"원래URL={raw_url[:80]} | 반환URL={url[:120]}"
+        )
         raw_img = ""
         scraped_body = ""
         if url:
