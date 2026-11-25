@@ -16,7 +16,6 @@ try:
     from googlenewsdecoder import gnewsdecoder
 except ImportError:
     gnewsdecoder = None
-
 try:
     import trafilatura
 except ImportError:
@@ -24,8 +23,7 @@ except ImportError:
 
 KST = timezone(timedelta(hours=9))
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
 }
 BLOCKED_HOSTS = {
@@ -78,16 +76,49 @@ def _get_google_token(url):
     return ""
 
 
+def _find_garturl_result(node):
+    """Walk Google's variable batchexecute envelope and extract the Fbv4je URL."""
+    if isinstance(node, dict):
+        for value in node.values():
+            found = _find_garturl_result(value)
+            if found:
+                return found
+    elif isinstance(node, list):
+        # Typical envelope is ["wrb.fr", "Fbv4je", "[\"garturlres\",\"https://publisher/...\"]", ...].
+        if len(node) >= 3 and node[0] == "wrb.fr" and node[1] == "Fbv4je":
+            payload = node[2]
+            if isinstance(payload, str):
+                try:
+                    payload = json.loads(payload)
+                except ValueError:
+                    return ""
+            if isinstance(payload, list):
+                if len(payload) > 1 and payload[0] == "garturlres" and is_valid_article_url(payload[1]):
+                    return payload[1]
+                for value in payload:
+                    found = _find_garturl_result(value)
+                    if found:
+                        return found
+        for value in node:
+            found = _find_garturl_result(value)
+            if found:
+                return found
+    return ""
+
+
 def _decode_batchexecute(url):
     token = _get_google_token(url)
     if not token:
         return ""
-    page = requests.get(url, headers=HEADERS, timeout=(5, 15), allow_redirects=True)
+    session = requests.Session()
+    page = session.get(url, headers=HEADERS, timeout=(5, 15), allow_redirects=True)
+    page.raise_for_status()
     if is_valid_article_url(page.url):
         return page.url
     soup = BeautifulSoup(page.text, "html.parser")
     signature = soup.find(attrs={"data-n-a-sg": True, "data-n-a-ts": True})
     if not signature:
+        print(f"[안내] Google 응답에 garturl 서명 속성이 없음 (HTTP {page.status_code}, 최종 호스트={urlparse(page.url).hostname})")
         return ""
     inner = json.dumps([
         "garturlreq",
@@ -95,29 +126,30 @@ def _decode_batchexecute(url):
           None, None, None, None, 0, 1], "X", "X", 1, [1, 1, 1], 1, 1, None, 0, 0, None, 0],
         token, int(signature["data-n-a-ts"]), signature["data-n-a-sg"],
     ], separators=(",", ":"))
-    body = json.dumps([[['Fbv4je', inner, None, "generic"]]], separators=(",", ":"))
-    response = requests.post(
+    request_body = json.dumps([[['Fbv4je', inner, None, "generic"]]], separators=(",", ":"))
+    rpc = session.post(
         "https://news.google.com/_/DotsSplashUi/data/batchexecute",
-        headers={**HEADERS, "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},
-        data={"f.req": body}, timeout=(5, 15),
+        params={"rpcids": "Fbv4je", "source-path": urlparse(page.url).path, "hl": "ko", "gl": "KR", "rt": "c"},
+        headers={**HEADERS, "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                 "Origin": "https://news.google.com", "Referer": page.url},
+        data={"f.req": request_body}, timeout=(5, 15),
     )
-    response.raise_for_status()
-    for line in response.text.splitlines():
-        if "garturlres" not in line:
+    rpc.raise_for_status()
+    text = rpc.text.lstrip()
+    if text.startswith(")]}'"):
+        text = text.split("\n", 1)[-1]
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith(("[", "]")) and "wrb.fr" not in line:
             continue
         try:
-            outer = json.loads(line)
-            for record in outer:
-                if not isinstance(record, list):
-                    continue
-                for cell in record:
-                    if isinstance(cell, list) and len(cell) >= 3 and cell[0] == "Fbv4je":
-                        result = json.loads(cell[2]) if isinstance(cell[2], str) else cell[2]
-                        if isinstance(result, list):
-                            for candidate in result:
-                                if isinstance(candidate, str) and is_valid_article_url(candidate):
-                                    return candidate
-        except (ValueError, TypeError, IndexError):
+            # batchexecute lines can contain one complete JSON envelope or a prefix + envelope.
+            start = line.find("[[")
+            parsed = json.loads(line[start:]) if start >= 0 else json.loads(line)
+            result = _find_garturl_result(parsed)
+            if result:
+                return result
+        except (ValueError, TypeError):
             continue
     return ""
 
@@ -127,6 +159,13 @@ def decode_google_news_url(url):
         return ""
     if "news.google.com" not in (urlparse(url).hostname or "").lower():
         return url if is_valid_article_url(url) else ""
+    # The package can provide a quick path, but the verified batchexecute parser is primary.
+    try:
+        decoded = _decode_batchexecute(url)
+        if is_valid_article_url(decoded):
+            return decoded
+    except Exception as exc:
+        print(f"[안내] Google News batchexecute 디코딩 실패: {exc}")
     if gnewsdecoder is not None:
         try:
             result = gnewsdecoder(url, interval=1)
@@ -137,12 +176,6 @@ def decode_google_news_url(url):
                 print(f"[안내] googlenewsdecoder 응답: {result['message']}")
         except Exception as exc:
             print(f"[안내] googlenewsdecoder 실패: {exc}")
-    try:
-        decoded = _decode_batchexecute(url)
-        if is_valid_article_url(decoded):
-            return decoded
-    except Exception as exc:
-        print(f"[안내] Google News batchexecute 디코딩 실패: {exc}")
     return ""
 
 
@@ -249,9 +282,7 @@ def fetch_feed_safe(url, retries=2):
                 continue
             response.raise_for_status()
             parsed = feedparser.parse(response.content)
-            if parsed.entries:
-                return parsed
-            return feedparser.FeedParserDict(entries=[])
+            return parsed if parsed.entries else feedparser.FeedParserDict(entries=[])
         except requests.RequestException as exc:
             if attempt < retries and getattr(getattr(exc, "response", None), "status_code", None) in (429, 503):
                 time.sleep(min(2 ** (attempt + 1), 8))
@@ -266,7 +297,6 @@ def build_search_query(raw_query, excludes):
     if not raw:
         return ""
     positives, negatives = [], []
-    # Comma-separated settings may include negative keywords inside a token.
     for token in raw.split(","):
         words = token.strip().split()
         positive_words = [word for word in words if not (word.startswith("-") and len(word) > 1)]
@@ -275,24 +305,10 @@ def build_search_query(raw_query, excludes):
             phrase = " ".join(positive_words)
             positives.append(f'"{phrase}"' if " " in phrase else phrase)
     query = " OR ".join(positives) if positives else raw
-    excluded = [x.strip().lstrip("-") for x in re.split(r"[,\s]+", excludes or "") if x.strip()]
-    for word in excluded[:10]:
+    for word in [x.strip().lstrip("-") for x in re.split(r"[,\s]+", excludes or "") if x.strip()][:10]:
         if word not in negatives:
             negatives.append(word)
-    if negatives:
-        query += " " + " ".join("-" + word for word in negatives[:15])
-    return query
-
-
-def _news_rss_urls(query):
-    # Keep the Google query concise; long OR chains are more likely to be throttled.
-    terms = [term.strip('"') for term in re.findall(r'"[^"]+"|[^\s]+', query) if not term.startswith("-")]
-    compact = " OR ".join(terms[:4]) or query
-    return [
-        ("Google News", f"https://news.google.com/rss/search?q={quote_plus(query)}+when:2d&hl=ko&gl=KR&ceid=KR:ko"),
-        ("Google News compact", f"https://news.google.com/rss/search?q={quote_plus(compact)}&hl=ko&gl=KR&ceid=KR:ko"),
-        ("Bing News", f"https://www.bing.com/news/search?q={quote_plus(compact)}&format=RSS"),
-    ]
+    return query + (" " + " ".join("-" + word for word in negatives[:15]) if negatives else "")
 
 
 def fetch_news_candidates(categories, excludes, disliked_urls):
@@ -301,19 +317,8 @@ def fetch_news_candidates(categories, excludes, disliked_urls):
         query = build_search_query(category.get("query", ""), excludes)
         if not query:
             continue
-        feed = feedparser.FeedParserDict(entries=[])
-        provider = ""
-        for provider_name, rss_url in _news_rss_urls(query):
-            feed = fetch_feed_safe(rss_url, retries=1 if provider_name.startswith("Google") else 2)
-            if feed.entries:
-                provider = provider_name
-                break
-            if provider_name.startswith("Google"):
-                time.sleep(2)
-        if not feed.entries:
-            print(f"[경고] 뉴스 검색 피드 모두 실패: {category.get('name', '뉴스')}")
-            continue
-        print(f"[안내] {category.get('name', '뉴스')} 피드 제공자: {provider}")
+        rss_url = f"https://news.google.com/rss/search?q={quote_plus(query)}+when:2d&hl=ko&gl=KR&ceid=KR:ko"
+        feed = fetch_feed_safe(rss_url)
         count = 0
         for entry in feed.entries[:10]:
             title, link = entry.get("title", "").strip(), entry.get("link", "").strip()
@@ -391,9 +396,9 @@ def fetch_blog_articles(configured, published):
             if len(body) < 80:
                 body = clean_article_text(BeautifulSoup(entry.get("summary", ""), "html.parser").get_text("\n", strip=True), 3500)
             local = download_local_image(img, f"blog_{len(results)}.jpg", link) if img else ""
-            results.append({"blog_name": blog.get("name", "구독 블로그"),
-                            "title": entry.get("title", "").strip(), "url": link,
-                            "image": local or img, "full_article": body or "원문 링크에서 전체 내용을 확인하세요.",
+            results.append({"blog_name": blog.get("name", "구독 블로그"), "title": entry.get("title", "").strip(),
+                            "url": link, "image": local or img,
+                            "full_article": body or "원문 링크에서 전체 내용을 확인하세요.",
                             "published": entry.get("published", "")[:16]})
             if len(results) >= 3:
                 return results
@@ -416,8 +421,7 @@ def fetch_weather(city):
             "&timezone=Asia%2FSeoul&forecast_days=1", timeout=10,
         ).json().get("daily", {})
         code = (data.get("weathercode") or [0])[0]
-        low = round((data.get("temperature_2m_min") or [0])[0])
-        high = round((data.get("temperature_2m_max") or [0])[0])
+        low, high = round((data.get("temperature_2m_min") or [0])[0]), round((data.get("temperature_2m_max") or [0])[0])
         rain = (data.get("precipitation_probability_max") or [0])[0]
         return f"{city} {WMO_DESC.get(code, '흐림')} {low}°/{high}° (강수 {rain}%)"
     except Exception as exc:
@@ -427,7 +431,7 @@ def fetch_weather(city):
 
 def generate_edition(config, candidates, research, prefs):
     if not candidates:
-        raise RuntimeError("뉴스 후보를 하나도 수집하지 못했습니다. RSS 오류를 확인하고 발행을 중단합니다.")
+        raise RuntimeError("뉴스 후보를 하나도 수집하지 못했습니다. 발행을 중단합니다.")
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError("GEMINI_API_KEY 환경 변수가 설정되지 않았습니다.")
@@ -462,9 +466,8 @@ def generate_edition(config, candidates, research, prefs):
             return (2, name)
         return (3, name)
 
-    models = sorted(set(models), key=priority)
     last_error = None
-    for name in models[:6]:
+    for name in sorted(set(models), key=priority)[:6]:
         try:
             response = client.models.generate_content(
                 model=name, contents=prompt,
@@ -520,8 +523,7 @@ def main():
         rc, rr = research[0], ai["research_report"]
         report = {"source_name": rc["source_name"], "title": rr.get("title") or rc["title"],
                   "journal_info": rr.get("journal_info", rc["source_name"]), "url": rc["url"],
-                  "image": rc.get("image", ""), "full_article": rr.get("full_article", ""),
-                  "takeaway": rr.get("takeaway", "")}
+                  "image": rc.get("image", ""), "full_article": rr.get("full_article", ""), "takeaway": rr.get("takeaway", "")}
         history["research"].append(rc["url"])
         history["research"] = history["research"][-200:]
     history["blogs"] = (history["blogs"] + [item["url"] for item in blogs if item.get("url")])[-300:]
