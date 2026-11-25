@@ -30,6 +30,30 @@ except ImportError:
     gnewsdecoder = None
 
 
+BLOCKED_DECODE_HOSTS = (
+    "news.google.com",
+    "google.com",
+    "www.google.com",
+    "google-analytics.com",
+    "www.google-analytics.com",
+    "googletagmanager.com",
+    "www.googletagmanager.com",
+    "googlesyndication.com",
+    "doubleclick.net",
+    "gstatic.com",
+    "googleusercontent.com",
+)
+
+
+def is_valid_article_url(u):
+    if not u or not u.startswith(("http://", "https://")):
+        return False
+    host = (urlparse(u).hostname or "").lower()
+    if not host:
+        return False
+    return not any(host == b or host.endswith("." + b) for b in BLOCKED_DECODE_HOSTS)
+
+
 def decode_google_news_url(url):
     if not url or "news.google.com" not in url:
         return url
@@ -40,44 +64,35 @@ def decode_google_news_url(url):
             res = gnewsdecoder(url, interval=1)
             if isinstance(res, dict) and res.get("status") and res.get("decoded_url"):
                 decoded = res["decoded_url"].strip()
-                if decoded.startswith("http") and "news.google.com" not in decoded:
+                if is_valid_article_url(decoded):
                     return decoded
         except Exception as e:
             print(f"[안내] googlenewsdecoder 실패, 페이지 추적 전환: {e}")
 
-    # 2차: 구글 뉴스 articles 페이지에서 원문 링크/엔드포인트 추출
+    # 2차: 구글 뉴스 articles 페이지에서 실제 외부 언론사 링크만 선별
     try:
         resp = requests.get(url, headers=HEADERS, timeout=12, allow_redirects=True)
         final_url = (resp.url or url).strip()
-        if final_url.startswith("http") and "news.google.com" not in final_url:
+        if is_valid_article_url(final_url):
             return final_url
 
         html = resp.text or ""
         soup = BeautifulSoup(html, "html.parser")
 
-        # data-n-au 등 구글 뉴스 내부 원문 속성 확인
         for el in soup.find_all(attrs={"data-n-au": True}):
             cand = (el.get("data-n-au") or "").strip()
-            if cand.startswith("http") and "news.google.com" not in cand:
+            if is_valid_article_url(cand):
                 return cand
 
-        # 외부 언론사 링크(a 태그) 탐색
         for a in soup.find_all("a", href=True):
             href = urljoin(final_url, a["href"].strip())
-            if href.startswith("http") and "news.google.com" not in href and "google.com" not in href:
+            if is_valid_article_url(href):
                 return href
 
-        # HTML/스크립트 내 이스케이프된 언론사 URL 패턴 탐색
         unescaped = html.replace("\\/", "/").replace("\\u003d", "=").replace("\\u0026", "&")
         for match in re.findall(r"https?://[^\s\"'<>\\]+", unescaped):
             cand = unquote(match).strip().rstrip(".,);'\"")
-            if (
-                cand.startswith("http")
-                and "news.google.com" not in cand
-                and "google.com" not in cand
-                and "gstatic.com" not in cand
-                and "googleusercontent.com" not in cand
-            ):
+            if is_valid_article_url(cand) and not cand.lower().endswith((".js", ".css", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".ico")):
                 return cand
     except Exception as e:
         print(f"[경고] 구글 뉴스 페이지 링크 추출 실패: {e}")
