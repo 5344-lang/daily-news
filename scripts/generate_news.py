@@ -99,12 +99,12 @@ def _find_garturl_result(node):
             if isinstance(payload, list):
                 if len(payload) > 1 and payload[0] == "garturlres" and is_valid_article_url(payload[1]):
                     return payload[1]
-                for item in payload:
-                    found = _find_garturl_result(item)
+                for value in payload:
+                    found = _find_garturl_result(value)
                     if found:
                         return found
-        for item in node:
-            found = _find_garturl_result(item)
+        for value in node:
+            found = _find_garturl_result(value)
             if found:
                 return found
     return ""
@@ -353,8 +353,8 @@ def fetch_news_candidates(categories, excludes, disliked_urls):
                 title, source = title.rsplit(" - ", 1)
             snippet = BeautifulSoup(entry.get("summary", ""), "html.parser").get_text(" ", strip=True)
             candidates.append({"id": len(candidates), "category": category.get("name", "뉴스"),
-                               "title": title.strip(), "source": source.strip() or "뉴스",
-                               "url": link, "snippet": snippet[:400]})
+                               "title": title.strip(), "source": source.strip() or "뉴스", "url": link,
+                               "snippet": snippet[:400]})
             count += 1
             if count >= 4:
                 break
@@ -462,10 +462,7 @@ def _search_related_candidates(candidate, visited_urls):
     keywords = sorted(_article_keywords(candidate.get("title", "")), key=lambda x: (-len(x), x))[:6]
     if len(keywords) < 2:
         return []
-    feed = fetch_feed_safe(
-        f"https://news.google.com/rss/search?q={quote_plus(' '.join(keywords))}&hl=ko&gl=KR&ceid=KR:ko",
-        retries=1,
-    )
+    feed = fetch_feed_safe(f"https://news.google.com/rss/search?q={quote_plus(' '.join(keywords))}&hl=ko&gl=KR&ceid=KR:ko", retries=1)
     result = []
     original_host = _source_host(candidate)
     for entry in feed.entries[:8]:
@@ -492,7 +489,7 @@ def generate_edition(config, candidates, research, prefs):
     research_input = research[0] if research else None
     prompt = f'''개인 맞춤 조간신문 편집장입니다. 뉴스 후보 중 기사 {count}개를 고르고 JSON만 반환하세요.
 후보 id/category만 반환하고 제목이나 본문을 새로 만들지 마세요. lead_story 한 개, articles 나머지 {count - 1}개입니다.
-각 뉴스 후보에는 takeaway를 넣으세요. 제목과 RSS 요약에 근거한 한 문장입니다.
+각 뉴스 후보에는 takeaway를 넣으세요. 제목과 RSS 요약에 근거한 한 문장 핵심 요약입니다.
 뉴스 후보: {json.dumps(candidates, ensure_ascii=False)}
 연구 원문: {json.dumps(research_input, ensure_ascii=False)}
 연구가 있으면 실제 원문 body를 바탕으로 research_report.full_article을 한국어 3~4문단으로 편집하고, takeaway는 핵심 한 문장으로 작성하세요. 추측이나 새 사실은 덧붙이지 말고, 연구가 없으면 null입니다.
@@ -551,6 +548,7 @@ def main():
         print(f"[디버그URL] {filename} | 변환성공={bool(url)} | 원래URL={original[:80]} | 반환URL={url[:120] if url else '디코딩 실패'}")
         image, body = scrape_generic_article(url, max_len=4000) if url else ("", "")
         if len(body) < MIN_ARTICLE_BODY:
+            print(f"[안내] {filename}: 원문 길이 {len(body)}자, 대체 기사 탐색")
             return None
         local_image = download_local_image(image, filename, referer=url) if image else ""
         takeaway = clean_article_text(item.get("takeaway", ""), 240) or make_takeaway(body, source.get("title", ""))
@@ -579,17 +577,15 @@ def main():
         else:
             failed.append((role, selection.get("category") or source.get("category", "뉴스"), source))
 
-    alternatives = [c for c in news if c.get("id") not in visited_ids and c.get("url") not in visited_urls]
-    topic_queries = 0
+    alternates = [c for c in news if c.get("id") not in visited_ids and c.get("url") not in visited_urls]
+    topic_searches = 0
     for role, category, failed_source in failed:
-        candidates_by_topic = sorted(
-            alternatives,
+        ranked = sorted(alternates,
             key=lambda c: (-_keyword_similarity(failed_source.get("title", ""), c.get("title", "")),
-                           c.get("category") != category, c.get("id", 0)),
-        )
+                           c.get("category") != category, c.get("id", 0)))
         replacement = None
         tested = set()
-        for candidate in candidates_by_topic:
+        for candidate in ranked:
             if _source_host(candidate) == _source_host(failed_source):
                 continue
             if _keyword_similarity(failed_source.get("title", ""), candidate.get("title", "")) < 0.34:
@@ -605,10 +601,10 @@ def main():
                                  "lead.jpg" if role == "lead" and not any(r == "lead" for r, _ in successful) else f"art_{index}.jpg", candidate)
             if replacement:
                 break
-        alternatives = [c for c in alternatives if c.get("id") not in tested and c.get("id") not in visited_ids]
+        alternates = [c for c in alternates if c.get("id") not in tested and c.get("id") not in visited_ids]
 
-        if replacement is None and topic_queries < MAX_TOPIC_SEARCHES:
-            topic_queries += 1
+        if replacement is None and topic_searches < MAX_TOPIC_SEARCHES:
+            topic_searches += 1
             time.sleep(2)
             for candidate in _search_related_candidates(failed_source, visited_urls):
                 url = candidate.get("url", "")
@@ -616,14 +612,14 @@ def main():
                     continue
                 visited_urls.add(url)
                 index = sum(1 for r, _ in successful if r == "article")
-                replacement = enrich({"id": -topic_queries, "category": category, "takeaway": ""},
+                replacement = enrich({"id": -topic_searches, "category": category, "takeaway": ""},
                                      "lead.jpg" if role == "lead" and not any(r == "lead" for r, _ in successful) else f"art_{index}.jpg", candidate)
                 if replacement:
                     break
         if replacement:
             successful.append((role, replacement))
         else:
-            print(f"[안내] 같은 주제의 충분한 본문 후보 없음, {category} 기사 제외 (visited 중복 없이 종료)")
+            print(f"[안내] {category} 기사 대체 후보가 없어 제외합니다. RSS 스니펫은 발행하지 않습니다.")
 
     successful = [(role, {k: v for k, v in article.items() if not k.startswith("_")}) for role, article in successful]
     lead = next((article for role, article in successful if role == "lead"), None)
