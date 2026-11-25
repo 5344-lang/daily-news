@@ -22,53 +22,65 @@ import base64
 from urllib.parse import urlparse, unquote
 
 
+from urllib.parse import unquote, urljoin
+
+try:
+    from googlenewsdecoder import gnewsdecoder
+except ImportError:
+    gnewsdecoder = None
+
+
 def decode_google_news_url(url):
     if not url or "news.google.com" not in url:
         return url
 
-    # 1) URL 쿼리나 경로 내 인코딩된 원문 링크 추출 시도
-    try:
-        parsed = urlparse(url)
-        parts = [p for p in parsed.path.split("/") if p]
-        if "articles" in parts:
-            idx = parts.index("articles")
-            if idx + 1 < len(parts):
-                token = parts[idx + 1].split("?")[0]
-                # base64 패딩 보정 후 http 링크 문자열 탐색
-                padded = token + "=" * ((4 - len(token) % 4) % 4)
-                for b64_fn in (base64.urlsafe_b64decode, base64.b64decode):
-                    try:
-                        raw_bytes = b64_fn(padded)
-                        text = raw_bytes.decode("utf-8", errors="ignore")
-                        match = re.search(r"https?://[^\s\"'<>\\\x00-\x1f]+", text)
-                        if match:
-                            cand = unquote(match.group(0))
-                            if "news.google.com" not in cand and "google.com" not in cand:
-                                return cand
-                    except Exception:
-                        pass
-    except Exception:
-        pass
+    # 1차: googlenewsdecoder 패키지 시도
+    if gnewsdecoder is not None:
+        try:
+            res = gnewsdecoder(url, interval=1)
+            if isinstance(res, dict) and res.get("status") and res.get("decoded_url"):
+                decoded = res["decoded_url"].strip()
+                if decoded.startswith("http") and "news.google.com" not in decoded:
+                    return decoded
+        except Exception as e:
+            print(f"[안내] googlenewsdecoder 실패, 페이지 추적 전환: {e}")
 
-    # 2) HTTP 리다이렉트 및 HTML 내 원문 링크 탐색
+    # 2차: 구글 뉴스 articles 페이지에서 원문 링크/엔드포인트 추출
     try:
         resp = requests.get(url, headers=HEADERS, timeout=12, allow_redirects=True)
-        final_url = resp.url or url
-        if "news.google.com" not in final_url:
+        final_url = (resp.url or url).strip()
+        if final_url.startswith("http") and "news.google.com" not in final_url:
             return final_url
 
-        soup = BeautifulSoup(resp.text, "html.parser")
+        html = resp.text or ""
+        soup = BeautifulSoup(html, "html.parser")
+
+        # data-n-au 등 구글 뉴스 내부 원문 속성 확인
         for el in soup.find_all(attrs={"data-n-au": True}):
             cand = (el.get("data-n-au") or "").strip()
             if cand.startswith("http") and "news.google.com" not in cand:
                 return cand
 
+        # 외부 언론사 링크(a 태그) 탐색
         for a in soup.find_all("a", href=True):
-            href = a["href"].strip()
+            href = urljoin(final_url, a["href"].strip())
             if href.startswith("http") and "news.google.com" not in href and "google.com" not in href:
                 return href
+
+        # HTML/스크립트 내 이스케이프된 언론사 URL 패턴 탐색
+        unescaped = html.replace("\\/", "/").replace("\\u003d", "=").replace("\\u0026", "&")
+        for match in re.findall(r"https?://[^\s\"'<>\\]+", unescaped):
+            cand = unquote(match).strip().rstrip(".,);'\"")
+            if (
+                cand.startswith("http")
+                and "news.google.com" not in cand
+                and "google.com" not in cand
+                and "gstatic.com" not in cand
+                and "googleusercontent.com" not in cand
+            ):
+                return cand
     except Exception as e:
-        print(f"[경고] 구글 뉴스 링크 추적 실패: {e}")
+        print(f"[경고] 구글 뉴스 페이지 링크 추출 실패: {e}")
 
     return url
     
