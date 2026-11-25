@@ -513,15 +513,38 @@ def generate_edition_with_gemini(config, news_candidates, research_candidates, p
     last_err = None
     for attempt in range(4):
         try:
-            response = client.models.generate_content(
-                model="gemini-3.8-flash",
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    temperature=0.4,
-                ),
-            )
-            return json.loads(response.text)
+            models_to_try = [
+        "gemini-3.8-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-2.0-flash",
+    ]
+    last_err = None
+    for model_name in models_to_try:
+        for attempt in range(3):
+            try:
+                print(f"[안내] {model_name} 모델로 편집 요청 중... ({attempt + 1}/3)")
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        temperature=0.4,
+                    ),
+                )
+                return json.loads(response.text)
+            except Exception as e:
+                last_err = e
+                err_str = str(e)
+                if "404" in err_str or "NOT_FOUND" in err_str:
+                    print(f"[안내] {model_name} 사용 불가, 다음 모델로 전환합니다.")
+                    break
+                if "503" in err_str or "429" in err_str or "UNAVAILABLE" in err_str:
+                    wait_sec = 10 * (attempt + 1)
+                    print(f"[안내] {model_name} 서버 혼잡. {wait_sec}초 후 재시도...")
+                    time.sleep(wait_sec)
+                else:
+                    raise
+    raise last_err
         except Exception as e:
             last_err = e
             err_str = str(e)
