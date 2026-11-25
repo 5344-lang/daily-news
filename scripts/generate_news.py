@@ -19,14 +19,27 @@ except ImportError:
 
 
 def decode_google_news_url(url):
-    if not url or "news.google.com" not in url or gnewsdecoder is None:
+    if not url or "news.google.com" not in url:
         return url
     try:
-        res = gnewsdecoder(url, interval=1)
-        if res.get("status") and res.get("decoded_url"):
-            return res["decoded_url"]
+        resp = requests.get(url, headers=HEADERS, timeout=12, allow_redirects=True)
+        final_url = resp.url or url
+        if "news.google.com" not in final_url:
+            return final_url
+
+        # 구글 뉴스 리다이렉트 페이지 HTML 내부에서 실제 언론사 URL 탐색
+        soup = BeautifulSoup(resp.text, "html.parser")
+        for el in soup.find_all(attrs={"data-n-au": True}):
+            cand = (el.get("data-n-au") or "").strip()
+            if cand.startswith("http") and "news.google.com" not in cand:
+                return cand
+
+        for a in soup.find_all("a", href=True):
+            href = a["href"].strip()
+            if href.startswith("http") and "news.google.com" not in href and "google.com" not in href:
+                return href
     except Exception as e:
-        print(f"[경고] 구글 뉴스 링크 변환 실패: {e}")
+        print(f"[경고] 구글 뉴스 링크 추적 실패: {e}")
     return url
     
 KST = timezone(timedelta(hours=9))
