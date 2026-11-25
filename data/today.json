@@ -4,12 +4,12 @@
   "date_kr": "2026년 11월 25일 (수)",
   "show_weather": true,
   "weather": "대구 대체로 맑음 -10°/3° (강수 0%)",
-  "edition_quote": "기술의 비약적인 발전 속에서도 인간의 본질적인 정신 건강과 수면의 질을 지키는 것이 우리 시대의 가장 중요한 과제입니다.",
+  "edition_quote": "기술의 비약적인 발전 속에서도 인간의 심리적 회복과 공정한 교육 환경을 지키려는 사회적 노력이 그 어느 때보다 절실한 시점입니다.",
   "lead_story": {
     "category": "심리학·인지",
     "title": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 - 한국일보",
     "source": "한국일보",
-    "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1leVJOZGZmVVctTHJ2VjJtLURkMmUxUVNTaVJEWlZUMjRhdjJ2VjVJT2xYVHBmSnB2UGh6a1lXb2RUTk5teWJlSl96c2IwVUxLOWpJb0NqM2hLSlhVMktzZVRfeFJPc2V0YWFSWjZn?oc=5",
+    "url": "https://www.google-analytics.com/analytics.js",
     "image": "",
     "full_article": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 한국일보",
     "takeaway": ""
@@ -17,9 +17,18 @@
   "articles": [
     {
       "category": "심리학·인지",
+      "title": "정신건강 상담은 ‘있는 줄 몰라서’, 노인돌봄은 ‘자격 안 돼서’···필요해도 못 쓰는 사회서비스 - 경향신문",
+      "source": "경향신문",
+      "url": "https://www.google-analytics.com/analytics.js",
+      "image": "",
+      "full_article": "정신건강 상담은 ‘있는 줄 몰라서’, 노인돌봄은 ‘자격 안 돼서’···필요해도 못 쓰는 사회서비스 경향신문",
+      "takeaway": ""
+    },
+    {
+      "category": "심리학·인지",
       "title": "혐오스러운데 자꾸 보게 되는 여드름 압출 영상…뇌과학적 이유는? - 메디컬투데이",
       "source": "메디컬투데이",
-      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5rdXF0b2c0VnFaQTAySWlYY3N4Ynd1YnlpZFFDTkFwMHJJUFk3MHZ3bEUtYWQtamtFZHVFR0IzYjBvWVBuUndzcTlVMDdPdDRYbXVrWTFZNktOUEFQdDFtREljUW95aU9EbTNuYQ?oc=5",
+      "url": "https://www.google-analytics.com/analytics.js",
       "image": "",
       "full_article": "혐오스러운데 자꾸 보게 되는 여드름 압출 영상…뇌과학적 이유는? 메디컬투데이",
       "takeaway": ""
@@ -28,7 +37,7 @@
       "category": "AI·테크",
       "title": "코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 - www.cio.com",
       "source": "www.cio.com",
-      "url": "https://news.google.com/rss/articles/CBMi2gJBVV95cUxPZWVlLVJ5Wk5oSWMzQ2lKUEk1RGlSVWZjcEY3QlZOUzVyaEdiTG1hbnczMkVXTTctTE5oMTZEQ250QmxtUnYwcUxqMzR0NkRuaWFKMDlYU1FQcGh6X3pWTW9NWWJqNzlxR3NwcjNFMnNScFFfVXpKSVlkRzh5YVkzalR0RGdGbDk0RVZqWE1qS3ZnMVZ4Z1RkcEpaanljVUpCTzVvT0FrcklOTWZkemFReUlkbmxlejNjR3p1Ukxsd0ZzX1JYZVBQTENzMF9oMEVtLU1qSWdqNkRnaU1pTEk1RFBpbGhLRF82OUNMN3ZiOGthWGdhbEhhMDhmOHpEc2p3WHpib0tkSkpadk9DdWRMZjc3WnhJQUdLdkNYZUJZdXF2Qzhnd2ZlRjFYVnRoc2QxX0pibUtnTkFEYnlCSHdKNGxRcmZmSW9PcnFlMU13REpOeXg3SjFmVGl3?oc=5",
+      "url": "https://www.google-analytics.com/analytics.js",
       "image": "",
       "full_article": "코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 www.cio.com",
       "takeaway": ""
@@ -37,7 +46,7 @@
       "category": "AI·테크",
       "title": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 - 아시아투데이",
       "source": "아시아투데이",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9EU2pQWkstazNIb0RUZ25VQzNpQmtRcnZzWHVQcVlrVmFVb1hmVnNWN2V1LWtuZG9HRlNvekFkQzBZR0RyQU5EWHlYTmF3alZ6VVJjMnk2Q25tU1lnMldHMjdRWTJObENVWWdDRDJR?oc=5",
+      "url": "https://www.google-analytics.com/analytics.js",
       "image": "",
       "full_article": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 아시아투데이",
       "takeaway": ""
@@ -46,56 +55,47 @@
       "category": "경제·시사",
       "title": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 - 한국경제",
       "source": "한국경제",
-      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5MVTM2UU82dlpELVV2RENMdnpHTmJkbFFNV2xNVDhwM2pQdW1fNkp0OW1ob0lpcmNwdFdNaUIzcWpCbmRscmlmbGtpRks2QjA4VVJINjlGYllPZw?oc=5",
+      "url": "https://www.google-analytics.com/analytics.js",
       "image": "",
       "full_article": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 한국경제",
       "takeaway": ""
     },
     {
-      "category": "경제·시사",
-      "title": "에스이노베이션스, 72억 원 규모 엣지 AI 반도체 사업 참여…자율주행 로봇 적용·실증 추진 - 인공지능신문",
-      "source": "인공지능신문",
-      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBaWFlJZlBhR2xfMmJ1LTMyLWR1UHpwVE9XbHpmZEl2enlEWGNudnI0dXo3dlRnMjdBOTJDVF9oVi1YVko3WTZYR0V6T2VFSkNoMWExRVFXYVd2Z3Z5WUtCUk5Fd09CbU0?oc=5",
+      "category": "사설·칼럼",
+      "title": "칼럼 | AI가 고친 코드 한 줄, 어디까지 검증해야 할까 - www.cio.com",
+      "source": "www.cio.com",
+      "url": "https://www.google-analytics.com/analytics.js",
       "image": "",
-      "full_article": "에스이노베이션스, 72억 원 규모 엣지 AI 반도체 사업 참여…자율주행 로봇 적용·실증 추진 인공지능신문",
+      "full_article": "칼럼 | AI가 고친 코드 한 줄, 어디까지 검증해야 할까 www.cio.com",
       "takeaway": ""
     },
     {
       "category": "임용·교육",
       "title": "앞치마에 열화상 탐지기까지…서울교육청, 중등 임용시험 'AI 부정행위' 차단 총력 - 뉴스핌",
       "source": "뉴스핌",
-      "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9ibzd2czBZdTZqOWJENk1XWFV0djJOMjdPNExPMmpIaVRBTWtKRzhhT2ExbHpDNWdrNXh1WGMwVUZDa1V3VUhJLUZST2tSM2lnZ05Fb2pRd0lMOWRn?oc=5",
+      "url": "https://www.google-analytics.com/analytics.js",
       "image": "",
       "full_article": "앞치마에 열화상 탐지기까지…서울교육청, 중등 임용시험 'AI 부정행위' 차단 총력 뉴스핌",
-      "takeaway": ""
-    },
-    {
-      "category": "임용·교육",
-      "title": "대구교육청, 고3 대상 '유해약물 예방' 순회 교육 - LG헬로비전",
-      "source": "LG헬로비전",
-      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBDR3lPZmxENmJRb1d3dDRXanhkOXcyVW14blFkQzJ1aVF4ZUJ1NGFjX3JCVmtoWnk3RGYzNkJqOHhOUmdUdGRyOWlfd1VjMG9CZjhtVEJ2S3dhOG5SOHNqaWJya0lpOWN3MGg1bDJYTnoxQTNCeFHSAXZBVV95cUxQQ0d5T2ZsRDZiUW9Xd3Q0V2p4ZDl3MlVteG5RZEMydWlReGVCdTRhY19yQlZraFp5N0RmMzZCajh4TlJnVHRkcjlpX3dVYzBvQmY4bVRCdkt3YThuUjhzamlicmtJaTljdzBoNWwyWE56MUEzQnhR?oc=5",
-      "image": "",
-      "full_article": "대구교육청, 고3 대상 '유해약물 예방' 순회 교육 LG헬로비전",
       "takeaway": ""
     },
     {
       "category": "도서·문학",
       "title": "인간의 창의성과 인공지능의 창의성…부평도서관 올빼미 인문학 - https://www.didimkorea.net/",
       "source": "https://www.didimkorea.net/",
-      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE40WFhLa0pxOHJrbzByUThiXzUxSDBiQUR3WGZsdk5ZVUFxS19KeVVfeWxKT3V1OWV1WmFhTmtBbXo2U0V1cnIzWUp3NUdBRzQ?oc=5",
+      "url": "https://www.google-analytics.com/analytics.js",
       "image": "",
       "full_article": "인간의 창의성과 인공지능의 창의성…부평도서관 올빼미 인문학 https://www.didimkorea.net/",
       "takeaway": ""
     }
   ],
   "research_report": {
-    "source_name": "PsyBlog",
-    "title": "비타민 D 수치와 수면의 질: 더 길고 일관된 수면의 비밀",
-    "journal_info": "PsyBlog, 델라웨어 대학교 연구진(18~45세 성인 80명 대상)",
-    "url": "https://www.spring.org.uk/2026/11/vitamin-better-sleep.php",
+    "source_name": "PsyPost 심리실험",
+    "title": "교육과 결혼 패턴이 도시 가구의 부에 미치는 영향",
+    "journal_info": "PsyPost 심리실험 / 도시 가구 경제학 연구",
+    "url": "https://www.psypost.org/how-education-and-marriage-patterns-shape-household-wealth-in-urban-china/",
     "image": "./data/images/research_0.jpg",
-    "full_article": "최근 2주간의 수면 추적 연구 결과, 비타민 D 수치가 높은 사람일수록 더 길고 일관된 수면 패턴을 보이는 것으로 나타났습니다. 연구진은 비타민 D가 수면을 유도하는 호르몬인 멜라토닌 분비와 생물학적 과정에 긍정적인 영향을 미칠 가능성을 제시했습니다.\n\n델라웨어 대학교 연구진이 18세에서 45세 사이의 건강한 성인 80명을 대상으로 손목 모니터링과 혈액 검사를 실시한 결과, 비타민 D 수치가 10ng/mL 높을 때마다 매일 밤 약 12분 더 긴 수면을 취하는 것으로 확인되었습니다. 이는 통계적 조정 후에도 유의미한 연관성을 보였습니다.\n\n다만 이번 연구는 관찰 연구로서 비타민 D 섭취가 직접적으로 수면 개선을 유도하는지에 대한 인과관계를 확정할 수는 없습니다. 하지만 비타민 D 상태와 수면은 일상적인 생활 습관이나 생물학적 리듬을 통해 밀접하게 연결되어 있을 가능성이 큽니다.",
-    "takeaway": "비타민 D 수치가 높을수록 수면 시간이 길어지고 수면 패턴이 일관되는 경향이 있어, 수면 건강을 위해 적절한 비타민 D 관리가 도움이 될 수 있습니다."
+    "full_article": "최근 중국 도시 가구를 대상으로 진행된 연구에 따르면, 부부의 교육적 배경이 가구의 자산 축적 방식에 결정적인 영향을 미치는 것으로 나타났습니다. 특히 두 배우자 모두 대학 이상의 학력을 갖춘 '고학력 부부'의 경우, 그렇지 않은 가구에 비해 순자산 규모가 압도적으로 높았습니다.\n\n연구진은 이러한 현상이 단순한 소득 차이를 넘어, 교육 수준이 비슷한 사람들끼리 결혼하는 '동질혼' 패턴이 강화되면서 경제적 불평등이 고착화되고 있음을 시사한다고 분석했습니다. 이는 교육이 사회적 계층 이동의 사다리 역할을 하는 동시에, 부의 대물림을 가속화하는 기제로도 작용하고 있음을 보여줍니다.\n\n결론적으로, 도시 가구의 경제적 격차는 개인의 능력뿐만 아니라 교육적 배경이 유사한 배우자와의 결합을 통해 더욱 심화되고 있습니다. 이러한 새로운 경제적 패턴은 현대 사회의 불평등 구조를 이해하는 데 중요한 지표가 될 것으로 보입니다.",
+    "takeaway": "비슷한 교육 수준을 가진 배우자 간의 결합이 경제적 불평등을 심화시키는 새로운 사회적 패턴으로 자리 잡고 있습니다."
   },
   "blog_articles": []
 }
