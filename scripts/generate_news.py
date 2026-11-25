@@ -49,6 +49,17 @@ BLOCKED_DECODE_HOSTS = (
     "googleusercontent.com",
     "w3.org",
     "www.w3.org",
+    "angular.dev",
+    "www.angular.dev",
+)
+
+BLOCKED_PATH_KEYWORDS = (
+    "/license",
+    "/terms",
+    "/privacy",
+    "/policies",
+    "/support",
+    "/help",
 )
 
 
@@ -57,14 +68,16 @@ def is_valid_article_url(u):
         return False
     parsed = urlparse(u)
     host = (parsed.hostname or "").lower()
+    path = (parsed.path or "").lower()
     if not host:
         return False
     if any(host == b or host.endswith("." + b) for b in BLOCKED_DECODE_HOSTS):
         return False
     if "w3.org/2000/svg" in u or "w3.org/1999/xhtml" in u:
         return False
+    if any(kw in path for kw in BLOCKED_PATH_KEYWORDS):
+        return False
     return True
-
 
 def _extract_url_from_cbmi_token(url):
     try:
@@ -110,37 +123,6 @@ def decode_google_news_url(url):
     cbmi_url = _extract_url_from_cbmi_token(url)
     if cbmi_url:
         return cbmi_url
-
-    # 3차: 리다이렉트 및 HTML 내 유효 외부 언론사 링크 탐색
-    try:
-        resp = requests.get(url, headers=HEADERS, timeout=12, allow_redirects=True)
-        final_url = (resp.url or url).strip()
-        if is_valid_article_url(final_url):
-            return final_url
-
-        html = resp.text or ""
-        soup = BeautifulSoup(html, "html.parser")
-
-        for el in soup.find_all(attrs={"data-n-au": True}):
-            cand = (el.get("data-n-au") or "").strip()
-            if is_valid_article_url(cand):
-                return cand
-
-        for a in soup.find_all("a", href=True):
-            href = urljoin(final_url, a["href"].strip())
-            if is_valid_article_url(href):
-                return href
-
-        unescaped = html.replace("\\/", "/").replace("\\u003d", "=").replace("\\u0026", "&")
-        for match in re.findall(r"https?://[^\s\"'<>\\]+", unescaped):
-            cand = unquote(match).strip().rstrip(".,);'\"")
-            if is_valid_article_url(cand) and not cand.lower().endswith(
-                (".js", ".css", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".ico")
-            ):
-                return cand
-    except Exception as e:
-        print(f"[경고] 구글 뉴스 페이지 링크 추출 실패: {e}")
-
     return url
     
 KST = timezone(timedelta(hours=9))
