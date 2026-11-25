@@ -37,7 +37,9 @@ IGNORE_IMAGE_PATTERNS = [
     "default_image",
     "og_default",
     "google_news",
-    "lh3.googleusercontent.com/J6_coFbogxhRI9iNm864NL_liGXvsh2a",
+    "news.google.com",
+    "googleusercontent.com",
+    "gstatic.com",
 ]
 
 
@@ -90,7 +92,7 @@ def is_ignored_image(img_url):
     if not img_url:
         return True
     low = img_url.lower()
-    return any(p in low for p in IGNORE_IMAGE_PATTERNS)
+    return any(p.lower() in low for p in IGNORE_IMAGE_PATTERNS)
 
 
 def download_local_image(img_url, filename, referer=None):
