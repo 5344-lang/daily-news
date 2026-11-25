@@ -1153,7 +1153,7 @@
       document.getElementById('archive-modal').classList.add('open');
     }
 
-    async function sendScrapEmailNow() {
+async function sendScrapEmailNow() {
       const statusEl = document.getElementById('scrap-mail-status');
       if (!prefs.saved.length) {
         statusEl.textContent = '보낼 스크랩 기사가 없습니다.';
@@ -1180,6 +1180,10 @@
         });
         if (!runRes.ok) throw new Error('발송 요청 실패 (토큰의 Actions 쓰기 권한 및 send_scrap.yml 확인)');
         statusEl.textContent = '[완료] 메일 발송을 시작했습니다. 약 1분 뒤 메일함을 확인해 주세요.';
+        prefs.saved = [];
+        saveLocalPrefs();
+        renderArchiveList();
+        Object.keys(articleRegistry).forEach(k => updateActionBarUI(k));
       } catch (e) {
         statusEl.textContent = '[오류] ' + e.message;
       }
