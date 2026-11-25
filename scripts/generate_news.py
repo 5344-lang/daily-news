@@ -96,13 +96,22 @@ def clean_article_text(text, max_len=2500):
 
 
 def fetch_feed_safe(url):
-    try:
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        resp.raise_for_status()
-        return feedparser.parse(resp.content)
-    except Exception as e:
-        print(f"[경고] RSS 불러오기 실패 ({url}): {e}")
-        return feedparser.FeedParserDict(entries=[])
+    for attempt in range(3):
+        try:
+            resp = requests.get(url, headers=HEADERS, timeout=15)
+            if resp.status_code in (429, 503):
+                wait = 3 * (attempt + 1)
+                print(f"[안내] RSS 일시 차단({resp.status_code}), {wait}초 후 재시도...")
+                time.sleep(wait)
+                continue
+            resp.raise_for_status()
+            return feedparser.parse(resp.content)
+        except Exception as e:
+            if attempt == 2:
+                print(f"[경고] RSS 불러오기 실패 ({url}): {e}")
+            else:
+                time.sleep(2)
+    return feedparser.FeedParserDict(entries=[])
 
 
 def is_ignored_image(img_url):
@@ -297,6 +306,7 @@ def fetch_news_candidates(categories, global_excludes, disliked_urls):
             continue
         query = build_search_query(raw_query, global_excludes)
         rss_url = f"https://news.google.com/rss/search?q={quote_plus(query)}+when:2d&hl=ko&gl=KR&ceid=KR:ko"
+        time.sleep(1.5)
         feed = fetch_feed_safe(rss_url)
         count = 0
         for entry in feed.entries[:8]:
