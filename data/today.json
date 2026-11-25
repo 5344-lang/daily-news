@@ -4,80 +4,80 @@
   "date_kr": "2026년 11월 25일 (수)",
   "show_weather": true,
   "weather": "대구 대체로 맑음 -10°/3° (강수 0%)",
-  "edition_quote": "기술의 비약적인 발전 속에서도 인간의 본질적인 심리적 안녕과 지적 성장을 위한 교육적 노력은 우리 사회의 가장 견고한 토대입니다.",
+  "edition_quote": "기술의 비약적 발전과 인간 내면의 복잡성이 교차하는 시대, 우리는 데이터의 효율성과 마음의 리듬을 동시에 읽어내야 합니다.",
   "lead_story": {
-    "category": "AI·테크",
-    "title": "EBS, 생성형 AI 기술 입힌 애니메이션 5편 내달 방영…교육 콘텐츠의 새 지평",
-    "source": "연합뉴스",
-    "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5vY1NPLTFlOFFIV2pjWHNlZDg0YXdCNDFUOTU3RU45T1dqNTJMbzdwUk5sbEJJYjN6bGxMM0ducmVMM1BEeW9wWDNxYjRZSHJyQ3ptSmptWkc0S1nSAWBBVV95cUxPdUJ2VGVHQmVndkZZUXllM1lKYlhlMVl6MzRlYU5IYTNLT1pNdVZwLXlCSmJkeHVySW50ZjdZZUNuXzhoM1Q2WENIWkplaC1TbnhTbXE5eURzeWlGNFVYM1Y?oc=5",
-    "image": "./data/images/lead.jpg",
-    "full_article": "EBS가 생성형 AI 기술을 적극적으로 도입한 애니메이션 5편을 다음 달부터 순차적으로 방영한다고 밝혔습니다. 이번 프로젝트는 단순한 기술 시연을 넘어, 교육 콘텐츠 제작 방식의 혁신을 꾀하는 시도로 평가받습니다.\n\n생성형 AI는 애니메이션의 배경 제작, 캐릭터 움직임의 자연스러운 구현 등 제작 효율성을 높이는 데 핵심적인 역할을 했습니다. 이를 통해 제작 기간을 단축하고 시각적 완성도를 높여 시청자들에게 더욱 몰입감 있는 경험을 제공할 예정입니다.\n\n교육 현장에서 AI 활용 사례가 확산되는 가운데, 이번 시도는 방송 콘텐츠 분야에서도 AI가 창의적인 도구로 자리 잡을 수 있음을 보여줍니다. EBS는 향후 AI 기반 콘텐츠를 지속적으로 확대하며 디지털 교육 환경 변화에 발맞춰 나갈 계획입니다.",
-    "takeaway": "EBS가 생성형 AI를 활용한 애니메이션을 방영하며 교육 콘텐츠 제작의 디지털 혁신을 본격화합니다."
+    "category": "경제·시사",
+    "title": "AI 넘어 바이오로… 중국 빅테크, 신약 개발에 대규모 베팅",
+    "source": "한국경제",
+    "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5MVTM2UU82dlpELVV2RENMdnpHTmJkbFFNV2xNVDhwM2pQdW1fNkp0OW1ob0lpcmNwdFdNaUIzcWpCbmRscmlmbGtpRks2QjA4VVJINjlGYllPZw?oc=5",
+    "image": "",
+    "full_article": "최근 중국의 주요 빅테크 기업들이 인공지능(AI) 기술력을 바탕으로 바이오 및 신약 개발 분야로 사업 영역을 공격적으로 확장하고 있습니다. 이는 단순한 기술 투자를 넘어, 국가적 차원의 미래 먹거리 확보를 위한 전략적 행보로 풀이됩니다.\n\n업계 전문가들에 따르면, AI를 활용한 신약 개발은 기존 방식에 비해 시간과 비용을 획기적으로 단축할 수 있다는 강점이 있습니다. 중국 기업들은 방대한 데이터를 처리하는 AI 역량을 신약 후보 물질 발굴에 집중 투입하며 글로벌 바이오 시장에서의 영향력을 높이고 있습니다.\n\n이러한 흐름은 전 세계 제약·바이오 산업의 지형을 변화시킬 것으로 보입니다. 기술과 생명공학의 결합이 가속화됨에 따라, 향후 신약 개발의 주도권을 둘러싼 글로벌 경쟁은 더욱 치열해질 전망입니다.",
+    "takeaway": "중국 빅테크가 AI 기술을 앞세워 신약 개발 시장의 판도를 바꾸고 있습니다."
   },
   "articles": [
     {
       "category": "AI·테크",
-      "title": "구글, 제미나이 개인정보 설정 개편…대화 저장과 모델 학습 분리",
-      "source": "디지털투데이",
-      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5rM2pZMjQ4WTJOS1VHNy1JYWxEdTM4U25EcUJrUVF5UGRldDItM3NJMXJlNFY1c0sxaE9lU0RvajJvbE5tU2Z6SXRxdjczbmZtU3gxZC1iUWpBMzBtd0Z2dnZSajBtdW9SSDN2YzBJenpIZnM?oc=5",
-      "image": "./data/images/art_0.jpg",
-      "full_article": "구글이 생성형 AI 모델 '제미나이'의 개인정보 보호 정책을 대폭 강화했습니다. 사용자들은 이제 자신의 대화 내역을 저장하는 기능과 해당 데이터를 AI 모델 학습에 활용하는 기능을 별도로 설정할 수 있게 됩니다.\n\n그동안 AI 서비스 이용 시 데이터 활용에 대한 우려가 꾸준히 제기되어 왔습니다. 이번 개편을 통해 구글은 사용자가 자신의 데이터가 어떻게 처리되는지 명확히 인지하고 통제할 수 있도록 권한을 부여했습니다.\n\n이러한 조치는 AI 기술의 신뢰성을 높이기 위한 업계의 흐름과 궤를 같이합니다. 사용자의 프라이버시를 존중하면서도 기술적 발전을 도모하는 구글의 이번 정책 변화가 향후 AI 서비스 운영의 표준이 될지 주목됩니다.",
-      "takeaway": ""
-    },
-    {
-      "category": "심리학·인지",
-      "title": "삼척시정신건강복지센터, 재난 심리지원 위한 '심리적 응급처치(PFA)' 교육 실시",
-      "source": "시민행정신문",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9pQ2pvSlRRRU16OU9fRDRGMkpnc0M2R3UtVnVscEtxNUNHVXNiNDZyRFo5VzNNWDdnZmN3cnk3ZXQxNWpPRlpwVGVsdzJFcE01dEVjS2M0SWk0ZEFUdS1CUU80amEwTjRXeDdreVRR?oc=5",
-      "image": "./data/images/art_1.jpg",
-      "full_article": "삼척시정신건강복지센터는 최근 재난 상황에서 발생할 수 있는 심리적 외상을 예방하고 대응하기 위한 '심리적 응급처치(PFA)' 교육을 진행했습니다. 이번 교육은 재난 현장 최일선에 있는 관계자들의 전문성을 높이는 데 초점을 맞췄습니다.\n\n심리적 응급처치는 재난 직후 피해자들의 심리적 안정을 돕고, 장기적인 트라우마로 이어지지 않도록 초기 대응을 제공하는 체계적인 기법입니다. 참가자들은 실제 사례를 바탕으로 한 실습을 통해 현장 대응력을 강화했습니다.\n\n정신건강에 대한 사회적 관심이 높아지는 가운데, 지자체 차원의 이러한 선제적 교육은 지역 사회의 회복탄력성을 높이는 데 기여할 것으로 기대됩니다.",
-      "takeaway": ""
-    },
-    {
-      "category": "심리학·인지",
-      "title": "자꾸 보게 되는 여드름 압출 영상…뇌과학이 밝힌 묘한 중독의 이유",
-      "source": "메디컬투데이",
-      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5rdXF0b2c0VnFaQTAySWlYY3N4Ynd1YnlpZFFDTkFwMHJJUFk3MHZ3bEUtYWQtamtFZHVFR0IzYjBvWVBuUndzcTlVMDdPdDRYbXVrWTFZNktOUEFQdDFtREljUW95aU9EbTNuYQ?oc=5",
-      "image": "./data/images/art_2.jpg",
-      "full_article": "혐오스러운 장면임에도 불구하고 여드름 압출 영상을 끝까지 보게 되는 현상에 대해 뇌과학적 분석이 제시되었습니다. 많은 사람이 느끼는 이러한 묘한 중독감은 뇌의 보상 체계와 밀접하게 연관되어 있습니다.\n\n전문가들은 이러한 영상을 볼 때 뇌에서 도파민이 분비되며 일종의 '대리 만족'을 느낀다고 설명합니다. 혐오감을 유발하는 자극을 극복하고 문제를 해결하는 과정에서 뇌가 쾌감을 느끼는 일종의 심리적 기제입니다.\n\n단순한 호기심을 넘어 인간의 뇌가 시각적 자극을 처리하고 보상 체계를 형성하는 방식을 보여주는 흥미로운 사례입니다. 다만, 과도한 시청은 디지털 피로감을 유발할 수 있어 적절한 조절이 필요합니다.",
+      "title": "포천시, 챗GPT부터 클로드까지… 'AI 행정비서' 도입으로 업무 혁신",
+      "source": "아시아투데이",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9EU2pQWkstazNIb0RUZ25VQzNpQmtRcnZzWHVQcVlrVmFVb1hmVnNWN2V1LWtuZG9HRlNvekFkQzBZR0RyQU5EWHlYTmF3alZ6VVJjMnk2Q25tU1lnMldHMjdRWTJObENVWWdDRDJR?oc=5",
+      "image": "",
+      "full_article": "경기도 포천시가 공공 행정 서비스의 효율성을 높이기 위해 최신 생성형 AI 기술을 도입했습니다. 이번에 도입된 AI 행정비서는 챗GPT, 제미나이, 클로드 등 다양한 거대언어모델(LLM)을 한곳에서 활용할 수 있도록 설계되었습니다.\n\n시는 이번 시스템 도입을 통해 복잡한 행정 문서 작성과 자료 분석 업무를 AI가 보조하게 함으로써, 공무원들이 보다 창의적이고 시민 중심적인 업무에 집중할 수 있는 환경을 조성할 계획입니다.\n\n디지털 전환이 가속화되는 가운데, 포천시의 이번 사례는 지방자치단체의 AI 도입 모범 사례로 주목받고 있습니다. 시는 향후 AI 활용 능력을 높이기 위한 직원 교육도 병행할 예정입니다.",
       "takeaway": ""
     },
     {
       "category": "임용·교육",
-      "title": "교사 임용시험 부정행위 차단…'앞치마 지급' 등 보안 강화",
+      "title": "교사 임용시험의 새로운 풍경… '부정행위 차단' 앞치마 등장",
       "source": "더에듀",
       "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE05dGFqVVFmSEZxcy03SWhHejhHLTVuNE9GekF3aUJVeURNSGcweTVJX1RYNURibFNSTlM5a1lMXzItN3pKajRXc1ZSVGdudC1MQW5nOWNVR3VtLUU?oc=5",
-      "image": "./data/images/art_3.jpg",
-      "full_article": "교사 임용시험의 공정성을 확보하기 위해 시험 당일 부정행위 차단을 위한 새로운 보안 조치가 도입되었습니다. 특히 수험생들에게 앞치마를 지급하여 소지품을 철저히 관리하도록 하는 등 엄격한 감독이 이루어집니다.\n\n시험의 공정성은 교육 현장의 신뢰와 직결되는 만큼, 당국은 매년 부정행위 방지를 위한 기술적, 제도적 장치를 보완하고 있습니다. 이번 조치 역시 수험생들이 오해의 소지 없이 시험에만 집중할 수 있는 환경을 조성하기 위함입니다.\n\n교육계는 이러한 노력이 임용시험의 투명성을 높이고, 예비 교사들에게 공정한 경쟁의 기회를 보장하는 밑거름이 될 것으로 보고 있습니다.",
+      "image": "",
+      "full_article": "최근 치러진 교사 임용시험 현장에 이색적인 풍경이 연출되었습니다. 시험의 공정성을 확보하고 부정행위를 원천적으로 차단하기 위해 수험생들에게 특수 제작된 앞치마를 지급한 것입니다.\n\n이번 조치는 시험 중 발생할 수 있는 전자기기 은닉 등 부정행위 가능성을 사전에 방지하려는 교육 당국의 강력한 의지가 반영된 결과입니다. 수험생들은 다소 낯선 환경 속에서도 시험에 집중하며 공정한 경쟁을 이어갔습니다.\n\n교육계에서는 이러한 노력이 시험의 신뢰도를 높이는 데 기여할 것으로 보고 있습니다. 다만, 수험생들의 편의와 시험 환경 사이의 균형을 맞추기 위한 지속적인 보완책 마련이 필요하다는 목소리도 나옵니다.",
+      "takeaway": ""
+    },
+    {
+      "category": "심리학·인지",
+      "title": "삼척시, 재난 심리지원 위한 '심리적 응급처치 교육(PFA)' 실시",
+      "source": "시민행정신문",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9pQ2pvSlRRRU16OU9fRDRGMkpnc0M2R3UtVnVscEtxNUNHVXNiNDZyRFo5VzNNWDdnZmN3cnk3ZXQxNWpPRlpwVGVsdzJFcE01dEVjS2M0SWk0ZEFUdS1CUU80amEwTjRXeDdreVRR?oc=5",
+      "image": "",
+      "full_article": "삼척시정신건강복지센터가 재난 상황 발생 시 시민들의 심리적 안정을 돕기 위한 '심리적 응급처치 교육(PFA)'을 실시했습니다. 이번 교육은 재난 현장에서 초기 대응자들이 갖춰야 할 심리적 지원 역량을 강화하는 데 초점을 맞췄습니다.\n\n심리적 응급처치는 재난 피해자의 고통을 경감시키고, 장기적인 정신건강 문제를 예방하기 위한 핵심적인 활동입니다. 참가자들은 실제 사례를 바탕으로 피해자의 마음을 헤아리고 적절한 도움을 제공하는 구체적인 기법을 습득했습니다.\n\n삼척시는 앞으로도 재난 대응 체계에 심리적 지원을 통합하여, 시민들이 안심하고 생활할 수 있는 안전망을 더욱 촘촘히 구축해 나갈 방침입니다.",
+      "takeaway": ""
+    },
+    {
+      "category": "심리학·인지",
+      "title": "여드름 압출 영상에 열광하는 이유… 뇌과학으로 풀어본 심리",
+      "source": "메디컬투데이",
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5rdXF0b2c0VnFaQTAySWlYY3N4Ynd1YnlpZFFDTkFwMHJJUFk3MHZ3bEUtYWQtamtFZHVFR0IzYjBvWVBuUndzcTlVMDdPdDRYbXVrWTFZNktOUEFQdDFtREljUW95aU9EbTNuYQ?oc=5",
+      "image": "",
+      "full_article": "혐오스러우면서도 자꾸만 보게 되는 '여드름 압출 영상'의 인기 뒤에는 흥미로운 뇌과학적 원리가 숨어 있습니다. 많은 사람들이 이러한 영상을 보며 묘한 쾌감과 심리적 해방감을 느끼는 현상이 학계의 주목을 받고 있습니다.\n\n전문가들은 이러한 현상을 '역설적 쾌감'으로 설명합니다. 뇌가 위협적인 자극을 인지하면서도, 실제로는 안전한 환경에서 이를 관찰할 때 도파민이 분비되며 스트레스가 해소되는 효과를 얻는다는 것입니다.\n\n또한, 압출이라는 행위가 주는 시각적 완결성이 뇌의 보상 체계를 자극한다는 분석도 있습니다. 일상 속의 작은 스트레스를 영상 시청을 통해 대리 해소하려는 현대인의 심리가 반영된 결과로 보입니다.",
       "takeaway": ""
     },
     {
       "category": "도서·문학",
-      "title": "인간의 창의성과 AI의 창의성…부평도서관 '올빼미 인문학' 강연 성료",
-      "source": "유스연합",
-      "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTFBPM3hMOERxTmZZaFp5ZFV0SUdFcmRaY2pTekpRMDRoTE1Hc0c3X2Q3ZUZGUkQzUGhKYy1oczZBWmM0WUR2NkZIZjNYRmxuRlpvNVVF?oc=5",
-      "image": "./data/images/art_4.jpg",
-      "full_article": "부평도서관에서 열린 '올빼미 인문학' 강연이 인간과 인공지능의 창의성을 주제로 성황리에 마무리되었습니다. 이번 강연은 AI 시대에 인간만이 가진 고유한 창의성의 가치를 재조명하는 시간을 가졌습니다.\n\n강연에서는 AI가 생성하는 데이터 기반의 결과물과 인간의 경험, 감정이 결합된 창의적 사고의 차이를 심도 있게 다뤘습니다. 참석자들은 기술적 도구를 어떻게 창의적으로 활용할 것인지에 대해 열띤 토론을 벌였습니다.\n\n도서관이 단순한 독서 공간을 넘어 인문학적 담론을 생산하는 장소로 거듭나고 있습니다. 이번 강연은 기술과 인문학의 융합이 우리 삶에 어떤 통찰을 줄 수 있는지 확인하는 계기가 되었습니다.",
+      "title": "부평도서관, '인간과 AI의 창의성' 주제로 올빼미 인문학 개최",
+      "source": "https://www.didimkorea.net/",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE40WFhLa0pxOHJrbzByUThiXzUxSDBiQUR3WGZsdk5ZVUFxS19KeVVfeWxKT3V1OWV1WmFhTmtBbXo2U0V1cnIzWUp3NUdBRzQ?oc=5",
+      "image": "",
+      "full_article": "부평도서관이 인공지능 시대의 인간의 역할과 창의성을 고찰하는 '올빼미 인문학' 강좌를 개최했습니다. 이번 강좌는 기술이 인간의 고유 영역이라 여겨졌던 창의성을 넘보는 현실을 인문학적 시각에서 조명했습니다.\n\n참석자들은 AI가 생성한 예술 작품과 인간의 작품을 비교하며, 진정한 창의성이란 무엇인지에 대해 깊이 있는 토론을 나눴습니다. 기술이 발전할수록 인간만의 감성과 철학적 사유가 더욱 중요해진다는 점에 공감대가 형성되었습니다.\n\n도서관 측은 앞으로도 시민들이 변화하는 시대 흐름을 인문학적 통찰로 이해할 수 있도록 다양한 프로그램을 이어갈 예정이라고 밝혔습니다.",
       "takeaway": ""
     }
   ],
   "research_report": {
-    "source_name": "PsyPost 심리실험",
-    "title": "독서, 단순한 시간 때우기가 아닌 '인지 예비능' 강화의 핵심",
-    "journal_info": "출처: PsyPost 심리실험 / Psychological Medicine 학술지 리뷰",
-    "url": "https://www.psypost.org/reading-for-pleasure-isnt-just-passing-the-time-psychology-links-it-to-lower-stress-and-reduced-dementia-risk/",
+    "source_name": "ScienceDaily 심리연구",
+    "title": "기존 항우울제 안 듣는 '서카디언 우울증' 발견",
+    "journal_info": "출처: British Journal of Psychiatry / 연구진: 시드니 대학교 연구팀",
+    "url": "https://www.sciencedaily.com/releases/2026/11/261123005352.htm",
     "image": "./data/images/research_0.jpg",
-    "full_article": "최근 심리학 연구에 따르면 독서를 단순히 여가 시간을 보내는 행위로 치부해서는 안 된다는 주장이 제기되었습니다. 연구진은 일상적인 독서 습관이 뇌의 인지 예비능을 강화하고 노년기 치매 위험을 낮추는 데 중요한 역할을 한다고 밝혔습니다.\n\n'Psychological Medicine'에 발표된 연구 리뷰에 따르면, 매일 책을 읽거나 독서 모임에 참여하는 습관은 노화 과정에서 사고력을 날카롭게 유지하고 고립감을 줄이는 데 효과적입니다. 이는 독서가 뇌의 신경 가소성을 자극하고 인지적 건강을 보호하기 때문입니다.\n\n단순히 정보를 습득하는 것을 넘어, 독서는 뇌를 능동적으로 사용하게 함으로써 정신적 활력을 유지하는 강력한 도구가 됩니다. 노년기 건강한 삶을 위해 지금부터 독서 습관을 들이는 것이 매우 중요합니다.",
-    "takeaway": "독서는 뇌의 인지 예비능을 높여 치매 위험을 줄이고 노년기 정신 건강을 지키는 가장 효과적인 습관입니다."
+    "full_article": "시드니 대학교 연구팀이 기존 항우울제에 반응하지 않는 새로운 유형의 우울증인 '서카디언 우울증(Circadian depression)'을 발견했습니다. 연구팀은 1만 명 이상의 우울증 환자 데이터를 분석한 결과, 환자의 약 4분의 1이 생체 시계와 밀접하게 연관된 이 유형에 해당한다는 사실을 밝혀냈습니다.\n\n서카디언 우울증은 수면과 각성을 조절하는 신체 내부의 24시간 생체 리듬이 붕괴되면서 발생합니다. 일반적인 세로토닌 기반 항우울제로는 증상 완화가 어려운 경우가 많아, 기존 치료법의 한계를 드러내기도 했습니다.\n\n연구진은 멜라토닌 조절제나 빛 치료 등 생체 리듬을 정상화하는 치료법이 이 유형의 환자들에게 훨씬 효과적일 수 있다고 제안합니다. 이번 연구는 우울증 치료의 개인 맞춤형 접근을 가능하게 하는 중요한 이정표가 될 것으로 기대됩니다.",
+    "takeaway": "생체 리듬과 연관된 '서카디언 우울증'은 기존 항우울제 대신 빛 치료 등 생체 시계 맞춤형 치료가 효과적일 수 있습니다."
   },
   "blog_articles": [
     {
       "blog_name": "pppoem",
-      "title": "한 걸음도 진보하지 못했음을",
-      "url": "https://pppoem.tistory.com/197",
+      "title": "돈을 가마니에다 넣고 꾹꾹 발로 눌러 담아",
+      "url": "https://pppoem.tistory.com/194",
       "image": "",
-      "full_article": "그리곤 여학생의 흡연이 여태도 논란된다는 사실이 하도 놀라워서 이 글을 쓴다고 전제했다. 우리 대학의 남학생들은 아직도 나혜석을 매도하는 시대에서 한 걸음도 진보하지 못했음을 슬퍼한다고도 썼다. -『나는 소망한다 내게 금지된 것을』, 양귀자\n\n공유하기 게시글 관리 시와 시와 시\n\n' WORDS ' 카테고리의 다른 글 모든 적응은 자연선택에 의해 만들어졌다. (1) 2025.02.14 사실을 알고 있을 수록, 세상은 더 흥미진진해진다 (0) 2023.04.27 돈을 가마니에다 넣고 꾹꾹 발로 눌러 담아 (0) 2023.04.20 완전한 인식을 얻었다고 느끼는 것일까? (0) 2023.04.06 사랑과 저항은 하나 (진은영, 청혼에 대한 해설) (0) 2023.04.04",
-      "published": "Mon, 19 Jun 2023"
+      "full_article": "나는 그 엄청난 구매력을 바라보면서 처음으로 신용카드라는 걸, 업자의 입장에서 고맙게 생각했다. 만일 현금으로 그 많은 물건 값을 받는다면 은행까지 운반하려고 해도 돈을 가마니에다 넣고 꾹꾹 발로 눌러 담아 트럭에 실어야 할 것 같았다. - 『모래알만 한 진실이라도』 , 「집 없는 아이」 , 박완서, p.47\n\n공유하기 게시글 관리 시와 시와 시\n\n' WORDS ' 카테고리의 다른 글 한 걸음도 진보하지 못했음을 (0) 2023.06.19 사실을 알고 있을 수록, 세상은 더 흥미진진해진다 (0) 2023.04.27 완전한 인식을 얻었다고 느끼는 것일까? (0) 2023.04.06 사랑과 저항은 하나 (진은영, 청혼에 대한 해설) (0) 2023.04.04 문자가 발명된 지 5천 년 정도밖에 되지 않았기 때문에 (0) 2023.04.04",
+      "published": "Thu, 20 Apr 2023"
     }
   ]
 }
