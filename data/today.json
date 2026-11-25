@@ -4,7 +4,7 @@
   "date_kr": "2026년 11월 25일 (수)",
   "show_weather": true,
   "weather": "대구 구름 조금 -10°/3° (강수 0%)",
-  "edition_quote": "기술의 비약적 발전 속에서도 인간의 정신건강과 사회적 안전망을 지키는 '인문학적 통찰'과 '제도적 정교함'이 그 어느 때보다 절실한 시대입니다.",
+  "edition_quote": "AI 기술의 급격한 확산과 그에 따른 사회적 책임, 그리고 인간 중심의 인문학적 성찰이 공존하는 오늘, 우리는 변화하는 시스템 속에서 어떻게 존엄을 지킬 것인가를 고민해야 합니다.",
   "lead_story": {
     "category": "도서·문학",
     "title": "[특집 인터뷰] 오석진 대전시교육감 “AI 시대 해법은 인간 중심 인문학…교직원 모두 지키는 ‘교육가족 보호’ 실현할 것” - 프레시안",
@@ -16,21 +16,12 @@
   },
   "articles": [
     {
-      "category": "심리학·인지",
-      "title": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 - 한국일보",
-      "source": "한국일보",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1leVJOZGZmVVctTHJ2VjJtLURkMmUxUVNTaVJEWlZUMjRhdjJ2VjVJT2xYVHBmSnB2UGh6a1lXb2RUTk5teWJlSl96c2IwVUxLOWpJb0NqM2hLSlhVMktzZVRfeFJPc2V0YWFSWjZn?oc=5",
+      "category": "임용·교육",
+      "title": "수능 이어 교사 임용시험도 'AI 커닝' 차단…일회용 앞치마 착용 - 뉴스1",
+      "source": "뉴스1",
+      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE53Ykl1OFY3M2MzZ0xfWHRoNGgzUHA3V2trV0hRQnRIc2pBU3ZCRkdSMkgxdy14M0JZcFRIWFo1WHNNUkJZVDNfRUJOLXVuWnR1aGtwU3E2cWc4UQ?oc=5",
       "image": "",
-      "full_article": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 한국일보",
-      "takeaway": ""
-    },
-    {
-      "category": "심리학·인지",
-      "title": "\"스트레스, 제대로 다스린다\"…울산과학대 전문의 집단상담 - 뉴시스",
-      "source": "뉴시스",
-      "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1FS3VYMDMwTnluRWhhY1dIeDBQSmFUeDdIU2w0WktMaXZ2bU1NQjNzaWMwWFU2ZzVuZW4tYi12MS1tMHllcm9rSVhRVVU3ZE1fajIzOW1zWWRtTnFvYWNWUzZLdHduNUFlU1RjMGJCSXdkR0gteG1vQ9IBeEFVX3lxTE1FS3VYMDMwTnluRWhhY1dIeDBQSmFUeDdIU2w0WktMaXZ2bU1NQjNzaWMwWFU2ZzVuZW4tYi12MS1tMHllcm9rSVhRVVU3ZE1fajIzOW1zWWRtTnFvYWNWUzZLdHduNUFlU1RjMGJCSXdkR0gteG1vQw?oc=5",
-      "image": "",
-      "full_article": "\"스트레스, 제대로 다스린다\"…울산과학대 전문의 집단상담 뉴시스",
+      "full_article": "수능 이어 교사 임용시험도 'AI 커닝' 차단…일회용 앞치마 착용 뉴스1",
       "takeaway": ""
     },
     {
@@ -43,21 +34,21 @@
       "takeaway": ""
     },
     {
-      "category": "AI·테크",
-      "title": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 - 아시아투데이",
-      "source": "아시아투데이",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9EU2pQWkstazNIb0RUZ25VQzNpQmtRcnZzWHVQcVlrVmFVb1hmVnNWN2V1LWtuZG9HRlNvekFkQzBZR0RyQU5EWHlYTmF3alZ6VVJjMnk2Q25tU1lnMldHMjdRWTJObENVWWdDRDJR?oc=5",
-      "image": "",
-      "full_article": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 아시아투데이",
-      "takeaway": ""
-    },
-    {
       "category": "경제·시사",
       "title": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 - 한국경제",
       "source": "한국경제",
       "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5MVTM2UU82dlpELVV2RENMdnpHTmJkbFFNV2xNVDhwM2pQdW1fNkp0OW1ob0lpcmNwdFdNaUIzcWpCbmRscmlmbGtpRks2QjA4VVJINjlGYllPZw?oc=5",
       "image": "",
       "full_article": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 한국경제",
+      "takeaway": ""
+    },
+    {
+      "category": "심리학·인지",
+      "title": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 - 한국일보",
+      "source": "한국일보",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1leVJOZGZmVVctTHJ2VjJtLURkMmUxUVNTaVJEWlZUMjRhdjJ2VjVJT2xYVHBmSnB2UGh6a1lXb2RUTk5teWJlSl96c2IwVUxLOWpJb0NqM2hLSlhVMktzZVRfeFJPc2V0YWFSWjZn?oc=5",
+      "image": "",
+      "full_article": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 한국일보",
       "takeaway": ""
     },
     {
@@ -70,32 +61,33 @@
       "takeaway": ""
     },
     {
-      "category": "임용·교육",
-      "title": "서울 중등교사 임용시험도 ‘앞치마’…스마트폰 소지해도 시험 ‘무효’ - KBS 뉴스",
-      "source": "KBS 뉴스",
-      "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1mYlFVb2dDS3BFcG8teGI3X1lpa1RGQUt6REJDN1QxU3UxbHhTcEtOS1pJaVN6cy1MQjBZejk3OVgzMEc0UVpsTkpaVTJmVFY1dHpsdUNRVVROOWM?oc=5",
+      "category": "AI·테크",
+      "title": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 - 아시아투데이",
+      "source": "아시아투데이",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9EU2pQWkstazNIb0RUZ25VQzNpQmtRcnZzWHVQcVlrVmFVb1hmVnNWN2V1LWtuZG9HRlNvekFkQzBZR0RyQU5EWHlYTmF3alZ6VVJjMnk2Q25tU1lnMldHMjdRWTJObENVWWdDRDJR?oc=5",
       "image": "",
-      "full_article": "서울 중등교사 임용시험도 ‘앞치마’…스마트폰 소지해도 시험 ‘무효’ KBS 뉴스",
+      "full_article": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 아시아투데이",
       "takeaway": ""
     },
     {
       "category": "임용·교육",
-      "title": "수능 이어 교사 임용시험도 'AI 커닝' 차단…일회용 앞치마 착용 - 뉴스1",
-      "source": "뉴스1",
-      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE53Ykl1OFY3M2MzZ0xfWHRoNGgzUHA3V2trV0hRQnRIc2pBU3ZCRkdSMkgxdy14M0JZcFRIWFo1WHNNUkJZVDNfRUJOLXVuWnR1aGtwU3E2cWc4UQ?oc=5",
+      "title": "서울 중·고교 교사 임용시험서 부정행위 방지 '일회용 앞치마' - MBC 뉴스",
+      "source": "MBC 뉴스",
+      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE9MRHR5UjY2RUZ6clh0MU9YamhkQTdPSmt0S2pnckVsaExqT2JfYWpudThNV2lMZ3JWTmlXOE5PanpVc3lheHFtRks0aWRRMXZnY3J6X0VhbGxUS1RLTTEtRzhQSDNDNUVEWVU0RmN4STZQY3M1WFRR0gF3QVVfeXFMT3BreTNjdHBIekxWZlNuNUdMSlE2WjFRMC1McXhtWmYyTWkxaFdodnpFOHZDbHFNSjhsRWJmNEdIVGljVXAzVWRHNDlYYUs1VkJiWndyUHczakFMM21OUUFwbm0wQzNSZG96S29RZTZxc2owbDlfNU0?oc=5",
       "image": "",
-      "full_article": "수능 이어 교사 임용시험도 'AI 커닝' 차단…일회용 앞치마 착용 뉴스1",
+      "full_article": "서울 중·고교 교사 임용시험서 부정행위 방지 '일회용 앞치마' MBC 뉴스",
+      "takeaway": ""
+    },
+    {
+      "category": "심리학·인지",
+      "title": "정신건강 상담은 ‘있는 줄 몰라서’, 노인돌봄은 ‘자격 안 돼서’···필요해도 못 쓰는 사회서비스 - 경향신문",
+      "source": "경향신문",
+      "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5WYkU4LXVNeHhFN2hrQlJNQ1MyZlNYN3ZiR3lmSVBLVV9XRi1lZGZweERBTmRURmp3WXlqYU10cXh4TzFaZFQxU09Vb1N1bjRpM3FtYlNTWjBaby1yUmww0gFfQVVfeXFMTlZiRTgtdU14eEU3aGtCUk1DUzJmU1g3dmJHeWZJUEtVX1dGLWVkZnB4REFOZFRGandZeWphTXRxeHhPMVpkVDFTT1VvU3VuNGkzcW1iU1NaMFpvLXJSbDA?oc=5",
+      "image": "",
+      "full_article": "정신건강 상담은 ‘있는 줄 몰라서’, 노인돌봄은 ‘자격 안 돼서’···필요해도 못 쓰는 사회서비스 경향신문",
       "takeaway": ""
     }
   ],
-  "research_report": {
-    "source_name": "Behavioral Scientist",
-    "title": "로버스 케이브 실험: 갈등과 평화의 심리학적 여정",
-    "journal_info": "Behavioral Scientist, 제니퍼 L. 바자(Jennifer L. Bazar) 연구",
-    "url": "https://behavioralscientist.org/journey-to-robbers-cave/",
-    "image": "./data/images/research_0.jpg",
-    "full_article": "제2차 세계대전이 끝난 직후인 1948년, 심리학자들은 인류의 고질적인 갈등 문제를 해결하기 위한 대담한 실험에 착수했습니다. 그들의 실험실은 다름 아닌 여름 캠프였으며, 11~12세 소년들을 두 그룹으로 나누어 경쟁과 갈등을 유도한 뒤, 다시 평화를 회복할 수 있는 방법을 찾는 것이 목표였습니다. 이 연구는 심리학 역사상 가장 논쟁적이면서도 영향력 있는 '로버스 케이브(Robbers Cave)' 연구로 기록되었습니다.\n\n국립 심리학 박물관의 제니퍼 L. 바자 부관장은 박물관에 보관된 당시의 편지, 사진, 캠프 깃발 등 물리적 유물을 통해 이 실험의 전말을 재조명합니다. 바자는 연구의 비전과 방법론, 결과뿐만 아니라 당시의 윤리적 문제까지 심도 있게 탐구하며, 오늘날 전 세계에서 끊이지 않는 갈등 속에서 우리가 어떤 교훈을 얻어야 하는지 질문을 던집니다.\n\n이 연구는 5천만 명 이상의 희생자를 낸 전쟁의 참상 속에서 인간의 집단적 편견과 갈등의 근원을 이해하고자 했던 학자들의 고뇌를 담고 있습니다. 오늘날 이 실험은 단순한 과거의 기록을 넘어, 분열된 현대 사회에서 어떻게 공동의 목표를 설정하고 화합을 이끌어낼 것인가에 대한 중요한 통찰을 제공합니다.",
-    "takeaway": "집단 간의 갈등은 경쟁을 통해 쉽게 발생하지만, 이를 해결하기 위해서는 공동의 목표를 향한 협력이 필수적이라는 심리학적 교훈을 재확인합니다."
-  },
+  "research_report": null,
   "blog_articles": []
 }
