@@ -41,6 +41,8 @@ BLOCKED_DECODE_HOSTS = (
     "googlesyndication.com",
     "doubleclick.net",
     "gstatic.com",
+    "fonts.gstatic.com",
+    "fonts.googleapis.com",
     "googleusercontent.com",
 )
 
