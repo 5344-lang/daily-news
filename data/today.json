@@ -4,33 +4,79 @@
   "date_kr": "2026년 11월 25일 (수)",
   "show_weather": true,
   "weather": "대구 대체로 맑음 -10°/3° (강수 0%)",
-  "edition_quote": "공공 서비스의 붕괴와 기술적 변화가 개인의 심리와 정치적 선택에 미치는 영향력을 깊이 있게 조명합니다.",
+  "edition_quote": "기술의 진보가 인간의 인지 능력을 보조하고 삶의 질을 개선하는 새로운 시대, 오늘 우리는 AI와 생명공학이 빚어내는 미래의 단면을 마주합니다.",
   "lead_story": {
-    "category": "심리학·정치",
-    "title": "공공 의료 접근성 저하, 영국 내 포퓰리즘 우파 지지율 상승의 도화선 되나",
-    "source": "뉴스",
-    "url": "",
+    "category": "경제·시사",
+    "title": "AI 넘어 바이오로…중국 빅테크, 신약 개발에 대규모 베팅",
+    "source": "한국경제",
+    "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5MVTM2UU82dlpELVV2RENMdnpHTmJkbFFNV2xNVDhwM2pQdW1fNkp0OW1ob0lpcmNwdFdNaUIzcWpCbmRscmlmbGtpRks2QjA4VVJINjlGYllPZw?oc=5",
     "image": "",
-    "full_article": "최근 미국 정치학 리뷰(American Political Science Review)에 게재된 연구에 따르면, 영국 내 지역 의료 클리닉의 폐쇄가 인근 주민들의 정치적 성향 변화에 직접적인 영향을 미치고 있는 것으로 나타났습니다. 연구진은 의료 서비스 접근성이 악화된 지역의 주민들이 기존 정치권에 대한 신뢰를 잃고, 포퓰리즘 우파 정당을 지지할 가능성이 현저히 높아진다는 사실을 확인했습니다.\n\n특히 이러한 정치적 지지 성향의 변화는 이민자 유입이 많은 지역에서 더욱 두드러지게 나타났습니다. 공공 서비스의 질적 저하가 지역 사회의 불안감을 증폭시키고, 이것이 특정 정치적 이데올로기에 대한 결집으로 이어지는 심리적 기제가 작동하고 있다는 분석입니다.\n\n이번 연구는 단순한 경제적 불만을 넘어, 국가의 기본적인 복지 시스템이 무너질 때 시민들이 느끼는 소외감과 분노가 어떻게 정치적 극단주의로 투영되는지를 보여주는 중요한 지표가 됩니다. 공공 서비스의 안정성이 민주주의 체제 유지에 얼마나 필수적인 요소인지 다시금 생각하게 합니다.",
-    "takeaway": "의료 서비스 접근성 악화가 지역 사회의 정치적 극단화를 초래하며, 특히 이민자 밀집 지역에서 그 경향이 강하게 나타남."
+    "full_article": "최근 중국의 주요 빅테크 기업들이 인공지능(AI) 기술력을 바탕으로 바이오 산업에 전례 없는 대규모 투자를 단행하고 있습니다. 그동안 AI 모델 고도화에 집중해온 이들은 이제 AI의 연산 능력을 신약 후보 물질 발굴과 질병 예측 모델링에 접목하며 산업의 패러다임을 바꾸고 있습니다.\n\n업계 전문가들은 이러한 움직임이 단순한 사업 다각화를 넘어, 데이터 처리 능력이 핵심 경쟁력이 된 현대 제약 시장에서 우위를 점하기 위한 전략적 선택이라고 분석합니다. 방대한 유전체 데이터와 임상 결과를 AI로 분석함으로써 신약 개발에 소요되는 시간과 비용을 획기적으로 단축하겠다는 계산입니다.\n\n글로벌 시장에서도 중국 기업들의 이러한 행보는 주목받고 있습니다. AI와 생명공학의 융합이 가속화됨에 따라 향후 글로벌 바이오 시장의 판도가 어떻게 재편될지 전 세계 투자자들의 시선이 집중되고 있습니다.",
+    "takeaway": "중국 빅테크 기업들이 AI 기술을 신약 개발에 접목하며 바이오 산업의 디지털 전환을 주도하고 있습니다."
   },
-  "articles": [],
+  "articles": [
+    {
+      "category": "AI·테크",
+      "title": "앤트로픽, '클로드 쉽' 출시…AI가 코드 검토 병목 해결",
+      "source": "www.cio.com",
+      "url": "https://news.google.com/rss/articles/CBMi2gJBVV95cUxPZWVlLVJ5Wk5oSWMzQ2lKUEk1RGlSVWZjcEY3QlZOUzVyaEdiTG1hbnczMkVXTTctTE5oMTZEQ250QmxtUnYwcUxqMzR0NkRuaWFKMDlYU1FQcGh6X3pWTW9NWWJqNzlxR3NwcjNFMnNScFFfVXpKSVlkRzh5YVkzalR0RGdGbDk0RVZqWE1qS3ZnMVZ4Z1RkcEpaanljVUpCTzVvT0FrcklOTWZkemFReUlkbmxlejNjR3p1Ukxsd0ZzX1JYZVBQTENzMF9oMEVtLU1qSWdqNkRnaU1pTEk1RFBpbGhLRF82OUNMN3ZiOGthWGdhbEhhMDhmOHpEc2p3WHpib0tkSkpadk9DdWRMZjc3WnhJQUdLdkNYZUJZdXF2Qzhnd2ZlRjFYVnRoc2QxX0pibUtnTkFEYnlCSHdKNGxRcmZmSW9PcnFlMU13REpOeXg3SjFmVGl3?oc=5",
+      "image": "",
+      "full_article": "AI 기업 앤트로픽이 코드 생성부터 승인 과정까지 자동화하는 '클로드 쉽(Claude Ship)'을 선보였습니다. 개발 현장에서 가장 큰 병목 구간으로 꼽히는 코드 검토 과정을 AI가 효율적으로 처리함으로써 개발 생산성을 극대화하겠다는 취지입니다.\n\n클로드 쉽은 단순한 코드 작성을 넘어, 보안 취약점 점검과 표준 준수 여부를 실시간으로 확인합니다. 이를 통해 개발자는 반복적인 검토 업무에서 벗어나 보다 창의적인 설계에 집중할 수 있게 됩니다.\n\n기술 업계는 이번 도구가 소프트웨어 개발 생태계의 속도를 한 단계 끌어올릴 것으로 기대하고 있습니다. AI가 단순한 보조 도구를 넘어 실무 프로세스의 핵심 파트너로 자리 잡고 있음을 보여주는 사례입니다.",
+      "takeaway": ""
+    },
+    {
+      "category": "심리학·인지",
+      "title": "삼척시, 재난 심리지원 역량 강화 위한 '심리적 응급처치' 교육 실시",
+      "source": "시민행정신문",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9pQ2pvSlRRRU16OU9fRDRGMkpnc0M2R3UtVnVscEtxNUNHVXNiNDZyRFo5VzNNWDdnZmN3cnk3ZXQxNWpPRlpwVGVsdzJFcE01dEVjS2M0SWk0ZEFUdS1CUU80amEwTjRXeDdreVRR?oc=5",
+      "image": "",
+      "full_article": "삼척시정신건강복지센터가 재난 발생 시 시민들의 심리적 안정을 돕기 위한 '심리적 응급처치 교육(PFA)'을 실시했습니다. 이번 교육은 예기치 못한 재난 상황에서 초기 대응 인력이 갖춰야 할 심리적 지원 역량을 강화하는 데 초점을 맞췄습니다.\n\n교육에 참여한 관계자들은 재난 피해자의 불안과 외상 후 스트레스를 완화하기 위한 실질적인 대화법과 안정화 기법을 학습했습니다. 이는 단순히 물리적 피해 복구를 넘어, 공동체의 정신적 회복탄력성을 높이는 중요한 과정으로 평가받습니다.\n\n센터 측은 앞으로도 지역사회 내 심리적 안전망을 촘촘히 구축하기 위해 관련 교육을 지속적으로 확대할 계획이라고 밝혔습니다.",
+      "takeaway": ""
+    },
+    {
+      "category": "AI·테크",
+      "title": "포천시, 챗GPT·제미나이·클로드 통합한 'AI 행정비서' 도입",
+      "source": "아시아투데이",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9EU2pQWkstazNIb0RUZ25VQzNpQmtRcnZzWHVQcVlrVmFVb1hmVnNWN2V1LWtuZG9HRlNvekFkQzBZR0RyQU5EWHlYTmF3alZ6VVJjMnk2Q25tU1lnMldHMjdRWTJObENVWWdDRDJR?oc=5",
+      "image": "",
+      "full_article": "포천시가 행정 서비스의 효율성을 높이기 위해 최신 생성형 AI 모델들을 한곳에서 활용할 수 있는 'AI 행정비서' 시스템을 도입했습니다. 챗GPT, 제미나이, 클로드 등 다양한 AI 모델을 통합 운영함으로써 공무원들이 상황에 맞는 최적의 답변을 얻을 수 있게 되었습니다.\n\n이번 시스템 도입으로 단순 민원 응대부터 정책 자료 요약, 복잡한 행정 문서 작성까지 업무 전반의 속도가 크게 향상될 것으로 보입니다. 특히 각 AI 모델의 강점을 선택적으로 활용할 수 있어 행정의 전문성과 정확도가 높아질 전망입니다.\n\n포천시는 디지털 전환 시대에 발맞춰 공공 부문에서의 AI 활용 사례를 선도적으로 구축하며, 시민들에게 보다 신속하고 질 높은 행정 서비스를 제공하겠다는 의지를 보였습니다.",
+      "takeaway": ""
+    },
+    {
+      "category": "도서·문학",
+      "title": "부평도서관, '인간과 AI의 창의성' 주제로 올빼미 인문학 강연",
+      "source": "https://www.didimkorea.net/",
+      "url": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE40WFhLa0pxOHJrbzByUThiXzUxSDBiQUR3WGZsdk5ZVUFxS19KeVVfeWxKT3V1OWV1WmFhTmtBbXo2U0V1cnIzWUp3NUdBRzQ?oc=5",
+      "image": "",
+      "full_article": "부평도서관이 인공지능 시대의 창의성을 탐구하는 '올빼미 인문학' 강연을 개최했습니다. 이번 강연은 인간 고유의 영역이라 여겨졌던 창의성이 AI와 어떻게 공존하고 진화할 수 있는지에 대해 깊이 있는 논의를 나눴습니다.\n\n참석자들은 AI가 생성한 예술과 문학 작품이 인간의 창의성에 미치는 영향에 대해 토론하며, 기술이 인간을 대체하는 것이 아니라 확장하는 도구로서의 가능성을 모색했습니다. 인문학적 관점에서 기술의 발전을 바라보는 시각은 많은 시민의 공감을 얻었습니다.\n\n도서관 측은 기술의 급격한 변화 속에서 시민들이 인문학적 성찰을 통해 삶의 방향을 설정할 수 있도록 다양한 프로그램을 이어갈 예정입니다.",
+      "takeaway": ""
+    },
+    {
+      "category": "임용·교육",
+      "title": "교사 임용시험 부정행위 원천 차단…'전용 앞치마' 도입",
+      "source": "더에듀",
+      "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE05dGFqVVFmSEZxcy03SWhHejhHLTVuNE9GekF3aUJVeURNSGcweTVJX1RYNURibFNSTlM5a1lMXzItN3pKajRXc1ZSVGdudC1MQW5nOWNVR3VtLUU?oc=5",
+      "image": "",
+      "full_article": "교사 임용시험의 공정성을 강화하기 위해 시험 현장에 새로운 방안이 도입되었습니다. 바로 수험생들에게 부정행위 방지를 위한 전용 앞치마를 지급하는 것입니다. 이는 시험 중 소지품이나 전자기기 활용을 통한 부정행위를 물리적으로 차단하기 위한 조치입니다.\n\n교육 당국은 시험의 신뢰도가 무엇보다 중요하다는 판단하에 이러한 세밀한 관리 체계를 마련했습니다. 앞치마 착용은 수험생들에게 시험의 엄중함을 다시 한번 상기시키는 효과도 거두고 있습니다.\n\n수험생들 사이에서는 다소 생소하다는 반응도 있지만, 공정한 경쟁 환경을 조성하려는 교육청의 의지에 대체로 긍정적인 평가가 이어지고 있습니다.",
+      "takeaway": ""
+    }
+  ],
   "research_report": {
-    "source_name": "PsyPost 심리실험",
-    "title": "공공 의료 접근성 저하와 포퓰리즘 우파 지지율의 상관관계",
-    "journal_info": "American Political Science Review / PsyPost 심리실험",
-    "url": "https://www.psypost.org/declining-public-healthcare-access-fuels-lasting-support-for-populist-right-parties-in-england/",
+    "source_name": "ScienceDaily 심리연구",
+    "title": "비강 투여 mRNA, 쥐의 기억력 회복 및 알츠하이머 예방 효과 확인",
+    "journal_info": "ScienceDaily / 시드니 대학교 찰스 퍼킨스 센터, 그렉 닐 교수 연구팀",
+    "url": "https://www.sciencedaily.com/releases/2026/11/261123005337.htm",
     "image": "./data/images/research_0.jpg",
-    "full_article": "영국 전역의 의료 클리닉 폐쇄 현상이 주민들의 정치적 태도에 미치는 영향을 분석한 결과, 공공 서비스의 붕괴는 단순한 불편함을 넘어 정치적 지형을 바꾸는 강력한 동인이 되고 있습니다. 연구는 의료 서비스의 질적 저하를 경험한 주민들이 사회적 안전망에 대한 불신을 키우게 되며, 이 과정에서 포퓰리즘 우파 정당이 제시하는 대안적 담론에 더 쉽게 매료된다는 점을 시사합니다.\n\n특히 주목할 점은 이민자 비율이 높은 지역에서의 반응입니다. 공공 자원의 희소성이 강조되는 환경 속에서 의료 서비스의 공백은 이민자 집단과의 자원 경쟁이라는 프레임으로 변질되기 쉽습니다. 이러한 심리적 기제는 주민들로 하여금 기존 중도 정치권보다는 강력한 변화를 주장하는 우파 정당에 표를 던지게 만드는 요인이 됩니다.\n\n결론적으로, 이번 연구는 공공 의료 서비스가 단순히 보건의 영역에 머무는 것이 아니라, 사회적 통합과 정치적 안정성을 유지하는 핵심적인 기둥임을 입증합니다. 정책 입안자들은 공공 서비스의 접근성 보장이 곧 사회적 갈등을 예방하는 가장 강력한 정치적 도구임을 인지해야 할 것입니다.",
-    "takeaway": "공공 의료 서비스의 붕괴는 시민들의 정치적 소외감을 자극하여 포퓰리즘 우파에 대한 지지를 강화하는 결과를 초래한다."
+    "full_article": "시드니 대학교 연구팀이 쥐의 기억력 저하를 개선하고 알츠하이머병과 유사한 인지 기능 감퇴를 예방하는 실험용 비강 투여제를 개발했습니다. 이 치료제는 코로나19 백신에 사용된 mRNA 기술을 응용하여 뇌의 인지 기능을 젊은 수준으로 회복시키는 성과를 보였습니다.\n\n연구를 이끈 그렉 닐 교수는 이 방식이 혈뇌장벽(BBB)을 우회하여 뇌로 직접 전달되는 비침습적 시스템이라는 점을 강조했습니다. 이는 기존 알츠하이머 치료제가 가진 전달 효율성 문제를 해결할 수 있는 혁신적인 접근법으로 평가받습니다.\n\n이번 발견은 알츠하이머뿐만 아니라 뇌졸중, 외상성 뇌 손상, 희귀 유전 질환 등 다양한 신경 퇴행성 질환 치료에 새로운 길을 열어줄 것으로 기대됩니다. 연구팀은 향후 인간 대상 임상 시험을 신속하게 추진할 계획입니다.",
+    "takeaway": "mRNA 기술을 활용한 비강 투여제가 뇌의 인지 기능을 회복시키고 알츠하이머병을 예방할 가능성을 제시했습니다."
   },
   "blog_articles": [
     {
       "blog_name": "pppoem",
-      "title": "봄여름가을겨울 - 진은영",
-      "url": "https://pppoem.tistory.com/191",
+      "title": "봄여름가을겨울의 모놀로그",
+      "url": "https://pppoem.tistory.com/190",
       "image": "",
-      "full_article": "작은 엽서처럼 네게로 갔다. 봉투도 비밀도 없이. 전적으로 열린 채. 오후의 장미처럼 벌어져 여름비가 내렸다. 나는 네 밑에 있다. 네가 쏟은 커피에 젖은 냅킨처럼. 만 개의 파란 전구가 마음에 켜진 듯. 가을이 왔다. 내 영혼은 잠옷 차림을 하고서 돌아다닌다. 맨홀 뚜껑 위에 쌓인 눈을 맨발로 밟으며\n\n<나는 오래된 거리처럼 너를 사랑하고> 중에서\n\n공유하기 게시글 관리 시와 시와 시\n\n' POEM ' 카테고리의 다른 글 뱀 이야기 - 진은영 (0) 2023.04.15 봄여름가을겨울의 모놀로그 (0) 2023.04.06 아빠 - 진은영 (0) 2023.04.04 나는 도망 중 - 진은영 (0) 2023.04.04 우리는 모두 한 권의 죽음이 되어간다 (0) 2022.02.28",
+      "full_article": "세입자: 벽과 지붕과 창문을 잃어버렸다 집보다 큰 상자들이 쌓여 있다\n\n종이배: 내가 어디로 흘러갈지 너는 알고 있지?\n\n왕비: 거울은 썩은 알처럼 내 앞에 있다 그 속에서 아무도 태어나지 않고, 빨간 사과는 가을의 홀로그램처럼\n\n눈사람: 사랑으로 우리를 녹이는 어머니, 언제나 무無를 낳으시는\n\n<나는 오래된 거리처럼 너를 사랑하고> 중에서\n\n공유하기 게시글 관리 시와 시와 시\n\n' POEM ' 카테고리의 다른 글 뱀 이야기 - 진은영 (0) 2023.04.15 봄여름가을겨울 - 진은영 (0) 2023.04.06 아빠 - 진은영 (0) 2023.04.04 나는 도망 중 - 진은영 (0) 2023.04.04 우리는 모두 한 권의 죽음이 되어간다 (0) 2022.02.28",
       "published": "Thu, 6 Apr 2023 "
     }
   ]
