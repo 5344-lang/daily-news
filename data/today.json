@@ -4,12 +4,12 @@
   "date_kr": "2026년 11월 25일 (수)",
   "show_weather": true,
   "weather": "대구 대체로 맑음 -10°/3° (강수 0%)",
-  "edition_quote": "기술의 비약적인 발전 속에서도 인간의 심리적 회복과 공정한 교육 환경을 지키려는 사회적 노력이 그 어느 때보다 절실한 시점입니다.",
+  "edition_quote": "기술의 비약적 발전과 인간의 내면적 성찰이 교차하는 시대, 데이터가 가리키는 미래와 우리의 정신적 건강을 함께 돌보는 균형 잡힌 시각이 필요합니다.",
   "lead_story": {
     "category": "심리학·인지",
     "title": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 - 한국일보",
     "source": "한국일보",
-    "url": "https://www.google-analytics.com/analytics.js",
+    "url": "https://fonts.googleapis.com/css?family=Google+Sans+Text:400,500,700,400i,500i,700i",
     "image": "",
     "full_article": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 한국일보",
     "takeaway": ""
@@ -17,18 +17,9 @@
   "articles": [
     {
       "category": "심리학·인지",
-      "title": "정신건강 상담은 ‘있는 줄 몰라서’, 노인돌봄은 ‘자격 안 돼서’···필요해도 못 쓰는 사회서비스 - 경향신문",
-      "source": "경향신문",
-      "url": "https://www.google-analytics.com/analytics.js",
-      "image": "",
-      "full_article": "정신건강 상담은 ‘있는 줄 몰라서’, 노인돌봄은 ‘자격 안 돼서’···필요해도 못 쓰는 사회서비스 경향신문",
-      "takeaway": ""
-    },
-    {
-      "category": "심리학·인지",
       "title": "혐오스러운데 자꾸 보게 되는 여드름 압출 영상…뇌과학적 이유는? - 메디컬투데이",
       "source": "메디컬투데이",
-      "url": "https://www.google-analytics.com/analytics.js",
+      "url": "https://fonts.googleapis.com/css?family=Google+Sans+Text:400,500,700,400i,500i,700i",
       "image": "",
       "full_article": "혐오스러운데 자꾸 보게 되는 여드름 압출 영상…뇌과학적 이유는? 메디컬투데이",
       "takeaway": ""
@@ -37,7 +28,7 @@
       "category": "AI·테크",
       "title": "코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 - www.cio.com",
       "source": "www.cio.com",
-      "url": "https://www.google-analytics.com/analytics.js",
+      "url": "https://news.google.com/rss/articles/CBMi2gJBVV95cUxPZWVlLVJ5Wk5oSWMzQ2lKUEk1RGlSVWZjcEY3QlZOUzVyaEdiTG1hbnczMkVXTTctTE5oMTZEQ250QmxtUnYwcUxqMzR0NkRuaWFKMDlYU1FQcGh6X3pWTW9NWWJqNzlxR3NwcjNFMnNScFFfVXpKSVlkRzh5YVkzalR0RGdGbDk0RVZqWE1qS3ZnMVZ4Z1RkcEpaanljVUpCTzVvT0FrcklOTWZkemFReUlkbmxlejNjR3p1Ukxsd0ZzX1JYZVBQTENzMF9oMEVtLU1qSWdqNkRnaU1pTEk1RFBpbGhLRF82OUNMN3ZiOGthWGdhbEhhMDhmOHpEc2p3WHpib0tkSkpadk9DdWRMZjc3WnhJQUdLdkNYZUJZdXF2Qzhnd2ZlRjFYVnRoc2QxX0pibUtnTkFEYnlCSHdKNGxRcmZmSW9PcnFlMU13REpOeXg3SjFmVGl3?oc=5",
       "image": "",
       "full_article": "코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 www.cio.com",
       "takeaway": ""
@@ -46,7 +37,7 @@
       "category": "AI·테크",
       "title": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 - 아시아투데이",
       "source": "아시아투데이",
-      "url": "https://www.google-analytics.com/analytics.js",
+      "url": "https://fonts.googleapis.com/css?family=Google+Sans+Text:400,500,700,400i,500i,700i",
       "image": "",
       "full_article": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 아시아투데이",
       "takeaway": ""
@@ -55,47 +46,56 @@
       "category": "경제·시사",
       "title": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 - 한국경제",
       "source": "한국경제",
-      "url": "https://www.google-analytics.com/analytics.js",
+      "url": "https://fonts.googleapis.com/css?family=Google+Sans+Text:400,500,700,400i,500i,700i",
       "image": "",
       "full_article": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 한국경제",
       "takeaway": ""
     },
     {
-      "category": "사설·칼럼",
-      "title": "칼럼 | AI가 고친 코드 한 줄, 어디까지 검증해야 할까 - www.cio.com",
-      "source": "www.cio.com",
-      "url": "https://www.google-analytics.com/analytics.js",
+      "category": "경제·시사",
+      "title": "에스이노베이션스, 72억 원 규모 엣지 AI 반도체 사업 참여…자율주행 로봇 적용·실증 추진 - 인공지능신문",
+      "source": "인공지능신문",
+      "url": "https://fonts.googleapis.com/css?family=Google+Sans+Text:400,500,700,400i,500i,700i",
       "image": "",
-      "full_article": "칼럼 | AI가 고친 코드 한 줄, 어디까지 검증해야 할까 www.cio.com",
+      "full_article": "에스이노베이션스, 72억 원 규모 엣지 AI 반도체 사업 참여…자율주행 로봇 적용·실증 추진 인공지능신문",
       "takeaway": ""
     },
     {
       "category": "임용·교육",
       "title": "앞치마에 열화상 탐지기까지…서울교육청, 중등 임용시험 'AI 부정행위' 차단 총력 - 뉴스핌",
       "source": "뉴스핌",
-      "url": "https://www.google-analytics.com/analytics.js",
+      "url": "https://fonts.googleapis.com/css?family=Google+Sans+Text:400,500,700,400i,500i,700i",
       "image": "",
       "full_article": "앞치마에 열화상 탐지기까지…서울교육청, 중등 임용시험 'AI 부정행위' 차단 총력 뉴스핌",
       "takeaway": ""
     },
     {
       "category": "도서·문학",
-      "title": "인간의 창의성과 인공지능의 창의성…부평도서관 올빼미 인문학 - https://www.didimkorea.net/",
-      "source": "https://www.didimkorea.net/",
-      "url": "https://www.google-analytics.com/analytics.js",
+      "title": "[특집 인터뷰] 오석진 대전시교육감 “AI 시대 해법은 인간 중심 인문학…교직원 모두 지키는 ‘교육가족 보호’ 실현할 것” - 프레시안",
+      "source": "프레시안",
+      "url": "https://fonts.googleapis.com/css?family=Google+Sans+Text:400,500,700,400i,500i,700i",
       "image": "",
-      "full_article": "인간의 창의성과 인공지능의 창의성…부평도서관 올빼미 인문학 https://www.didimkorea.net/",
+      "full_article": "[특집 인터뷰] 오석진 대전시교육감 “AI 시대 해법은 인간 중심 인문학…교직원 모두 지키는 ‘교육가족 보호’ 실현할 것” 프레시안",
+      "takeaway": ""
+    },
+    {
+      "category": "사설·칼럼",
+      "title": "[사설] 젠슨 황 복귀…관심은 AI 투자 - 글로벌이코노믹",
+      "source": "글로벌이코노믹",
+      "url": "https://fonts.googleapis.com/css?family=Google+Sans+Text:400,500,700,400i,500i,700i",
+      "image": "",
+      "full_article": "[사설] 젠슨 황 복귀…관심은 AI 투자 글로벌이코노믹",
       "takeaway": ""
     }
   ],
   "research_report": {
-    "source_name": "PsyPost 심리실험",
-    "title": "교육과 결혼 패턴이 도시 가구의 부에 미치는 영향",
-    "journal_info": "PsyPost 심리실험 / 도시 가구 경제학 연구",
-    "url": "https://www.psypost.org/how-education-and-marriage-patterns-shape-household-wealth-in-urban-china/",
+    "source_name": "ScienceDaily 심리연구",
+    "title": "뼈 건강과 뇌 노화의 놀라운 상관관계: 골밀도가 인지 기능 저하의 지표가 될까?",
+    "journal_info": "존스 홉킨스 대학 연구진, Radiology 학술지 게재",
+    "url": "https://www.sciencedaily.com/releases/2026/11/261121221132.htm",
     "image": "./data/images/research_0.jpg",
-    "full_article": "최근 중국 도시 가구를 대상으로 진행된 연구에 따르면, 부부의 교육적 배경이 가구의 자산 축적 방식에 결정적인 영향을 미치는 것으로 나타났습니다. 특히 두 배우자 모두 대학 이상의 학력을 갖춘 '고학력 부부'의 경우, 그렇지 않은 가구에 비해 순자산 규모가 압도적으로 높았습니다.\n\n연구진은 이러한 현상이 단순한 소득 차이를 넘어, 교육 수준이 비슷한 사람들끼리 결혼하는 '동질혼' 패턴이 강화되면서 경제적 불평등이 고착화되고 있음을 시사한다고 분석했습니다. 이는 교육이 사회적 계층 이동의 사다리 역할을 하는 동시에, 부의 대물림을 가속화하는 기제로도 작용하고 있음을 보여줍니다.\n\n결론적으로, 도시 가구의 경제적 격차는 개인의 능력뿐만 아니라 교육적 배경이 유사한 배우자와의 결합을 통해 더욱 심화되고 있습니다. 이러한 새로운 경제적 패턴은 현대 사회의 불평등 구조를 이해하는 데 중요한 지표가 될 것으로 보입니다.",
-    "takeaway": "비슷한 교육 수준을 가진 배우자 간의 결합이 경제적 불평등을 심화시키는 새로운 사회적 패턴으로 자리 잡고 있습니다."
+    "full_article": "존스 홉킨스 대학 연구진이 척추의 골밀도와 뇌 노화 속도 사이의 밀접한 연관성을 발견했습니다. 연구에 따르면 골밀도가 낮은 사람일수록 인지 기능 저하가 빠르게 나타나며, 뇌의 백질 퇴화 또한 가속화되는 것으로 확인되었습니다.\n\n골밀도는 뼈의 칼슘 등 무기질 함량을 나타내는 지표로, 그동안 골격계 건강의 척도로만 주로 인식되어 왔습니다. 그러나 이번 연구는 뼈의 상태가 뇌 건강을 예측할 수 있는 숨겨진 경고 신호가 될 수 있음을 시사합니다.\n\n연구팀은 AI 기술을 활용해 기존 데이터를 분석함으로써 뼈 건강과 뇌 노화가 과학자들이 생각했던 것보다 훨씬 더 깊게 연결되어 있음을 밝혀냈습니다. 이는 향후 골밀도 검사가 뇌 건강을 조기에 진단하는 중요한 도구로 활용될 가능성을 제시합니다.",
+    "takeaway": "낮은 골밀도는 뇌의 백질 퇴화 및 인지 기능 저하와 밀접한 관련이 있어, 뼈 건강 관리가 곧 뇌 건강 관리의 시작이 될 수 있습니다."
   },
   "blog_articles": []
 }
