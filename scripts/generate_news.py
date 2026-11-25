@@ -520,7 +520,7 @@ def generate_edition_with_gemini(config, news_candidates, research_candidates, p
 
 [작성 규칙]
 1. 카테고리 다양성을 살려 총 {article_count}개의 기사를 선별하세요 (1면 톱기사 `lead_story` 1건 + 일반 기사 `articles` {sub_count}건). 후보가 부족하면 있는 만큼만 선별하세요.
-2. 각 기사는 단순 1줄 요약이 아니라, 종이신문 기사처럼 읽기 좋은 **3~4문단 분량(문단 사이 줄바꿈 `\\n\\n`)**의 정돈된 한국어 기사로 작성하세요. 사실에 없는 내용은 지어내지 마세요.
+2. 기사를 새로 창작하거나 길게 요약하지 마세요. 선별한 기사의 `id`와 `category`만 정확히 반환하세요.
 3. `id`는 반드시 뉴스 후보 목록의 정수 `id`를 그대로 적으세요.
 4. {quote_inst}
 5. `research_report`는 연구 원문이 있을 때만 한국어 기사(3~4문단)와 `takeaway`(핵심 1줄), `journal_info`(출처/연구진 요약)를 작성하고, 없으면 null로 두세요.
@@ -639,19 +639,21 @@ def main():
         src = cand_map.get(item.get("id"), {})
         url = decode_google_news_url(src.get("url", ""))
         raw_img = ""
+        scraped_body = ""
         if url:
-            raw_img, _ = scrape_generic_article(url, max_len=500)
+            raw_img, scraped_body = scrape_generic_article(url, max_len=4000)
         local_img = download_local_image(raw_img, img_name, referer=url) if raw_img else ""
         final_img = local_img or raw_img
-        print(f"[이미지] {img_name} | 링크변환={'성공' if 'news.google.com' not in url else '실패'} | 원본={bool(raw_img)} | 저장={bool(local_img)}")
+        final_body = scraped_body or src.get("snippet") or ""
+        print(f"[수집] {img_name} | URL={'원문' if url and 'news.google.com' not in url else '구글'} | 사진={bool(final_img)} | 본문길이={len(final_body)}")
         return {
             "category": item.get("category") or src.get("category", "뉴스"),
-            "title": item.get("title") or src.get("title", ""),
+            "title": src.get("title") or item.get("title", ""),
             "source": src.get("source", "뉴스"),
             "url": url,
             "image": final_img,
-            "full_article": item.get("full_article", ""),
-            "takeaway": item.get("takeaway", ""),
+            "full_article": final_body,
+            "takeaway": "",
         }
 
     lead_story = enrich_article(ai_result.get("lead_story"), "lead.jpg")
