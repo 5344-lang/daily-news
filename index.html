@@ -549,8 +549,13 @@
   <div class="modal-backdrop" id="archive-modal" onclick="if(event.target===this) closeArchive()">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="archive-title">저장한 기사 보관함</h3>
+        <h3 id="archive-title">오늘의 스크랩 보관함</h3>
         <button class="btn-sm" onclick="closeArchive()">닫기</button>
+      </div>
+      <p class="help-text" style="margin-top:0;">스크랩한 기사는 다음 날 새벽 신문 발행 시 카드뉴스 메일로 자동 발송된 뒤 초기화됩니다.</p>
+      <div class="modal-actions" style="justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <span class="status-msg" id="scrap-mail-status" style="margin:0;"></span>
+        <button class="btn-primary" id="btn-send-scrap" onclick="sendScrapEmailNow()">지금 메일로 보내기</button>
       </div>
       <div id="archive-body"></div>
     </div>
@@ -724,11 +729,12 @@
           return {
             likes: Array.isArray(parsed.likes) ? parsed.likes : [],
             dislikes: Array.isArray(parsed.dislikes) ? parsed.dislikes : [],
-            saved: Array.isArray(parsed.saved) ? parsed.saved : []
+            saved: Array.isArray(parsed.saved) ? parsed.saved : [],
+            saved_reset_at: parsed.saved_reset_at || 0
           };
         }
       } catch (e) {}
-      return { likes: [], dislikes: [], saved: [] };
+      return { likes: [], dislikes: [], saved: [], saved_reset_at: 0 };
     }
 
     function saveLocalPrefs() {
@@ -740,12 +746,23 @@
 
     function mergePrefs(remote) {
       if (!remote || typeof remote !== 'object') return;
-      ['likes', 'dislikes', 'saved'].forEach(key => {
+      ['likes', 'dislikes'].forEach(key => {
         const map = new Map();
         (remote[key] || []).forEach(item => { if (item && item.url) map.set(item.url, item); });
         (prefs[key] || []).forEach(item => { if (item && item.url) map.set(item.url, item); });
         prefs[key] = Array.from(map.values());
       });
+      const remoteReset = remote.saved_reset_at || 0;
+      const localReset = prefs.saved_reset_at || 0;
+      if (remoteReset > localReset) {
+        prefs.saved = Array.isArray(remote.saved) ? remote.saved : [];
+        prefs.saved_reset_at = remoteReset;
+      } else {
+        const map = new Map();
+        (remote.saved || []).forEach(item => { if (item && item.url) map.set(item.url, item); });
+        (prefs.saved || []).forEach(item => { if (item && item.url) map.set(item.url, item); });
+        prefs.saved = Array.from(map.values());
+      }
       saveLocalPrefs();
     }
 
@@ -789,7 +806,6 @@
       localStorage.setItem('dn_mode', mode);
       document.body.classList.toggle('eink', mode === 'eink');
       document.body.classList.toggle('dark', mode === 'dark');
-
       const modeLabels = { paper: '신문지', dark: '야간', eink: '이북' };
       const btnMode = document.getElementById('btn-mode');
       if (btnMode) btnMode.textContent = modeLabels[mode] || '신문지';
@@ -1066,6 +1082,7 @@
           prefs.saved.push({
             ...meta,
             source: item.source || '',
+            image: item.image || '',
             full_article: item.full_article || ''
           });
         }
@@ -1131,8 +1148,41 @@
 
     // ===== 보관함 모달 =====
     function openArchive() {
+      document.getElementById('scrap-mail-status').textContent = '';
       renderArchiveList();
       document.getElementById('archive-modal').classList.add('open');
+    }
+
+    async function sendScrapEmailNow() {
+      const statusEl = document.getElementById('scrap-mail-status');
+      if (!prefs.saved.length) {
+        statusEl.textContent = '보낼 스크랩 기사가 없습니다.';
+        return;
+      }
+      const repo = localStorage.getItem('dn_gh_repo') || inferRepo();
+      const token = localStorage.getItem('dn_gh_token') || '';
+      if (!token) {
+        statusEl.textContent = '[안내] 설정에서 GitHub 토큰을 먼저 등록해 주세요.';
+        return;
+      }
+      statusEl.textContent = '메일 발송 요청 중...';
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      };
+      try {
+        await syncPrefsToGitHub(null);
+        const runRes = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/send_scrap.yml/dispatches`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ ref: 'main' }),
+        });
+        if (!runRes.ok) throw new Error('발송 요청 실패 (토큰의 Actions 쓰기 권한 및 send_scrap.yml 확인)');
+        statusEl.textContent = '[완료] 메일 발송을 시작했습니다. 약 1분 뒤 메일함을 확인해 주세요.';
+      } catch (e) {
+        statusEl.textContent = '[오류] ' + e.message;
+      }
     }
 
     function closeArchive() {
@@ -1197,6 +1247,7 @@
         category: r.source_name || '심리 실험 리포트',
         source: r.journal_info || r.source_name || '',
         url: r.url,
+        image: r.image || '',
         full_article: r.full_article || ''
       });
       return `
@@ -1221,6 +1272,7 @@
           category: b.blog_name || '구독 블로그',
           source: b.blog_name || '',
           url: b.url,
+          image: b.image || '',
           full_article: b.full_article || ''
         });
         return `
@@ -1285,6 +1337,7 @@
             category: lead.category,
             source: lead.source,
             url: lead.url,
+            image: lead.image || '',
             full_article: leadBody
           });
           frontHtml = `
@@ -1309,6 +1362,7 @@
             category: a.category,
             source: a.source,
             url: a.url,
+            image: a.image || '',
             full_article: body
           });
           return `
@@ -1451,7 +1505,7 @@
       const cur = await getRes.json();
       const origText = base64ToUtf8(cur.content);
       const utcHour = (hourKst - 9 + 24) % 24;
-      const newCron = `cron: '0 ${utcHour} * * *'`;
+      const newCron = `cron: '17 ${utcHour} * * *'`;
       const updatedText = origText.replace(/cron:\s*['"][^'"]+['"]/, newCron);
       if (updatedText === origText) return true;
 
