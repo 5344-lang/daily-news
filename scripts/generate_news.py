@@ -565,17 +565,6 @@ def generate_edition_with_gemini(config, news_candidates, research_candidates, p
                 else:
                     raise
     raise last_err
-        except Exception as e:
-            last_err = e
-            err_str = str(e)
-            if "503" in err_str or "429" in err_str or "UNAVAILABLE" in err_str:
-                wait_sec = 10 * (attempt + 1)
-                print(f"[안내] Gemini 서버 혼잡 ({attempt + 1}/4회 시도). {wait_sec}초 후 재시도합니다...")
-                time.sleep(wait_sec)
-            else:
-                raise
-    raise last_err
-
 
 def main():
     now_kst = datetime.now(KST)
