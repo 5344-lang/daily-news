@@ -18,16 +18,45 @@ except ImportError:
     gnewsdecoder = None
 
 
+import base64
+from urllib.parse import urlparse, unquote
+
+
 def decode_google_news_url(url):
     if not url or "news.google.com" not in url:
         return url
+
+    # 1) URL 쿼리나 경로 내 인코딩된 원문 링크 추출 시도
+    try:
+        parsed = urlparse(url)
+        parts = [p for p in parsed.path.split("/") if p]
+        if "articles" in parts:
+            idx = parts.index("articles")
+            if idx + 1 < len(parts):
+                token = parts[idx + 1].split("?")[0]
+                # base64 패딩 보정 후 http 링크 문자열 탐색
+                padded = token + "=" * ((4 - len(token) % 4) % 4)
+                for b64_fn in (base64.urlsafe_b64decode, base64.b64decode):
+                    try:
+                        raw_bytes = b64_fn(padded)
+                        text = raw_bytes.decode("utf-8", errors="ignore")
+                        match = re.search(r"https?://[^\s\"'<>\\\x00-\x1f]+", text)
+                        if match:
+                            cand = unquote(match.group(0))
+                            if "news.google.com" not in cand and "google.com" not in cand:
+                                return cand
+                    except Exception:
+                        pass
+    except Exception:
+        pass
+
+    # 2) HTTP 리다이렉트 및 HTML 내 원문 링크 탐색
     try:
         resp = requests.get(url, headers=HEADERS, timeout=12, allow_redirects=True)
         final_url = resp.url or url
         if "news.google.com" not in final_url:
             return final_url
 
-        # 구글 뉴스 리다이렉트 페이지 HTML 내부에서 실제 언론사 URL 탐색
         soup = BeautifulSoup(resp.text, "html.parser")
         for el in soup.find_all(attrs={"data-n-au": True}):
             cand = (el.get("data-n-au") or "").strip()
@@ -40,6 +69,7 @@ def decode_google_news_url(url):
                 return href
     except Exception as e:
         print(f"[경고] 구글 뉴스 링크 추적 실패: {e}")
+
     return url
     
 KST = timezone(timedelta(hours=9))
@@ -650,7 +680,7 @@ def main():
             raw_img, scraped_body = scrape_generic_article(url, max_len=4000)
         local_img = download_local_image(raw_img, img_name, referer=url) if raw_img else ""
         final_img = local_img or raw_img
-        final_body = scraped_body or f"[원문 추출 실패 · RSS 요약] {src.get('snippet') or ''}"
+        final_body = scraped_body or (src.get("snippet") or "")
         본문출처 = "원문추출" if scraped_body else "RSS요약"
         print(f"[수집] {img_name} | {본문출처} | 사진={bool(final_img)} | 길이={len(final_body)} | URL={url[:60]}")
         return {
