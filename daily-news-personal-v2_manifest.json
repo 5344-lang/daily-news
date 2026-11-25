@@ -1,0 +1,17 @@
+{
+  "name": "DAILY NEWS",
+  "short_name": "DAILY NEWS",
+  "description": "나만의 AI 개인 맞춤형 조간 신문",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#faf7f0",
+  "theme_color": "#161616",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
