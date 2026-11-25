@@ -12,6 +12,23 @@ from bs4 import BeautifulSoup
 from google import genai
 from google.genai import types
 
+try:
+    from googlenewsdecoder import gnewsdecoder
+except ImportError:
+    gnewsdecoder = None
+
+
+def decode_google_news_url(url):
+    if not url or "news.google.com" not in url or gnewsdecoder is None:
+        return url
+    try:
+        res = gnewsdecoder(url, interval=1)
+        if res.get("status") and res.get("decoded_url"):
+            return res["decoded_url"]
+    except Exception as e:
+        print(f"[경고] 구글 뉴스 링크 변환 실패: {e}")
+    return url
+    
 KST = timezone(timedelta(hours=9))
 HEADERS = {
     "User-Agent": (
@@ -597,7 +614,7 @@ def main():
         if not item:
             return None
         src = cand_map.get(item.get("id"), {})
-        url = src.get("url", "")
+        url = decode_google_news_url(src.get("url", ""))
         raw_img = ""
         if url:
             raw_img, _ = scrape_generic_article(url, max_len=500)
