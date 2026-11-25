@@ -510,9 +510,6 @@ def generate_edition_with_gemini(config, news_candidates, research_candidates, p
 }}
 """
 
-    last_err = None
-    for attempt in range(4):
-        try:
             # 사용 가능한 Gemini 모델 목록을 자동으로 조회해 덜 붐비는 순으로 시도
     candidate_models = []
     try:
