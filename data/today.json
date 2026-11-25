@@ -4,90 +4,26 @@
   "date_kr": "2026년 11월 25일 (수)",
   "show_weather": true,
   "weather": "대구 구름 조금 -10°/3° (강수 0%)",
-  "edition_quote": "AI 기술의 급격한 확산과 그에 따른 사회적 책임, 그리고 인간 중심의 인문학적 성찰이 공존하는 오늘, 우리는 변화하는 시스템 속에서 어떻게 존엄을 지킬 것인가를 고민해야 합니다.",
+  "edition_quote": "AI 기술의 발전과 인간 중심의 교육 철학이 공존하는 오늘, 심리학적 통찰과 함께 미래를 준비하는 소식을 전합니다.",
   "lead_story": {
-    "category": "도서·문학",
-    "title": "[특집 인터뷰] 오석진 대전시교육감 “AI 시대 해법은 인간 중심 인문학…교직원 모두 지키는 ‘교육가족 보호’ 실현할 것” - 프레시안",
-    "source": "프레시안",
-    "url": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5lVE56TlBCcWhCdXRWNnowajl0NG1qbW9GUVpmTXdTYU5xZ2RrZDhzYmtCZzZEZU1XeEREQ1BSQklJRXdNckNFNG9PSUdIc1plTnhEQk1ZNmJMYnRBcndndW9xd2JBT0lKTWxB?oc=5",
+    "category": "AI·테크",
+    "title": "",
+    "source": "뉴스",
+    "url": "",
     "image": "",
-    "full_article": "[특집 인터뷰] 오석진 대전시교육감 “AI 시대 해법은 인간 중심 인문학…교직원 모두 지키는 ‘교육가족 보호’ 실현할 것” 프레시안",
+    "full_article": "",
     "takeaway": ""
   },
-  "articles": [
-    {
-      "category": "임용·교육",
-      "title": "수능 이어 교사 임용시험도 'AI 커닝' 차단…일회용 앞치마 착용 - 뉴스1",
-      "source": "뉴스1",
-      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE53Ykl1OFY3M2MzZ0xfWHRoNGgzUHA3V2trV0hRQnRIc2pBU3ZCRkdSMkgxdy14M0JZcFRIWFo1WHNNUkJZVDNfRUJOLXVuWnR1aGtwU3E2cWc4UQ?oc=5",
-      "image": "",
-      "full_article": "수능 이어 교사 임용시험도 'AI 커닝' 차단…일회용 앞치마 착용 뉴스1",
-      "takeaway": ""
-    },
-    {
-      "category": "AI·테크",
-      "title": "코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 - www.cio.com",
-      "source": "www.cio.com",
-      "url": "https://news.google.com/rss/articles/CBMi2gJBVV95cUxPZWVlLVJ5Wk5oSWMzQ2lKUEk1RGlSVWZjcEY3QlZOUzVyaEdiTG1hbnczMkVXTTctTE5oMTZEQ250QmxtUnYwcUxqMzR0NkRuaWFKMDlYU1FQcGh6X3pWTW9NWWJqNzlxR3NwcjNFMnNScFFfVXpKSVlkRzh5YVkzalR0RGdGbDk0RVZqWE1qS3ZnMVZ4Z1RkcEpaanljVUpCTzVvT0FrcklOTWZkemFReUlkbmxlejNjR3p1Ukxsd0ZzX1JYZVBQTENzMF9oMEVtLU1qSWdqNkRnaU1pTEk1RFBpbGhLRF82OUNMN3ZiOGthWGdhbEhhMDhmOHpEc2p3WHpib0tkSkpadk9DdWRMZjc3WnhJQUdLdkNYZUJZdXF2Qzhnd2ZlRjFYVnRoc2QxX0pibUtnTkFEYnlCSHdKNGxRcmZmSW9PcnFlMU13REpOeXg3SjFmVGl3?oc=5",
-      "image": "",
-      "full_article": "코드 생성부터 승인까지 AI에 맡긴다…앤트로픽, ‘클로드 쉽’으로 검토 병목 겨냥 www.cio.com",
-      "takeaway": ""
-    },
-    {
-      "category": "경제·시사",
-      "title": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 - 한국경제",
-      "source": "한국경제",
-      "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5MVTM2UU82dlpELVV2RENMdnpHTmJkbFFNV2xNVDhwM2pQdW1fNkp0OW1ob0lpcmNwdFdNaUIzcWpCbmRscmlmbGtpRks2QjA4VVJINjlGYllPZw?oc=5",
-      "image": "",
-      "full_article": "\"AI 다음은 신약이다\"…中 빅테크, 바이오 전쟁 한국경제",
-      "takeaway": ""
-    },
-    {
-      "category": "심리학·인지",
-      "title": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 - 한국일보",
-      "source": "한국일보",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1leVJOZGZmVVctTHJ2VjJtLURkMmUxUVNTaVJEWlZUMjRhdjJ2VjVJT2xYVHBmSnB2UGh6a1lXb2RUTk5teWJlSl96c2IwVUxLOWpJb0NqM2hLSlhVMktzZVRfeFJPc2V0YWFSWjZn?oc=5",
-      "image": "",
-      "full_article": "국민 절반 \"사회서비스 필요\"…정신건강은 필요 가구 5곳 중 1곳만 이용 한국일보",
-      "takeaway": ""
-    },
-    {
-      "category": "사설·칼럼",
-      "title": "칼럼 | AI가 고친 코드 한 줄, 어디까지 검증해야 할까 - www.cio.com",
-      "source": "www.cio.com",
-      "url": "https://news.google.com/rss/articles/CBMixAJBVV95cUxNQkQzT0xUdnBPWUNyLXJ6MGZ0N2VWNkNTQlpQbzM0M041Xzd2dm5ockFkY3ZEV3dRS3lRQWtYMGxoZjdmYzFJWTdXNWZGbHZoLUhScl93c0ZHaUVEUGcxeFlBMXVJSzhjVzlMTDk2cDVSOXpoSmlYeHE1X0ZVc21tSERMUjJXWkwxeHJlN2FTU2ZGdzhianNUS051UXptSjNMa2ZyQkFZODl5VU1RQVo0Xy1xQUQ5cUpCZnJkalR4WUhzeDlyZ25FWGlIOGp6cmdfV0x6Q1ZnTXJwcmRKRzhtMVJvVTN6ZmItQXJXS3BuR3ZYdDJ3NFhpdEo5NXFpblZFdGxrNjg0a3dMeDh1ejlWVDgwRi15UkhQV2UwUms4MDZjR0lhcHpmMngwUllWcktRWGJ2MHZzTTVGM0NnT3pUX0lUMTg?oc=5",
-      "image": "",
-      "full_article": "칼럼 | AI가 고친 코드 한 줄, 어디까지 검증해야 할까 www.cio.com",
-      "takeaway": ""
-    },
-    {
-      "category": "AI·테크",
-      "title": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 - 아시아투데이",
-      "source": "아시아투데이",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9EU2pQWkstazNIb0RUZ25VQzNpQmtRcnZzWHVQcVlrVmFVb1hmVnNWN2V1LWtuZG9HRlNvekFkQzBZR0RyQU5EWHlYTmF3alZ6VVJjMnk2Q25tU1lnMldHMjdRWTJObENVWWdDRDJR?oc=5",
-      "image": "",
-      "full_article": "챗GPT·제미나이·클로드 한곳에…포천시, AI 행정비서 도입 아시아투데이",
-      "takeaway": ""
-    },
-    {
-      "category": "임용·교육",
-      "title": "서울 중·고교 교사 임용시험서 부정행위 방지 '일회용 앞치마' - MBC 뉴스",
-      "source": "MBC 뉴스",
-      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE9MRHR5UjY2RUZ6clh0MU9YamhkQTdPSmt0S2pnckVsaExqT2JfYWpudThNV2lMZ3JWTmlXOE5PanpVc3lheHFtRks0aWRRMXZnY3J6X0VhbGxUS1RLTTEtRzhQSDNDNUVEWVU0RmN4STZQY3M1WFRR0gF3QVVfeXFMT3BreTNjdHBIekxWZlNuNUdMSlE2WjFRMC1McXhtWmYyTWkxaFdodnpFOHZDbHFNSjhsRWJmNEdIVGljVXAzVWRHNDlYYUs1VkJiWndyUHczakFMM21OUUFwbm0wQzNSZG96S29RZTZxc2owbDlfNU0?oc=5",
-      "image": "",
-      "full_article": "서울 중·고교 교사 임용시험서 부정행위 방지 '일회용 앞치마' MBC 뉴스",
-      "takeaway": ""
-    },
-    {
-      "category": "심리학·인지",
-      "title": "정신건강 상담은 ‘있는 줄 몰라서’, 노인돌봄은 ‘자격 안 돼서’···필요해도 못 쓰는 사회서비스 - 경향신문",
-      "source": "경향신문",
-      "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE5WYkU4LXVNeHhFN2hrQlJNQ1MyZlNYN3ZiR3lmSVBLVV9XRi1lZGZweERBTmRURmp3WXlqYU10cXh4TzFaZFQxU09Vb1N1bjRpM3FtYlNTWjBaby1yUmww0gFfQVVfeXFMTlZiRTgtdU14eEU3aGtCUk1DUzJmU1g3dmJHeWZJUEtVX1dGLWVkZnB4REFOZFRGandZeWphTXRxeHhPMVpkVDFTT1VvU3VuNGkzcW1iU1NaMFpvLXJSbDA?oc=5",
-      "image": "",
-      "full_article": "정신건강 상담은 ‘있는 줄 몰라서’, 노인돌봄은 ‘자격 안 돼서’···필요해도 못 쓰는 사회서비스 경향신문",
-      "takeaway": ""
-    }
-  ],
+  "articles": [],
   "research_report": null,
-  "blog_articles": []
+  "blog_articles": [
+    {
+      "blog_name": "똑심마인드 블로그",
+      "title": "칠성동 과일맛집 하이브릭스 빙수맛집",
+      "url": "https://blog.naver.com/talk_sim_mind/224423698429",
+      "image": "./data/images/blog_0.jpg",
+      "full_article": "칠성남로 쪽에 맛있는 과일을 파는 집이 있다고 해서 이번에 들렀다. 카페 형태라곤 하는데 보통은 미리 카카오톡을 이용해서 주문을 받고 수령하는 방식이 가깝다고 한다. 요즘 유행하는 공구 형태인 것 같다.\n\n근데 나는 동네 주민이 아니라서 따로 공구방에 들어가지는 않았고 그냥 일회성으로 방문했다. 동네 주민이거나 과일을 좋아하는 분들이라면 공구방에 들어가는 것도 좋을 것 같다\n\n칠성남로 경기장 근처에 있기 때문에 공영주차장이 잘 되어 있다. 되구요 오페라 더블유 방면에 공영주차장도 좋고 고성로에 경기장 내 주차장을 활용해도 좋다.\n\n가게 내에는 테이블이 있어서 먹고 이동할 수 있기는 했는데 그렇게 분위기가 좋거나 넓은 편은 아니라서 간단히 팥빙수를 함께 먹거나 과일을 먹는 정도의 테이블이었다. 보통은 주문을 한 후 픽업을 위해서 대기하는 분들이 많이 앉아 계셨다.\n\n보다시피 커피 메뉴와 주스 라떼 티 디저트 종류가 있었는데 빙수도 정말 잘 나갔다. 날이 조금 쌀쌀해진 9월이라서 빙수가 나는 딱히 끌리지 않는다고 생각했는데 과일이 엄청 올라간 제대로 만들어진 빙수를 보고 나니 나도 빙수를 시킬걸 그랬다 싶을 정도로 고퀄리티였다\n\n오픈 채팅은 해당 가게 내에서도 안내문이 붙어 있는데 가입만 해도 할인이 가능하다는 안내문이 붙어 있었다.\n\n전남친 빙수라는 메뉴도 아주 끌렸는데 이미 인터넷에 많이 유명해진 전남친 토스트의 변형 형태로 블루베리와 크림치즈 등이 올라가 아주 맛있어 보이는 빙수였다. 하지만 이날은 이미 말했다시피 9월 저녁이라서 밤 온도가 20° 초반으로 떨어질 정도로 서늘한 날이었다. 그래서 나는 빙수는 건너뛰었다\n\n가게 들어가면 우선 눈에 띄는 것은 음료 슬롯이었는데 커피 파인애플 딸기 초코 망고 블루베리 자두 키위 등 다양한 메뉴의 슬러시 들이 준비되어 있었어. 생과일 역시 판매되고 있었는데 상당히 저렴한 가격 임을 알 수 있었다.우리는 저녁 7시 8시가 되어서야 들렀더니 많은 메뉴가 빠졌다. 특히 추석을 앞둔 상황이라서 과일 판매가 거의 다 이루어진 상태라는 설명을 들었다.\n\n추석 전에 먹기에 좋은 원황 배가 한 개 단위로 팔고 있어서 배도 먹음직스러웠다. 하지만 여러 고민 끝에 평소에 좋아하던 파인애플과 Melon을 한 통씩 구매했다. 충분히 며칠을 두고 먹기 좋은 양인데다 두꺼운 껍질이 대표적인 과일인데 손질이 깨끗하게 잘 되어 있는 것에 비해 가격이 그다지 비싸지 않아서 합리적인 구매라고 생각되었다.\n\n귤도 드디어 시즌이 시작되었다고 해서 슬러시 두 개와 멜론 한 팩 귤 한 팩을 구매했다.\n\n카운터에는 다음과 같은 물품들이 준비되어 있어서 우리는 포크를 몇 개 챙겼다.슬러시는 바로 먹을 수 없을 정도로 꽝꽝 얼어 있기 때문에 몇 분은 밖에 두고 살짝 녹을 때까지 기다려야 한다. 만약 가게에서 먹고 싶거나 바로 먹을 음료를 찾는 경우에는 생과일 주스 종류를 물어보는 것이 좋겠다.\n\n계산을 하고 나니 옆에 포장 매대를 알려주셨는데 봉투가 사이즈별로 구비되어 있으니 맞춰서 가져 가시면 된다고 하셨다. 과일 폭탄 빙수 사이즈도 확인할 수 있었다.\n\n전반적으로 가격도 괜찮고 손질도 잘된 과일을 사 먹을 수 있는 하이 브릭스를 추천한다. 특히 당도가 정말 좋은 맛있는 과일을 살 수 있다는 게 가장 큰 메리트가 아닐까?",
+      "published": "Sun, 27 Sep 2026"
+    }
+  ]
 }
