@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#161616" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>DAILY NEWS</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect x='6' y='8' width='52' height='48' rx='4' fill='%23faf7f0' stroke='%23161616' stroke-width='5'/><rect x='14' y='16' width='36' height='8' fill='%23161616'/><rect x='14' y='30' width='16' height='18' fill='%23161616'/><line x1='35' y1='32' x2='50' y2='32' stroke='%23161616' stroke-width='4'/><line x1='35' y1='40' x2='50' y2='40' stroke='%23161616' stroke-width='4'/><line x1='35' y1='48' x2='46' y2='48' stroke='%23161616' stroke-width='4'/></svg>" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
   <style>
@@ -12,8 +18,9 @@
       --bg: #f4efe6;
       --paper: #faf7f0;
       --ink: #161616;
-      --muted: #555;
+      --muted: #555555;
       --border: #1a1a1a;
+      --input-bg: #ffffff;
       --font-size: 16px;
       --line-height: 28px;
     }
@@ -21,12 +28,21 @@
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
+    body.dark {
+      --bg: #111111;
+      --paper: #1b1b1b;
+      --ink: #e8e6e1;
+      --muted: #a39f96;
+      --border: #4d4d4d;
+      --input-bg: #262626;
+    }
     body.eink {
       --bg: #ffffff;
       --paper: #ffffff;
       --ink: #000000;
       --muted: #222222;
       --border: #000000;
+      --input-bg: #ffffff;
       overflow: hidden;
       height: 100vh;
       height: 100dvh;
@@ -129,7 +145,7 @@
       font-weight: 700;
     }
     .briefing-bar {
-      display: flex;
+      display: none;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
@@ -188,6 +204,9 @@
       display: block;
       break-inside: avoid;
     }
+    body.dark .news-img {
+      filter: grayscale(40%) contrast(1.05) brightness(0.9);
+    }
     body.eink .news-img {
       filter: none;
     }
@@ -237,7 +256,7 @@
     .two-col-text {
       column-count: 2;
       column-gap: 24px;
-      column-rule: 1px solid #ccc;
+      column-rule: 1px solid var(--border);
     }
     @media (max-width: 640px) {
       .two-col-text { column-count: 1; }
@@ -252,7 +271,6 @@
       margin-top: 8px;
       break-inside: avoid;
     }
-    /* 기사 하단 좋아요 / 싫어요 / 저장 바 */
     .article-actions {
       display: flex;
       gap: 6px;
@@ -303,8 +321,8 @@
     body.eink .eink-nav { display: flex; }
     .eink-nav button {
       border: 1.5px solid var(--border);
-      background: #fff;
-      color: #000;
+      background: var(--paper);
+      color: var(--ink);
       padding: 6px 14px;
       font-family: inherit;
       font-size: 13px;
@@ -320,7 +338,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.55);
+      background: rgba(0,0,0,0.6);
       z-index: 999;
       align-items: center;
       justify-content: center;
@@ -328,10 +346,10 @@
     }
     .modal-backdrop.open { display: flex; }
     .modal {
-      background: #faf7f0;
-      color: #111;
-      border: 2px solid #111;
-      max-width: 640px;
+      background: var(--paper);
+      color: var(--ink);
+      border: 2px solid var(--border);
+      max-width: 660px;
       width: 100%;
       max-height: 88vh;
       overflow-y: auto;
@@ -346,7 +364,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px solid #111;
+      border-bottom: 2px solid var(--border);
       padding-bottom: 8px;
       margin-bottom: 14px;
     }
@@ -354,7 +372,7 @@
     .modal-sec {
       margin-bottom: 16px;
       padding-bottom: 12px;
-      border-bottom: 1px dashed #999;
+      border-bottom: 1px dashed var(--muted);
     }
     .modal-sec h4 { margin: 0 0 8px; font-size: 0.95em; }
     .row-item {
@@ -362,40 +380,54 @@
       gap: 6px;
       margin-bottom: 6px;
       align-items: center;
+      flex-wrap: wrap;
     }
-    .row-item input[type="text"], .row-item input[type="password"], .row-item input[type="number"] {
+    .row-item label {
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .row-item input[type="text"],
+    .row-item input[type="password"],
+    .row-item input[type="number"],
+    .row-item select {
       flex: 1;
       padding: 6px 8px;
-      border: 1px solid #333;
-      background: #fff;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--ink);
       font-family: inherit;
       font-size: 13px;
       min-width: 0;
     }
-    .row-item .small-input { flex: 0 0 34%; }
+    .row-item .small-input { flex: 0 0 32%; }
+    .row-item .mode-select { flex: 0 0 auto; width: auto; }
     .btn-sm {
       padding: 5px 9px;
-      border: 1px solid #111;
-      background: #fff;
-      color: #111;
+      border: 1px solid var(--border);
+      background: var(--paper);
+      color: var(--ink);
       cursor: pointer;
       font-family: inherit;
       font-size: 12px;
       white-space: nowrap;
     }
     .btn-primary {
-      background: #111;
-      color: #fff;
-      border: 1px solid #111;
+      background: var(--ink);
+      color: var(--paper);
+      border: 1px solid var(--border);
       padding: 8px 14px;
       font-family: inherit;
       font-weight: 700;
       cursor: pointer;
     }
     .btn-outline {
-      background: #fff;
-      color: #111;
-      border: 1px solid #111;
+      background: var(--paper);
+      color: var(--ink);
+      border: 1px solid var(--border);
       padding: 8px 14px;
       font-family: inherit;
       font-weight: 700;
@@ -414,7 +446,7 @@
     }
     .help-text {
       font-size: 12px;
-      color: #555;
+      color: var(--muted);
       margin: 4px 0 8px;
       line-height: 1.5;
     }
@@ -426,26 +458,25 @@
     }
     .page-num-btn {
       padding: 8px 0;
-      border: 1px solid #111;
-      background: #fff;
-      color: #111;
+      border: 1px solid var(--border);
+      background: var(--paper);
+      color: var(--ink);
       font-family: inherit;
       font-weight: 700;
       cursor: pointer;
     }
     .page-num-btn.current {
-      background: #111;
-      color: #fff;
+      background: var(--ink);
+      color: var(--paper);
     }
-    /* 보관함 목록 스타일 */
     .saved-item {
-      border-bottom: 1px solid #bbb;
+      border-bottom: 1px solid var(--border);
       padding: 10px 0;
     }
     .saved-item:last-child { border-bottom: none; }
     .saved-item-meta {
       font-size: 12px;
-      color: #555;
+      color: var(--muted);
       margin-bottom: 4px;
     }
     .saved-item-title {
@@ -463,8 +494,9 @@
   <div class="container">
     <div class="toolbar">
       <div class="toolbar-group">
-        <button id="btn-paper" class="active" onclick="setMode('paper')">신문지 모드</button>
-        <button id="btn-eink" onclick="setMode('eink')">이북 모드</button>
+        <button id="btn-paper" class="active" onclick="setMode('paper')">신문지</button>
+        <button id="btn-dark" onclick="setMode('dark')">야간</button>
+        <button id="btn-eink" onclick="setMode('eink')">이북</button>
         <button id="btn-img-toggle" onclick="toggleImages()">사진 켜짐</button>
       </div>
       <div class="toolbar-group">
@@ -535,40 +567,82 @@
       </div>
 
       <div class="modal-sec">
-        <h4>1. 기본 날씨 지역 (이북·메일용)</h4>
+        <h4>1. 신문 기본 설정</h4>
         <div class="row-item">
-          <input type="text" id="cfg-weather-city" placeholder="도시명 (예: 대구, 서울, 부산)" />
+          <label for="cfg-paper-name">신문 이름</label>
+          <input type="text" id="cfg-paper-name" placeholder="예: DAILY NEWS" />
+        </div>
+        <div class="row-item">
+          <label for="cfg-article-count">하루 기사 개수</label>
+          <select id="cfg-article-count">
+            <option value="3">3개 (가볍게 3분 컷)</option>
+            <option value="6">6개 (기본 추천)</option>
+            <option value="9">9개 (풍성하게 읽기)</option>
+          </select>
+          <label for="cfg-publish-hour">발행 시간</label>
+          <select id="cfg-publish-hour"></select>
+        </div>
+      </div>
+
+      <div class="modal-sec">
+        <h4>2. 날씨 표시</h4>
+        <div class="row-item">
+          <label><input type="checkbox" id="cfg-show-weather" checked /> 상단에 날씨 표시</label>
+          <input type="text" id="cfg-weather-city" placeholder="기본 도시명 (예: 대구, 서울)" />
         </div>
         <p class="help-text">스마트폰·PC 브라우저에서는 위치 권한 허용 시 현재 위치 날씨가 자동 반영됩니다.</p>
       </div>
 
       <div class="modal-sec">
-        <h4>2. 관심 뉴스 키워드</h4>
-        <div id="cfg-categories"></div>
-        <button class="btn-sm" onclick="addCategoryRow()">뉴스 카테고리 추가</button>
+        <h4>3. 신문 이름 아래 한 줄 문장</h4>
+        <div class="row-item">
+          <select id="cfg-quote-mode" onchange="toggleQuoteCustom()">
+            <option value="news_comment">오늘 뉴스 한줄평 (편집장 코멘트)</option>
+            <option value="famous_quote">오늘의 명언 (철학·문학)</option>
+            <option value="ai_cheer">AI의 따뜻한 아침 응원</option>
+            <option value="humor">가벼운 개그·유머 한 줄</option>
+            <option value="custom">직접 프롬프트 입력</option>
+            <option value="none">표시 안 함</option>
+          </select>
+        </div>
+        <div class="row-item" id="cfg-quote-custom-wrap" style="display:none;">
+          <input type="text" id="cfg-quote-custom" placeholder="예: 까칠한 고양이 말투로 출근 응원해 줘" />
+        </div>
       </div>
 
       <div class="modal-sec">
-        <h4>3. 최신 심리학 실험 논문 피드</h4>
+        <h4>4. 관심 뉴스 키워드</h4>
+        <p class="help-text">관심 단어만 쉼표(,)로 편하게 적으세요. 매일 좋아요/싫어요를 누를수록 AI가 취향을 학습합니다.</p>
+        <div id="cfg-categories"></div>
+        <button class="btn-sm" onclick="addCategoryRow()">뉴스 카테고리 추가</button>
+        <div class="row-item" style="margin-top:10px;">
+          <label for="cfg-exclude-keywords">공통 제외 단어</label>
+          <input type="text" id="cfg-exclude-keywords" placeholder="예: MOU, 협약, 할인, 이벤트, 특가" />
+        </div>
+      </div>
+
+      <div class="modal-sec">
+        <h4>5. 최신 심리학 실험 논문 피드 (매일 순환)</h4>
         <div id="cfg-research"></div>
         <button class="btn-sm" onclick="addResearchRow()">연구 피드 추가</button>
       </div>
 
       <div class="modal-sec">
-        <h4>4. 구독 블로그 (원문 전체 수록)</h4>
+        <h4>6. 구독 블로그 (원문 전체 수록)</h4>
         <p class="help-text">네이버 블로그는 아이디(예: talk_sim_mind)나 주소만 넣어도 자동 변환됩니다.</p>
         <div id="cfg-blogs"></div>
         <button class="btn-sm" onclick="addBlogRow()">블로그 추가</button>
       </div>
 
       <div class="modal-sec">
-        <h4>5. GitHub 저장소 연동 (이 기기에만 저장)</h4>
+        <h4>7. GitHub 저장소 연동 (이 기기에만 저장)</h4>
         <div class="row-item">
           <input type="text" id="gh-repo" placeholder="아이디/저장소 (예: 5344-lang/daily-news)" />
         </div>
         <div class="row-item">
-          <input type="password" id="gh-token" placeholder="GitHub 토큰 입력" />
+          <input type="password" id="gh-token" placeholder="GitHub Fine-grained 토큰 입력" />
         </div>
+        <p class="help-text">토큰은 현재 기기 브라우저에만 저장됩니다. 공용 PC에서는 입력하지 마세요.</p>
       </div>
 
       <div class="modal-actions">
@@ -591,7 +665,31 @@
       95: '뇌우', 96: '우박 동반 뇌우', 99: '강한 뇌우'
     };
 
+    // ===== XSS 방어 유틸리티 =====
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function safeUrl(raw) {
+      const s = String(raw || '').trim();
+      if (!s) return '#';
+      if (s.startsWith('./') || s.startsWith('/')) return s;
+      try {
+        const parsed = new URL(s);
+        if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+          return parsed.href;
+        }
+      } catch (e) {}
+      return '#';
+    }
+
     let mode = localStorage.getItem('dn_mode') || 'paper';
+    if (!['paper', 'dark', 'eink'].includes(mode)) mode = 'paper';
     let fontSize = parseInt(localStorage.getItem('dn_font') || '16', 10);
     let hideImages = localStorage.getItem('dn_hide_img') === '1';
     let currentPage = 0;
@@ -607,6 +705,18 @@
     let prefs = loadLocalPrefs();
     let syncInFlight = false;
     let syncPending = false;
+
+    // 발행 시간 드롭다운 초기화 (0시~23시 KST)
+    (function initHourSelect() {
+      const sel = document.getElementById('cfg-publish-hour');
+      for (let h = 0; h < 24; h++) {
+        const opt = document.createElement('option');
+        opt.value = String(h);
+        const label = h === 0 ? '자정 12시' : (h < 12 ? `오전 ${h}시` : (h === 12 ? '오후 12시' : `오후 ${h - 12}시`));
+        opt.textContent = label;
+        sel.appendChild(opt);
+      }
+    })();
 
     function loadLocalPrefs() {
       try {
@@ -674,7 +784,9 @@
       mode = newMode;
       localStorage.setItem('dn_mode', mode);
       document.body.classList.toggle('eink', mode === 'eink');
+      document.body.classList.toggle('dark', mode === 'dark');
       document.getElementById('btn-paper').classList.toggle('active', mode === 'paper');
+      document.getElementById('btn-dark').classList.toggle('active', mode === 'dark');
       document.getElementById('btn-eink').classList.toggle('active', mode === 'eink');
 
       const track = document.getElementById('reader-track');
@@ -776,7 +888,7 @@
 
     function handleViewportTap(e) {
       if (mode !== 'eink') return;
-      if (e.target.closest('a, button, input')) return;
+      if (e.target.closest('a, button, input, select')) return;
       const rect = document.getElementById('eink-viewport').getBoundingClientRect();
       const x = e.clientX - rect.left;
       if (x < rect.width * 0.33) movePage(-1);
@@ -837,7 +949,7 @@
 
             const slot = document.getElementById('weather-slot');
             if (slot) {
-              slot.innerHTML = `<b>날씨: ${place} ${desc} ${tNow}${tMin}°/${tMax}° (강수 ${rain}%)</b>`;
+              slot.textContent = `날씨: ${place} ${desc} ${tNow}${tMin}°/${tMax}° (강수 ${rain}%)`;
               scheduleEinkRecalc();
             }
           } catch (e) {}
@@ -848,16 +960,17 @@
     }
 
     function imgTag(src) {
-      if (!src) return '';
-      const bust = src.startsWith('./') ? `${src}?t=${Date.now()}` : src;
-      return `<img class="news-img" src="${bust}" referrerpolicy="no-referrer" alt="기사 사진" onload="scheduleEinkRecalc()" onerror="this.style.display='none'; scheduleEinkRecalc();" />`;
+      const clean = safeUrl(src);
+      if (!src || clean === '#') return '';
+      const bust = clean.startsWith('./') ? `${clean}?t=${Date.now()}` : clean;
+      return `<img class="news-img" src="${escapeHtml(bust)}" referrerpolicy="no-referrer" alt="기사 사진" onload="scheduleEinkRecalc()" onerror="this.style.display='none'; scheduleEinkRecalc();" />`;
     }
 
     function formatParagraphs(text, useDropcap = false) {
       if (!text) return '';
-      const paras = text.split(/\n+/).map(s => s.trim()).filter(Boolean);
+      const paras = String(text).split(/\n+/).map(s => s.trim()).filter(Boolean);
       return paras.map((p, idx) =>
-        `<p class="${useDropcap && idx === 0 ? 'dropcap' : ''}">${p}</p>`
+        `<p class="${useDropcap && idx === 0 ? 'dropcap' : ''}">${escapeHtml(p)}</p>`
       ).join('');
     }
 
@@ -1025,7 +1138,7 @@
       document.getElementById('archive-title').textContent = `저장한 기사 보관함 (${prefs.saved.length}건)`;
       const body = document.getElementById('archive-body');
       if (!prefs.saved.length) {
-        body.innerHTML = '<p style="text-align:center; padding:24px 0; color:#555;">저장한 기사가 아직 없습니다. 기사 아래 저장 버튼을 눌러 보관해 보세요.</p>';
+        body.innerHTML = '<p style="text-align:center; padding:24px 0; color:var(--muted);">저장한 기사가 아직 없습니다. 기사 아래 저장 버튼을 눌러 보관해 보세요.</p>';
         return;
       }
       const list = [...prefs.saved].reverse();
@@ -1033,11 +1146,11 @@
         const realIdx = prefs.saved.length - 1 - revIdx;
         return `
           <div class="saved-item">
-            <div class="saved-item-meta">${item.category || '기사'} · ${item.source || ''} · ${item.date || ''}</div>
-            <div class="saved-item-title">${item.title}</div>
+            <div class="saved-item-meta">${escapeHtml(item.category || '기사')} · ${escapeHtml(item.source || '')} · ${escapeHtml(item.date || '')}</div>
+            <div class="saved-item-title">${escapeHtml(item.title)}</div>
             <div class="saved-item-btns">
               <button class="btn-sm" onclick="readSavedArticle(${realIdx})">읽기</button>
-              <a class="btn-sm" style="text-decoration:none;" href="${item.url}" target="_blank">원문 출처</a>
+              <a class="btn-sm" style="text-decoration:none;" href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener noreferrer">원문 출처</a>
               <button class="btn-sm" onclick="removeSavedArticle(${realIdx})">삭제</button>
             </div>
           </div>`;
@@ -1052,8 +1165,8 @@
         <div style="margin-bottom:12px;">
           <button class="btn-sm" onclick="renderArchiveList()">목록으로</button>
         </div>
-        <h3 style="margin:0 0 6px; font-size:1.25em; line-height:1.35;">${item.title}</h3>
-        <div class="saved-item-meta" style="margin-bottom:14px;">${item.source || ''} · ${item.date || ''} · <a class="read-more" href="${item.url}" target="_blank">원문 출처</a></div>
+        <h3 style="margin:0 0 6px; font-size:1.25em; line-height:1.35;">${escapeHtml(item.title)}</h3>
+        <div class="saved-item-meta" style="margin-bottom:14px;">${escapeHtml(item.source || '')} · ${escapeHtml(item.date || '')} · <a class="read-more" href="${escapeHtml(safeUrl(item.url))}" target="_blank" rel="noopener noreferrer">원문 출처</a></div>
         <div class="article-body">${formatParagraphs(item.full_article || '본문이 저장되지 않았습니다. 원문 출처에서 확인해 주세요.', false)}</div>
       `;
     }
@@ -1083,13 +1196,13 @@
       });
       return `
         <section class="special-section">
-          <span class="cat-tag dark">오늘의 심리 실험 리포트 · ${r.source_name || '연구'}</span>
-          <h3 style="margin:6px 0 4px; font-size:1.4em; line-height:1.35;">${r.title}</h3>
-          <p class="special-meta">${r.journal_info || ''}</p>
+          <span class="cat-tag dark">오늘의 심리 실험 리포트 · ${escapeHtml(r.source_name || '연구')}</span>
+          <h3 style="margin:6px 0 4px; font-size:1.4em; line-height:1.35;">${escapeHtml(r.title)}</h3>
+          <p class="special-meta">${escapeHtml(r.journal_info || '')}</p>
           ${imgTag(r.image)}
           <div class="article-body">${formatParagraphs(r.full_article, true)}</div>
-          ${r.takeaway ? `<div class="takeaway">핵심: ${r.takeaway}</div>` : ''}
-          <div class="source-line"><a class="read-more" href="${r.url}" target="_blank">원문 연구 기사 보기</a></div>
+          ${r.takeaway ? `<div class="takeaway">핵심: ${escapeHtml(r.takeaway)}</div>` : ''}
+          <div class="source-line"><a class="read-more" href="${escapeHtml(safeUrl(r.url))}" target="_blank" rel="noopener noreferrer">원문 연구 기사 보기</a></div>
           ${renderActionBar(key, false)}
         </section>`;
     }
@@ -1107,11 +1220,11 @@
         });
         return `
           <section class="special-section">
-            <span class="cat-tag">구독 아티클 · ${b.blog_name || '블로그'}</span>
-            <h3 style="margin:6px 0 8px; font-size:1.35em; line-height:1.35;">${b.title}</h3>
+            <span class="cat-tag">구독 아티클 · ${escapeHtml(b.blog_name || '블로그')}</span>
+            <h3 style="margin:6px 0 8px; font-size:1.35em; line-height:1.35;">${escapeHtml(b.title)}</h3>
             ${imgTag(b.image)}
             <div class="article-body">${formatParagraphs(b.full_article, false)}</div>
-            <div class="source-line">${b.blog_name}${b.published ? ' · ' + b.published : ''} · <a class="read-more" href="${b.url}" target="_blank">블로그 원문 보기</a></div>
+            <div class="source-line">${escapeHtml(b.blog_name || '')}${b.published ? ' · ' + escapeHtml(b.published) : ''} · <a class="read-more" href="${escapeHtml(safeUrl(b.url))}" target="_blank" rel="noopener noreferrer">블로그 원문 보기</a></div>
             ${renderActionBar(key, false)}
           </section>`;
       }).join('');
@@ -1133,38 +1246,55 @@
         editionDate = ed.date || '';
         articleRegistry = {};
 
-        document.getElementById('paper-name').textContent = ed.paper_name || 'DAILY NEWS';
-        document.getElementById('paper-date').textContent = ed.date_kr || ed.date;
-        document.getElementById('paper-quote').textContent = ed.edition_quote || '';
+        const paperName = ed.paper_name || 'DAILY NEWS';
+        document.title = paperName;
+        document.getElementById('paper-name').textContent = paperName;
+        document.getElementById('paper-date').textContent = ed.date_kr || ed.date || '';
 
-        const weatherText = ed.weather ? `날씨: ${ed.weather}` : '날씨: 불러오는 중';
-        const scheduleText = ed.schedule ? `일정: ${ed.schedule}` : '일정: 미연동';
+        const quoteEl = document.getElementById('paper-quote');
+        if (ed.edition_quote) {
+          quoteEl.textContent = ed.edition_quote;
+          quoteEl.style.display = 'block';
+        } else {
+          quoteEl.textContent = '';
+          quoteEl.style.display = 'none';
+        }
+
         const briefingEl = document.getElementById('briefing-bar');
-        briefingEl.innerHTML = `<span id="weather-slot"><b>${weatherText}</b></span><span>${scheduleText}</span>`;
-        briefingEl.style.display = 'flex';
+        const showWeather = ed.show_weather !== false;
+        if (showWeather) {
+          const weatherText = ed.weather ? `날씨: ${ed.weather}` : '날씨: 불러오는 중';
+          briefingEl.innerHTML = `<span id="weather-slot" style="font-weight:700;">${escapeHtml(weatherText)}</span>`;
+          briefingEl.style.display = 'flex';
+        } else {
+          briefingEl.innerHTML = '';
+          briefingEl.style.display = 'none';
+        }
 
-        const lead = ed.lead_story;
+        const lead = ed.lead_story || {};
         const leadBody = lead.full_article || lead.summary || '';
-        registerArticle('lead', {
-          title: lead.title,
-          category: lead.category,
-          source: lead.source,
-          url: lead.url,
-          full_article: leadBody
-        });
-
-        const frontHtml = `
-          <section class="front-section">
-            <article>
-              <span class="cat-tag">${lead.category}</span>
-              <h2 class="lead-title">${lead.title}</h2>
-              ${imgTag(lead.image)}
-              <div class="article-body">${formatParagraphs(leadBody, true)}</div>
-              ${lead.takeaway ? `<div class="takeaway">핵심: ${lead.takeaway}</div>` : ''}
-              <div class="source-line">${lead.source} · <a class="read-more" href="${lead.url}" target="_blank">원문 출처</a></div>
-              ${renderActionBar('lead', true)}
-            </article>
-          </section>`;
+        let frontHtml = '';
+        if (lead.title) {
+          registerArticle('lead', {
+            title: lead.title,
+            category: lead.category,
+            source: lead.source,
+            url: lead.url,
+            full_article: leadBody
+          });
+          frontHtml = `
+            <section class="front-section">
+              <article>
+                <span class="cat-tag">${escapeHtml(lead.category || '주요 뉴스')}</span>
+                <h2 class="lead-title">${escapeHtml(lead.title)}</h2>
+                ${imgTag(lead.image)}
+                <div class="article-body">${formatParagraphs(leadBody, true)}</div>
+                ${lead.takeaway ? `<div class="takeaway">핵심: ${escapeHtml(lead.takeaway)}</div>` : ''}
+                <div class="source-line">${escapeHtml(lead.source || '')} · <a class="read-more" href="${escapeHtml(safeUrl(lead.url))}" target="_blank" rel="noopener noreferrer">원문 출처</a></div>
+                ${renderActionBar('lead', true)}
+              </article>
+            </section>`;
+        }
 
         const articlesHtml = (ed.articles || []).map((a, idx) => {
           const body = a.full_article || a.summary || '';
@@ -1178,11 +1308,11 @@
           });
           return `
             <section class="article-section">
-              <span class="cat-tag">${a.category}</span>
-              <h3>${a.title}</h3>
+              <span class="cat-tag">${escapeHtml(a.category || '뉴스')}</span>
+              <h3>${escapeHtml(a.title)}</h3>
               ${imgTag(a.image)}
               <div class="article-body two-col-text">${formatParagraphs(body, false)}</div>
-              <div class="source-line">${a.source} · <a class="read-more" href="${a.url}" target="_blank">원문 출처</a></div>
+              <div class="source-line">${escapeHtml(a.source || '')} · <a class="read-more" href="${escapeHtml(safeUrl(a.url))}" target="_blank" rel="noopener noreferrer">원문 출처</a></div>
               ${renderActionBar(key, true)}
             </section>`;
         }).join('');
@@ -1191,12 +1321,12 @@
           frontHtml + articlesHtml + renderResearch(ed.research_report) + renderBlogs(ed.blog_articles);
 
         setMode(mode);
-        updateLiveLocationWeather();
+        if (showWeather) updateLiveLocationWeather();
         if (document.fonts && document.fonts.ready) {
           document.fonts.ready.then(() => scheduleEinkRecalc());
         }
       } catch (err) {
-        document.getElementById('content').innerHTML = `<p style="text-align:center; padding:40px 0;">${err.message}</p>`;
+        document.getElementById('content').innerHTML = `<p style="text-align:center; padding:40px 0;">${escapeHtml(err.message)}</p>`;
       }
     }
 
@@ -1212,24 +1342,25 @@
       return '5344-lang/daily-news';
     }
 
-    function escapeAttr(s) {
-      return String(s || '').replace(/"/g, '&quot;');
+    function toggleQuoteCustom() {
+      const val = document.getElementById('cfg-quote-mode').value;
+      document.getElementById('cfg-quote-custom-wrap').style.display = (val === 'custom') ? 'flex' : 'none';
     }
 
-function makeRowHtml(type, name = '', val = '', enabled = true, mode = 'unread') {
+    function makeRowHtml(type, name = '', val = '', enabled = true, modeVal = 'unread') {
       const ph1 = type === 'cat' ? '카테고리명' : '이름';
-      const ph2 = type === 'cat' ? '검색 키워드 (OR로 연결)' : 'RSS 주소 또는 네이버 블로그 아이디';
+      const ph2 = type === 'cat' ? '관심 단어 (쉼표로 구분)' : 'RSS 주소 또는 네이버 블로그 아이디';
       const chk = type === 'cat' ? '' : `<input type="checkbox" class="inp-en" ${enabled ? 'checked' : ''} />`;
       const modeSel = type === 'blog' ? `
-        <select class="inp-mode" style="padding:5px; border:1px solid #333; background:#fff; font-family:inherit; font-size:12px;">
-          <option value="unread" ${mode !== 'new_only' ? 'selected' : ''}>안 읽은 글</option>
-          <option value="new_only" ${mode === 'new_only' ? 'selected' : ''}>새 글만</option>
+        <select class="inp-mode mode-select">
+          <option value="unread" ${modeVal !== 'new_only' ? 'selected' : ''}>안 읽은 글</option>
+          <option value="new_only" ${modeVal === 'new_only' ? 'selected' : ''}>새 글만</option>
         </select>` : '';
       return `
         <div class="row-item">
           ${chk}
-          <input type="text" class="small-input inp-name" value="${escapeAttr(name)}" placeholder="${ph1}" />
-          <input type="text" class="inp-val" value="${escapeAttr(val)}" placeholder="${ph2}" />
+          <input type="text" class="small-input inp-name" value="${escapeHtml(name)}" placeholder="${ph1}" />
+          <input type="text" class="inp-val" value="${escapeHtml(val)}" placeholder="${ph2}" />
           ${modeSel}
           <button class="btn-sm" onclick="this.parentElement.remove()">삭제</button>
         </div>`;
@@ -1241,9 +1372,10 @@ function makeRowHtml(type, name = '', val = '', enabled = true, mode = 'unread')
     function addResearchRow(n = '', u = '', en = true) {
       document.getElementById('cfg-research').insertAdjacentHTML('beforeend', makeRowHtml('res', n, u, en));
     }
-    function addBlogRow(n = '', u = '', en = true, mode = 'unread') {
-      document.getElementById('cfg-blogs').insertAdjacentHTML('beforeend', makeRowHtml('blog', n, u, en, mode));
+    function addBlogRow(n = '', u = '', en = true, modeVal = 'unread') {
+      document.getElementById('cfg-blogs').insertAdjacentHTML('beforeend', makeRowHtml('blog', n, u, en, modeVal));
     }
+
     async function openSettings() {
       document.getElementById('settings-status').textContent = '';
       document.getElementById('gh-repo').value = inferRepo();
@@ -1256,21 +1388,26 @@ function makeRowHtml(type, name = '', val = '', enabled = true, mode = 'unread')
         loadedConfig = {};
       }
 
+      document.getElementById('cfg-paper-name').value = loadedConfig.paper_name || 'DAILY NEWS';
+      document.getElementById('cfg-article-count').value = String(loadedConfig.article_count || 6);
+      document.getElementById('cfg-publish-hour').value = String(loadedConfig.publish_hour_kst ?? 6);
+      document.getElementById('cfg-show-weather').checked = loadedConfig.show_weather !== false;
       document.getElementById('cfg-weather-city').value = loadedConfig.weather_city || '대구';
+      document.getElementById('cfg-quote-mode').value = loadedConfig.quote_mode || 'news_comment';
+      document.getElementById('cfg-quote-custom').value = loadedConfig.quote_custom_prompt || '';
+      toggleQuoteCustom();
+
+      document.getElementById('cfg-exclude-keywords').value =
+        loadedConfig.exclude_keywords ?? 'MOU, 협약, 개최, 모집, 캠페인, 할인, 쿠폰, 특가, 체험단, 이벤트, 급등주, 특징주, 추천주, 테마주';
 
       document.getElementById('cfg-categories').innerHTML = '';
       (loadedConfig.categories || []).forEach(c => addCategoryRow(c.name, c.query));
 
       document.getElementById('cfg-research').innerHTML = '';
-      (loadedConfig.research_feeds || [
-        { name: 'ScienceDaily 심리연구', url: 'https://www.sciencedaily.com/rss/mind_brain/psychology.xml', enabled: true },
-        { name: 'PsyPost 심리실험', url: 'https://www.psypost.org/feed/', enabled: true }
-      ]).forEach(r => addResearchRow(r.name, r.url, r.enabled !== false));
+      (loadedConfig.research_feeds || []).forEach(r => addResearchRow(r.name, r.url, r.enabled !== false));
 
       document.getElementById('cfg-blogs').innerHTML = '';
-      (loadedConfig.blogs || [
-        { name: '똑심마인드 블로그', url: 'https://rss.blog.naver.com/talk_sim_mind.xml', enabled: true }
-      ]).forEach(b => addBlogRow(b.name, b.url, b.enabled !== false, b.mode || 'unread'));
+      (loadedConfig.blogs || []).forEach(b => addBlogRow(b.name, b.url, b.enabled !== false, b.mode || 'unread'));
 
       document.getElementById('settings-modal').classList.add('open');
     }
@@ -1294,6 +1431,35 @@ function makeRowHtml(type, name = '', val = '', enabled = true, mode = 'unread')
       let bin = '';
       bytes.forEach(b => bin += String.fromCharCode(b));
       return btoa(bin);
+    }
+
+    function base64ToUtf8(b64) {
+      const bin = atob(b64.replace(/\n/g, ''));
+      const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+
+    async function updateWorkflowSchedule(repo, headers, hourKst) {
+      const wfUrl = `https://api.github.com/repos/${repo}/contents/.github/workflows/daily.yml`;
+      const getRes = await fetch(wfUrl, { headers });
+      if (!getRes.ok) return false;
+      const cur = await getRes.json();
+      const origText = base64ToUtf8(cur.content);
+      const utcHour = (hourKst - 9 + 24) % 24;
+      const newCron = `cron: '0 ${utcHour} * * *'`;
+      const updatedText = origText.replace(/cron:\s*['"][^'"]+['"]/, newCron);
+      if (updatedText === origText) return true;
+
+      const putRes = await fetch(wfUrl, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({
+          message: `Update publish schedule to KST ${hourKst}:00`,
+          content: utf8ToBase64(updatedText),
+          sha: cur.sha,
+        }),
+      });
+      return putRes.ok;
     }
 
     async function saveConfigToGitHub(triggerRun) {
@@ -1326,10 +1492,19 @@ function makeRowHtml(type, name = '', val = '', enabled = true, mode = 'unread')
         enabled: row.querySelector('.inp-en').checked,
       })).filter(b => b.name && b.url);
 
+      const publishHourKst = parseInt(document.getElementById('cfg-publish-hour').value, 10);
+      const prevHourKst = loadedConfig ? (loadedConfig.publish_hour_kst ?? 6) : 6;
+
       const newConfig = {
-        paper_name: (loadedConfig && loadedConfig.paper_name) || 'DAILY NEWS',
+        paper_name: document.getElementById('cfg-paper-name').value.trim() || 'DAILY NEWS',
         site_url: (loadedConfig && loadedConfig.site_url) || location.href.split('?')[0],
+        publish_hour_kst: isNaN(publishHourKst) ? 6 : publishHourKst,
+        article_count: parseInt(document.getElementById('cfg-article-count').value, 10) || 6,
+        show_weather: document.getElementById('cfg-show-weather').checked,
         weather_city: document.getElementById('cfg-weather-city').value.trim() || '대구',
+        quote_mode: document.getElementById('cfg-quote-mode').value || 'news_comment',
+        quote_custom_prompt: document.getElementById('cfg-quote-custom').value.trim(),
+        exclude_keywords: document.getElementById('cfg-exclude-keywords').value.trim(),
         categories,
         research_feeds,
         blogs,
@@ -1362,6 +1537,14 @@ function makeRowHtml(type, name = '', val = '', enabled = true, mode = 'unread')
         });
         if (!putRes.ok) throw new Error('config.json 저장 실패 (토큰의 Contents 쓰기 권한 확인)');
 
+        let scheduleNote = '';
+        if (newConfig.publish_hour_kst !== prevHourKst) {
+          const ok = await updateWorkflowSchedule(repo, headers, newConfig.publish_hour_kst);
+          if (!ok) {
+            scheduleNote = ' (발행 시간 자동 변경은 토큰에 Workflows 쓰기 권한이 필요합니다)';
+          }
+        }
+
         if (triggerRun) {
           statusEl.textContent = '저장 완료. 새 신문 발행을 요청하는 중...';
           const runRes = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/daily.yml/dispatches`, {
@@ -1370,9 +1553,9 @@ function makeRowHtml(type, name = '', val = '', enabled = true, mode = 'unread')
             body: JSON.stringify({ ref: 'main' }),
           });
           if (!runRes.ok) throw new Error('설정은 저장되었으나 즉시 실행 실패 (토큰의 Actions 쓰기 권한 확인)');
-          statusEl.textContent = '[완료] 저장 및 재발행 요청이 완료되었습니다. 약 1분 뒤 새로고침해 주세요.';
+          statusEl.textContent = '[완료] 저장 및 재발행 요청 완료. 약 1분 뒤 새로고침해 주세요.' + scheduleNote;
         } else {
-          statusEl.textContent = '[완료] 설정이 저장되었습니다. 내일 오전 6시부터 반영됩니다.';
+          statusEl.textContent = '[완료] 설정이 저장되었습니다. 다음 발행부터 반영됩니다.' + scheduleNote;
         }
       } catch (err) {
         statusEl.textContent = '[오류] ' + err.message;
