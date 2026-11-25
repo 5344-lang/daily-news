@@ -7,7 +7,7 @@
   "weather_city": "대구",
   "quote_mode": "humor",
   "quote_custom_prompt": "",
-  "exclude_keywords": "MOU, 협약, 개최, 모집, 캠페인, 할인, 쿠폰, 특가, 체험단, 이벤트, 급등주, 특징주, 추천주, 테마주",
+  "exclude_keywords": "MOU, 협약, 개최, 모집, 캠페인, 할인, 쿠폰, 특가, 체험단, 이벤트",
   "categories": [
     {
       "name": "심리학·인지",
