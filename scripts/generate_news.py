@@ -41,6 +41,7 @@ WMO_DESC = {
     65: "강한 비", 71: "약한 눈", 73: "눈", 75: "강한 눈", 80: "소나기",
     81: "소나기", 82: "강한 소나기", 95: "뇌우", 96: "우박 동반 뇌우", 99: "강한 뇌우",
 }
+MIN_ARTICLE_BODY = 120
 
 
 def load_json(path, default):
@@ -77,14 +78,12 @@ def _get_google_token(url):
 
 
 def _find_garturl_result(node):
-    """Walk Google's variable batchexecute envelope and extract the Fbv4je URL."""
     if isinstance(node, dict):
         for value in node.values():
-            found = _find_garturl_result(value)
-            if found:
-                return found
+            result = _find_garturl_result(value)
+            if result:
+                return result
     elif isinstance(node, list):
-        # Typical envelope is ["wrb.fr", "Fbv4je", "[\"garturlres\",\"https://publisher/...\"]", ...].
         if len(node) >= 3 and node[0] == "wrb.fr" and node[1] == "Fbv4je":
             payload = node[2]
             if isinstance(payload, str):
@@ -96,13 +95,13 @@ def _find_garturl_result(node):
                 if len(payload) > 1 and payload[0] == "garturlres" and is_valid_article_url(payload[1]):
                     return payload[1]
                 for value in payload:
-                    found = _find_garturl_result(value)
-                    if found:
-                        return found
+                    result = _find_garturl_result(value)
+                    if result:
+                        return result
         for value in node:
-            found = _find_garturl_result(value)
-            if found:
-                return found
+            result = _find_garturl_result(value)
+            if result:
+                return result
     return ""
 
 
@@ -140,10 +139,9 @@ def _decode_batchexecute(url):
         text = text.split("\n", 1)[-1]
     for line in text.splitlines():
         line = line.strip()
-        if not line or line.startswith(("[", "]")) and "wrb.fr" not in line:
+        if not line:
             continue
         try:
-            # batchexecute lines can contain one complete JSON envelope or a prefix + envelope.
             start = line.find("[[")
             parsed = json.loads(line[start:]) if start >= 0 else json.loads(line)
             result = _find_garturl_result(parsed)
@@ -159,7 +157,6 @@ def decode_google_news_url(url):
         return ""
     if "news.google.com" not in (urlparse(url).hostname or "").lower():
         return url if is_valid_article_url(url) else ""
-    # The package can provide a quick path, but the verified batchexecute parser is primary.
     try:
         decoded = _decode_batchexecute(url)
         if is_valid_article_url(decoded):
@@ -193,6 +190,20 @@ def clean_article_text(text, max_len=4000):
     return "\n\n".join(lines)[:max_len].strip()
 
 
+def make_takeaway(text, title=""):
+    """Deterministic one-sentence fallback when Gemini omits an article takeaway."""
+    cleaned = clean_article_text(text or "", 4000)
+    if cleaned:
+        sentence = re.split(r"(?<=[.!?。？！])\s+|\n+", cleaned, maxsplit=1)[0].strip()
+        sentence = sentence[:180].rstrip(" ,;:")
+        if sentence:
+            return sentence if sentence[-1] in ".!?。？！" else sentence + "다."
+    clean_title = re.sub(r"\s+-\s+[^-]+$", "", (title or "")).strip()
+    if clean_title:
+        return f"{clean_title}의 핵심 내용을 확인할 수 있습니다."
+    return "기사의 핵심 내용을 원문에서 확인할 수 있습니다."
+
+
 def is_ignored_image(url):
     return not url or any(part in url.lower() for part in IGNORED_IMAGE_PARTS)
 
@@ -221,54 +232,81 @@ def download_local_image(img_url, filename, referer=None):
         return ""
 
 
+def _amp_candidates(url):
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").lower()
+    path = parsed.path.rstrip("/")
+    if host not in {"news1.kr", "www.news1.kr"}:
+        return []
+    # Only try the publisher's documented-style AMP path for known News1 article URLs.
+    if re.fullmatch(r"/society/[^/]+/\d+", path):
+        return [urljoin(url, path + "/amp")]
+    return []
+
+
 def scrape_generic_article(url, max_len=4000):
+    """Try the article URL and known public AMP variants; never bypass access controls."""
     if not is_valid_article_url(url):
         return "", ""
-    try:
-        response = requests.get(url, headers=HEADERS, timeout=(5, 18), allow_redirects=True)
-        response.raise_for_status()
-        final_url = response.url
-        if not is_valid_article_url(final_url):
-            return "", ""
-        response.encoding = response.apparent_encoding or "utf-8"
-        html = response.text
-        soup = BeautifulSoup(html, "html.parser")
-        image_url = ""
-        for attrs in ({"property": "og:image"}, {"name": "twitter:image"}):
-            meta = soup.find("meta", attrs=attrs)
-            candidate = urljoin(final_url, (meta.get("content") or "").strip()) if meta else ""
-            if is_valid_article_url(candidate) and not is_ignored_image(candidate):
-                image_url = candidate
-                break
-        extracted = trafilatura.extract(html, include_comments=False, include_tables=False) if trafilatura else ""
-        if extracted and len(extracted.strip()) > 120:
-            body = clean_article_text(extracted, max_len)
-        else:
-            article = soup.find("article") or soup.find(
-                ["main"], class_=re.compile(r"article|content|story|news", re.I)
-            ) or soup.find("div", class_=re.compile(
-                r"article|entry-content|post-content|contents_style|article-body|news-content", re.I
-            ))
-            container = article or soup.body
-            if container:
-                for tag in container(["script", "style", "nav", "header", "footer", "aside", "noscript", "iframe"]):
-                    tag.decompose()
-                if not image_url:
-                    for img in container.find_all("img"):
-                        candidate = img.get("data-src") or img.get("data-lazy-src") or img.get("src") or ""
-                        candidate = urljoin(final_url, candidate.strip())
-                        if is_valid_article_url(candidate) and not is_ignored_image(candidate):
-                            image_url = candidate
-                            break
-                paragraphs = [p.get_text(" ", strip=True) for p in container.find_all("p")]
-                text = "\n".join(p for p in paragraphs if len(p) > 25) or container.get_text("\n", strip=True)
-                body = clean_article_text(text, max_len)
-            else:
-                body = ""
-        return image_url, body
-    except Exception as exc:
-        print(f"[안내] 원문 스크래핑 실패 ({url[:90]}): {exc}")
-        return "", ""
+    attempted = set()
+    targets = [url] + _amp_candidates(url)
+    for target in targets:
+        if target in attempted:
+            continue
+        attempted.add(target)
+        try:
+            headers = dict(HEADERS)
+            parsed_target = urlparse(target)
+            headers["Referer"] = f"{parsed_target.scheme}://{parsed_target.netloc}/"
+            response = requests.get(target, headers=headers, timeout=(5, 18), allow_redirects=True)
+            if response.status_code == 403:
+                print(f"[안내] 게시자 접근 거부(403), 공개 AMP 대체를 계속 검토: {target}")
+                continue
+            response.raise_for_status()
+            final_url = response.url
+            if not is_valid_article_url(final_url):
+                continue
+            response.encoding = response.apparent_encoding or "utf-8"
+            html = response.text
+            soup = BeautifulSoup(html, "html.parser")
+            image_url = ""
+            for attrs in ({"property": "og:image"}, {"name": "twitter:image"}):
+                meta = soup.find("meta", attrs=attrs)
+                candidate = urljoin(final_url, (meta.get("content") or "").strip()) if meta else ""
+                if is_valid_article_url(candidate) and not is_ignored_image(candidate):
+                    image_url = candidate
+                    break
+            extracted = trafilatura.extract(html, include_comments=False, include_tables=False) if trafilatura else ""
+            body = clean_article_text(extracted, max_len) if extracted else ""
+            if len(body) < MIN_ARTICLE_BODY:
+                article = soup.find("article") or soup.find(
+                    ["main"], class_=re.compile(r"article|content|story|news", re.I)
+                ) or soup.find("div", class_=re.compile(
+                    r"article|entry-content|post-content|contents_style|article-body|news-content|news1_article", re.I
+                ))
+                container = article or soup.body
+                if container:
+                    for tag in container(["script", "style", "nav", "header", "footer", "aside", "noscript", "iframe"]):
+                        tag.decompose()
+                    if not image_url:
+                        for img in container.find_all("img"):
+                            candidate = img.get("data-src") or img.get("data-lazy-src") or img.get("src") or ""
+                            candidate = urljoin(final_url, candidate.strip())
+                            if is_valid_article_url(candidate) and not is_ignored_image(candidate):
+                                image_url = candidate
+                                break
+                    paragraphs = [p.get_text(" ", strip=True) for p in container.find_all("p")]
+                    text = "\n".join(p for p in paragraphs if len(p) > 25) or container.get_text("\n", strip=True)
+                    body = clean_article_text(text, max_len)
+            # Accept AMP only when it actually contains article-length text.
+            if len(body) >= MIN_ARTICLE_BODY:
+                return image_url, body
+        except requests.HTTPError as exc:
+            code = exc.response.status_code if exc.response is not None else "?"
+            print(f"[안내] 원문 요청 실패 HTTP {code} ({target[:90]})")
+        except Exception as exc:
+            print(f"[안내] 원문 스크래핑 실패 ({target[:90]}): {exc}")
+    return "", ""
 
 
 def fetch_feed_safe(url, retries=2):
@@ -355,15 +393,17 @@ def fetch_research_candidates(feeds, history):
             link = entry.get("link", "").strip()
             if not link or link in history.get("research", []):
                 continue
-            image, body = scrape_generic_article(link, max_len=1600)
-            if len(body) < 180:
-                body = BeautifulSoup(entry.get("summary", ""), "html.parser").get_text(" ", strip=True)[:1500]
-            if len(body) >= 180:
+            image, body = scrape_generic_article(link, max_len=4000)
+            if len(body) < MIN_ARTICLE_BODY:
+                summary = BeautifulSoup(entry.get("summary", ""), "html.parser").get_text("\n", strip=True)
+                body = clean_article_text(summary, max_len=3500)
+            if len(body) >= MIN_ARTICLE_BODY:
                 local = download_local_image(image, "research_0.jpg", link) if image else ""
                 history["research_idx"] = (idx + 1) % len(enabled)
                 return [{"source_name": enabled[idx].get("name", "심리학 연구"),
                          "title": entry.get("title", "").strip(), "url": link,
                          "image": local or image, "body": body}]
+            print(f"[안내] 연구 피드 본문이 짧아 건너뜀: {link}")
     return []
 
 
@@ -437,13 +477,17 @@ def generate_edition(config, candidates, research, prefs):
         raise RuntimeError("GEMINI_API_KEY 환경 변수가 설정되지 않았습니다.")
     client = genai.Client(api_key=api_key)
     count = max(3, min(9, int(config.get("article_count", 6))))
+    research_input = research[0] if research else None
     prompt = f'''개인 맞춤 조간신문 편집장입니다. 뉴스 후보 중 기사 {count}개를 고르고 JSON만 반환하세요.
-후보 id/category만 반환하고 제목이나 본문을 새로 만들지 마세요. lead_story 한 개, articles 나머지 {count - 1}개.
+후보 id/category만 반환하고 제목이나 본문을 새로 만들지 마세요. lead_story 한 개, articles 나머지 {count - 1}개입니다.
+각 뉴스 후보에는 takeaway를 넣으세요. 본문 없이 후보의 제목과 RSS 요약만 사용해 추측을 추가하지 않는 한 문장 핵심 요약을 작성합니다.
+lead_story와 articles 모두 takeaway는 반드시 빈 문자열이 아닌 문자열입니다.
 뉴스 후보: {json.dumps(candidates, ensure_ascii=False)}
-연구 원문: {json.dumps(research[0] if research else None, ensure_ascii=False)}
+연구 원문: {json.dumps(research_input, ensure_ascii=False)}
+연구가 있으면 실제 원문 body를 바탕으로 research_report.full_article을 한국어 3~4개 문단으로 편집하고, takeaway는 핵심 한 문장으로 작성하세요. 추측이나 새 사실은 덧붙이지 말고, 연구가 없으면 null입니다.
 좋아요: {json.dumps(prefs.get("likes", [])[-15:], ensure_ascii=False)}
 싫어요: {json.dumps(prefs.get("dislikes", [])[-15:], ensure_ascii=False)}
-스키마: {{"edition_quote":"문자열","lead_story":{{"id":0,"category":"카테고리"}},"articles":[{{"id":1,"category":"카테고리"}}],"research_report":null}}'''
+스키마: {{"edition_quote":"문자열","lead_story":{{"id":0,"category":"카테고리","takeaway":"핵심 한 문장"}},"articles":[{{"id":1,"category":"카테고리","takeaway":"핵심 한 문장"}}],"research_report":{{"title":"원문 제목","journal_info":"출처","full_article":"한국어 본문 3~4문단","takeaway":"핵심 한 문장"}} 또는 null}}'''
     models = []
     try:
         for model in client.models.list():
@@ -507,25 +551,85 @@ def main():
         url = decode_google_news_url(original)
         print(f"[디버그URL] {filename} | 변환성공={bool(url)} | 원래URL={original[:80]} | 반환URL={url[:120] if url else '디코딩 실패'}")
         image, body = scrape_generic_article(url, max_len=4000) if url else ("", "")
+        if len(body) < MIN_ARTICLE_BODY:
+            print(f"[안내] {filename}: 원문이 짧거나 접근 불가(403 포함), 대체 후보 검토")
+            return None
         local_image = download_local_image(image, filename, referer=url) if image else ""
         final_image = local_image or image
-        final_body = body or source.get("snippet", "")
-        print(f"[수집] {filename} | {'원문추출' if body else 'RSS요약'} | 사진={bool(final_image)} | 길이={len(final_body)} | URL={url[:80]}")
+        takeaway = clean_article_text(item.get("takeaway", ""), 240) or make_takeaway(body, source.get("title", ""))
+        print(f"[수집] {filename} | 원문추출 | 사진={bool(final_image)} | takeaway={bool(takeaway)} | 길이={len(body)} | URL={url[:80]}")
         return {"category": item.get("category") or source.get("category", "뉴스"),
                 "title": source.get("title") or item.get("title", ""), "source": source.get("source", "뉴스"),
-                "url": url or original, "image": final_image, "full_article": final_body, "takeaway": ""}
+                "url": url, "image": final_image, "full_article": body, "takeaway": takeaway,
+                "_candidate_id": source.get("id")}
 
-    lead = enrich(ai.get("lead_story"), "lead.jpg")
-    articles = [enrich(item, f"art_{idx}.jpg") for idx, item in enumerate(ai.get("articles") or [])]
-    articles = [item for item in articles if item and item.get("title")]
+    selected = []
+    if ai.get("lead_story"):
+        selected.append(("lead", ai["lead_story"]))
+    selected.extend(("article", item) for item in (ai.get("articles") or []))
+    successful = []
+    visited_ids, visited_urls = set(), set()
+    failed_roles = []
+    for role, item in selected:
+        candidate = by_id.get(item.get("id"), {})
+        cid, original = candidate.get("id"), candidate.get("url", "")
+        if cid is not None:
+            visited_ids.add(cid)
+        if original:
+            visited_urls.add(original)
+        article = enrich(item, "lead.jpg" if role == "lead" else f"art_{len(successful)}.jpg")
+        if article:
+            successful.append((role, article))
+        else:
+            failed_roles.append((role, item.get("category") or candidate.get("category", "뉴스")))
+
+    # Replace failed selections with distinct candidates; bounded by the finite candidate pool.
+    alternates = [c for c in news if c.get("id") not in visited_ids and c.get("url") not in visited_urls]
+    for role, wanted_category in failed_roles:
+        alternates.sort(key=lambda c: (c.get("category") != wanted_category, c.get("id", 0)))
+        replacement = None
+        while alternates and replacement is None:
+            candidate = alternates.pop(0)
+            cid, original = candidate.get("id"), candidate.get("url", "")
+            if cid in visited_ids or original in visited_urls:
+                continue
+            visited_ids.add(cid)
+            visited_urls.add(original)
+            replacement = enrich({"id": cid, "category": candidate.get("category")},
+                                 "lead.jpg" if role == "lead" and not any(r == "lead" for r, _ in successful)
+                                 else f"art_{len(successful)}.jpg")
+        if replacement:
+            successful.append((role, replacement))
+        else:
+            print(f"[안내] 대체 후보 소진: {wanted_category} 기사는 제외합니다.")
+
+    successful = [(role, {k: v for k, v in article.items() if not k.startswith("_")}) for role, article in successful]
+    lead = next((article for role, article in successful if role == "lead"), None)
+    if lead is None and successful:
+        lead = successful[0][1]
+    articles = [article for role, article in successful if article is not lead]
+
     report = None
-    if research and ai.get("research_report"):
-        rc, rr = research[0], ai["research_report"]
-        report = {"source_name": rc["source_name"], "title": rr.get("title") or rc["title"],
-                  "journal_info": rr.get("journal_info", rc["source_name"]), "url": rc["url"],
-                  "image": rc.get("image", ""), "full_article": rr.get("full_article", ""), "takeaway": rr.get("takeaway", "")}
-        history["research"].append(rc["url"])
-        history["research"] = history["research"][-200:]
+    if research:
+        rc = research[0]
+        rr = ai.get("research_report") if isinstance(ai.get("research_report"), dict) else {}
+        report_body = clean_article_text(rr.get("full_article", ""), 4000)
+        if len(report_body) < MIN_ARTICLE_BODY:
+            report_body = clean_article_text(rc.get("body", ""), 4000)
+        if report_body:
+            model_takeaway = clean_article_text(rr.get("takeaway", ""), 240)
+            report_takeaway = model_takeaway or make_takeaway(report_body, rr.get("title") or rc.get("title", ""))
+            report = {"source_name": rc.get("source_name", "심리학 연구"),
+                      "title": rr.get("title") or rc.get("title", "연구 리포트"),
+                      "journal_info": rr.get("journal_info") or rc.get("source_name", "심리학 연구"),
+                      "url": rc.get("url", ""), "image": rc.get("image", ""),
+                      "full_article": report_body, "takeaway": report_takeaway}
+            history["research"].append(rc["url"])
+            history["research"] = history["research"][-200:]
+            print(f"[수집] 연구 리포트 | 본문길이={len(report_body)} | takeaway={bool(report_takeaway)} | 사진={bool(rc.get('image'))}")
+        else:
+            print(f"[안내] 연구 본문이 없어 리포트 발행 생략: {rc.get('url', '')}")
+
     history["blogs"] = (history["blogs"] + [item["url"] for item in blogs if item.get("url")])[-300:]
     edition = {"paper_name": config.get("paper_name", "DAILY NEWS"), "date": now.strftime("%Y-%m-%d"),
                "date_kr": f"{now.year}년 {now.month}월 {now.day}일 ({weekdays[now.weekday()]})",
