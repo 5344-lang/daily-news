@@ -1,13 +1,7 @@
 {
   "paper_name": "DAILY NEWS",
   "site_url": "https://5344-lang.github.io/daily-news/",
-  "publish_hour_kst": 5,
-  "article_count": 9,
-  "show_weather": true,
   "weather_city": "대구",
-  "quote_mode": "humor",
-  "quote_custom_prompt": "",
-  "exclude_keywords": "MOU, 협약, 개최, 모집, 캠페인, 할인, 쿠폰, 특가, 체험단, 이벤트, 급등주, 특징주, 추천주, 테마주",
   "categories": [
     {
       "name": "심리학·인지",
