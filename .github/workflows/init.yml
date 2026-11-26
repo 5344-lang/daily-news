@@ -1,0 +1,41 @@
+name: 1. Initialize My Paper (처음 한 번만)
+
+# 템플릿으로 만든 내 저장소를 "빈 신문"으로 초기화합니다. 원본 저장소에서는 실행되지 않습니다.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  init:
+    if: github.repository != '5344-lang/daily-news'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reset to blank paper
+        run: |
+          OWNER="${GITHUB_REPOSITORY%%/*}"
+          REPO="${GITHUB_REPOSITORY##*/}"
+          python3 - <<PY
+          import json, os, shutil
+          cfg = json.load(open("template/config.default.json", encoding="utf-8"))
+          cfg["site_url"] = "https://${OWNER}.github.io/${REPO}/"
+          json.dump(cfg, open("config.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+          shutil.rmtree("data", ignore_errors=True)
+          os.makedirs("data/images", exist_ok=True)
+          json.dump({"likes": [], "dislikes": [], "saved": []}, open("data/preferences.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+          for f in ("creator_column.json",):
+              if os.path.exists(f): os.remove(f)
+          PY
+          touch data/images/.gitkeep
+
+      - name: Commit
+        run: |
+          git config user.name "Daily News Bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "Initialize my DAILY NEWS"
+          git pull --rebase origin main || true
+          git push
