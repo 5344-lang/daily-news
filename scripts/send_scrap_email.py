@@ -3,6 +3,7 @@ import json
 import time
 import html
 import smtplib
+import sys
 from datetime import datetime, timezone, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -40,17 +41,19 @@ def resolve_image_url(img_path, site_url):
     return ""
 
 
-def build_card_html(item, site_url):
+def build_card_html(item, site_url, image_valid=False):
     category = html.escape(item.get("category") or "스크랩")
     source = html.escape(item.get("source") or "")
     title = html.escape(item.get("title") or "제목 없음")
     url = html.escape(item.get("url") or "#")
 
+    takeaway = (item.get("takeaway") or "").replace("\n", " ").strip()
     raw_body = (item.get("full_article") or "").replace("\n", " ").strip()
-    preview_30 = raw_body[:30] + ("..." if len(raw_body) > 30 else "")
-    preview_html = html.escape(preview_30) if preview_30 else "원문 링크에서 전체 내용을 확인하세요."
+    preview = takeaway or (raw_body[:90] + ("..." if len(raw_body) > 90 else ""))
+    preview_html = html.escape(preview) if preview else "원문 링크에서 전체 내용을 확인하세요."
 
-    img_url = resolve_image_url(item.get("image", ""), site_url)
+    # 이미지 파일명(lead.jpg 등)은 매일 덮어써지므로, 현재 발행본의 기사일 때만 사용한다.
+    img_url = resolve_image_url(item.get("image", ""), site_url) if image_valid else ""
     img_block = ""
     if img_url:
         img_block = (
@@ -93,9 +96,10 @@ def main():
     gmail_pass = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
     recipient = os.environ.get("RECIPIENT_EMAIL", "").strip() or gmail_user
 
-    if not gmail_user or not gmail_pass:
-        print("[경고] GMAIL_USER 또는 GMAIL_APP_PASSWORD 시크릿이 설정되지 않아 메일을 보낼 수 없습니다.")
-        return
+    dry_run = os.environ.get("DRY_RUN") == "1"
+    if not dry_run and (not gmail_user or not gmail_pass):
+        print("[오류] GMAIL_USER 또는 GMAIL_APP_PASSWORD 시크릿이 설정되지 않아 메일을 보낼 수 없습니다.")
+        sys.exit(1)
 
     config = load_json(CONFIG_PATH, {})
     paper_name = config.get("paper_name", "DAILY NEWS")
@@ -103,7 +107,11 @@ def main():
     now_kst = datetime.now(KST)
     date_label = now_kst.strftime("%Y.%m.%d")
 
-    cards_html = "\n".join(build_card_html(item, site_url) for item in saved)
+    edition_date = load_json("data/today.json", {}).get("date", "")
+    cards_html = "\n".join(
+        build_card_html(item, site_url, image_valid=bool(edition_date) and item.get("date") == edition_date)
+        for item in saved
+    )
     full_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head><meta charset="UTF-8" /></head>
@@ -121,6 +129,13 @@ def main():
 </body>
 </html>
 """
+
+    if dry_run:
+        out = os.environ.get("DRY_RUN_OUT", "/tmp/scrap_preview.html")
+        with open(out, "w", encoding="utf-8") as f:
+            f.write(full_html)
+        print(f"[드라이런] {len(saved)}건 미리보기를 {out}에 저장했습니다. 발송·초기화는 하지 않습니다.")
+        return
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = f"[{paper_name} 스크랩] {date_label} (총 {len(saved)}건)"
