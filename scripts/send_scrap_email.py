@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import time
 import html
@@ -108,10 +109,17 @@ def main():
     date_label = now_kst.strftime("%Y.%m.%d")
 
     edition_date = load_json("data/today.json", {}).get("date", "")
-    cards_html = "\n".join(
-        build_card_html(item, site_url, image_valid=bool(edition_date) and item.get("date") == edition_date)
-        for item in saved
-    )
+    def image_ok(item):
+        img = item.get("image", "")
+        if img.startswith("./data/images/"):
+            if not os.path.exists(img[2:]):
+                return False  # 파일이 없으면 깨진 이미지 대신 생략
+            # 예전 방식(lead.jpg, art_N.jpg 등 슬롯 이름)은 매일 덮어써졌으므로 오늘 발행본일 때만 사용
+            if re.match(r"^(lead|art_\d+|research_\d+|blog_\d+)\.jpg$", os.path.basename(img)):
+                return bool(edition_date) and item.get("date") == edition_date
+        return True
+
+    cards_html = "\n".join(build_card_html(item, site_url, image_valid=image_ok(item)) for item in saved)
     full_html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head><meta charset="UTF-8" /></head>

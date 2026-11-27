@@ -1,5 +1,7 @@
 import os
 import re
+import glob
+import hashlib
 import json
 import time
 from datetime import datetime, timezone, timedelta
@@ -220,6 +222,8 @@ def download_local_image(img_url, filename, referer=None):
         content = response.content
         if len(content) < 2500 or len(content) > 5 * 1024 * 1024:
             return ""
+        # 슬롯 이름(lead.jpg 등)은 매일 덮어써져 스크랩 기사의 사진이 바뀐다 → 기사 URL 기반 고유 이름 사용
+        filename = hashlib.sha1((referer or img_url).encode("utf-8")).hexdigest()[:12] + ".jpg"
         os.makedirs("data/images", exist_ok=True)
         path = os.path.join("data", "images", filename)
         with open(path, "wb") as image_file:
@@ -228,6 +232,35 @@ def download_local_image(img_url, filename, referer=None):
     except Exception as exc:
         print(f"[안내] 이미지 다운로드 실패 ({filename}): {exc}")
         return ""
+
+
+def cleanup_images(edition):
+    """오늘 발행본·스크랩 보관함이 쓰지 않는 이미지만 삭제(스크랩한 기사 사진은 메일 발송 때까지 유지)."""
+    used = set()
+
+    def collect(obj):
+        if isinstance(obj, dict):
+            img = obj.get("image")
+            if isinstance(img, str) and img.startswith("./data/images/"):
+                used.add(os.path.basename(img))
+            for v in obj.values():
+                collect(v)
+        elif isinstance(obj, list):
+            for v in obj:
+                collect(v)
+
+    collect(edition)
+    try:
+        with open("data/preferences.json", "r", encoding="utf-8") as f:
+            collect(json.load(f).get("saved", []))
+    except Exception:
+        pass
+    for path in glob.glob("data/images/*"):
+        if os.path.basename(path) not in used:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
 
 
 def _amp_candidates(url):
@@ -653,6 +686,7 @@ def main():
                "show_weather": show_weather, "weather": weather, "edition_quote": ai.get("edition_quote", ""),
                "lead_story": lead, "articles": articles, "research_report": report, "blog_articles": blogs}
     save_json("data/today.json", edition)
+    cleanup_images(edition)
     save_json("data/published_history.json", history)
     print(f"[완료] {edition['date_kr']} 신문 발행 성공! (기사 {bool(lead) + len(articles)}건, 연구 {bool(report)}건, 블로그 {len(blogs)}건)")
 
